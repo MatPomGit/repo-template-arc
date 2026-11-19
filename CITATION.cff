@@ -1,7 +1,9 @@
 cff-version: 1.2.0
-message: "TEMPLATE: replace this citation before publishing the program."
+message: "Cytuj konkretną wersję programu; współautorów dodawaj po potwierdzeniu ich wkładu."
 title: "ARC REPLACE PROGRAM — TEMPLATE"
 type: software
 authors:
-  - name: "REPLACE_AUTHOR"
+  - family-names: "Pomianek"
+    given-names: "Mateusz"
+    orcid: "https://orcid.org/0000-0001-7769-8919"
 version: "0.1.0"
