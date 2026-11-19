@@ -4,5 +4,3 @@ Przyjmuj tylko projekty z kanonicznym właścicielem, repozytorium, poprawnym za
 
 
 Autorstwo repozytorium programu obejmuje zawsze Mateusza Pomianka; inni współautorzy są opcjonalni po potwierdzeniu rzeczywistego wkładu. Osobno rozstrzyga się autorstwo poszczególnych artykułów w kanonicznych projektach `msc-*`.
-
-Publiczne repozytoria mogą stosować GitHub-hosted runners do bezpiecznych testów offline. Nie udostępnia się sekretów i prywatnych źródeł niezaufanym workflowom, a `audit-live` wymagający uprawnień wykonuje się tylko za zgodą. Zalecenia, luki i kryteria wdrożenia zapisano w [audycie](../reviews/2026-11-19-template-audit.md).
