@@ -66,6 +66,54 @@ class ARCContractTests(unittest.TestCase):
             (dst/"portfolio/projects.json").write_text(json.dumps({"projects":[candidate(),candidate()]}),encoding="utf-8")
             self.assertTrue(any("duplicate project" in x.lower() for x in validate(dst,"scaffold")))
 
+    def test_public_arc_rejects_private_metadata_even_if_hidden_from_pages(self):
+        import shutil
+        with tempfile.TemporaryDirectory() as d:
+            dst = Path(d)
+            shutil.copytree(ROOT, dst / "repo", ignore=shutil.ignore_patterns("__pycache__"))
+            dst = dst / "repo"
+            meta = json.loads((dst / "program.json").read_text(encoding="utf-8"))
+            meta["repository_visibility"] = "public"
+            meta["programme"] = "arc-neuro"
+            (dst / "program.json").write_text(json.dumps(meta), encoding="utf-8")
+            (dst / "areas/index.json").write_text(
+                json.dumps({"lines": [{"id": "ndd", "title": "NDD"}]}), encoding="utf-8")
+            (dst / "portfolio/projects.json").write_text(
+                json.dumps({"projects": [candidate()]}), encoding="utf-8")
+            issues = validate(dst, "scaffold")
+            self.assertTrue(any("Private project metadata unsafe" in x for x in issues))
+
+    def test_private_arc_accepts_unlisted_private_project(self):
+        import shutil
+        with tempfile.TemporaryDirectory() as d:
+            dst = Path(d)
+            shutil.copytree(ROOT, dst / "repo", ignore=shutil.ignore_patterns("__pycache__"))
+            dst = dst / "repo"
+            meta = json.loads((dst / "program.json").read_text(encoding="utf-8"))
+            meta["repository_visibility"] = "private"
+            meta["programme"] = "arc-neuro"
+            (dst / "program.json").write_text(json.dumps(meta), encoding="utf-8")
+            (dst / "areas/index.json").write_text(
+                json.dumps({"lines": [{"id": "ndd", "title": "NDD"}]}), encoding="utf-8")
+            (dst / "portfolio/projects.json").write_text(
+                json.dumps({"projects": [candidate()]}), encoding="utf-8")
+            self.assertEqual(validate(dst, "scaffold"), [])
+
+    def test_unconfigured_repo_cannot_register_private_project(self):
+        import shutil
+        with tempfile.TemporaryDirectory() as d:
+            dst = Path(d)
+            shutil.copytree(ROOT, dst / "repo", ignore=shutil.ignore_patterns("__pycache__"))
+            dst = dst / "repo"
+            meta = json.loads((dst / "program.json").read_text(encoding="utf-8"))
+            meta["programme"] = "arc-neuro"
+            (dst / "program.json").write_text(json.dumps(meta), encoding="utf-8")
+            (dst / "areas/index.json").write_text(
+                json.dumps({"lines": [{"id": "ndd", "title": "NDD"}]}), encoding="utf-8")
+            (dst / "portfolio/projects.json").write_text(
+                json.dumps({"projects": [candidate()]}), encoding="utf-8")
+            self.assertTrue(any("Set repository_visibility" in x for x in validate(dst)))
+
     def test_public_pages_urls_reject_markup_injection(self):
         self.assertTrue(safe_public_page_url("https://matpomgit.github.io/msc-example/"))
         self.assertFalse(safe_public_page_url("https://host.example/)[malicious](x"))
