@@ -12,3 +12,6 @@ Czytaj po kolei: `program.json`, `PROJECT_STATE.yaml`, `RESEARCH.md`, `ARCHITECT
 8. Automatyzacje publikowania GitHub Pages, przenoszenia projektów i zmian uprawnień wymagają oddzielnej zgody. Nie twórz drugiego schedulera poza Research Autopilot.
 9. Repozytoria prywatne podlegają kontroli dostępu; GitHub App jest planowanym ograniczonym odczytem, nie należy zakładać wdrożonego, nieograniczonego brokera.
 10. Nie kasuj ani nie archiwizuj historycznych repozytoriów bez mapy odwołań i potwierdzenia właściciela.
+
+11. Mateusz Pomianek musi pozostać co najmniej jednym z autorów w `CITATION.cff` i metadanych repozytorium programu; dodatkowych współautorów wolno dodawać po potwierdzeniu wkładu. Nie nadpisuj automatycznie autorstwa niezależnych prac w `msc-*`.
+12. Dla repozytoriów publicznych bezpieczne, izolowane kontrole CI **mogą** korzystać z GitHub-hosted runners. Sekrety, prywatny `audit-live` i kod niezaufanych PR muszą pozostawać poza uprzywilejowanymi środowiskami. Nie traktuj dokumentacji zaplanowanego CI jako dowodu wykonania testów.
