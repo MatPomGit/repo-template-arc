@@ -257,7 +257,14 @@ def main(argv: list[str] | None = None) -> int:
         import json
         try:
             meta=json.loads((a.root / "program.json").read_text(encoding="utf-8"))
-            if meta.get("repository_visibility") != a.repo_visibility:
+            declared = meta.get("repository_visibility")
+            is_empty_template = (
+                declared == "unconfigured"
+                and meta.get("programme") == "arc-REPLACE"
+                and json.loads((a.root / "portfolio/projects.json").read_text(
+                    encoding="utf-8")).get("projects") == []
+            )
+            if declared != a.repo_visibility and not is_empty_template:
                 issues.append("Declared visibility disagrees with verified repository visibility")
         except (OSError, ValueError, TypeError, AttributeError):
             issues.append("Cannot independently check declared visibility")

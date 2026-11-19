@@ -114,6 +114,13 @@ class ARCContractTests(unittest.TestCase):
                 json.dumps({"projects": [candidate()]}), encoding="utf-8")
             self.assertTrue(any("Set repository_visibility" in x for x in validate(dst)))
 
+    def test_unconfigured_empty_template_accepts_public_ci(self):
+        from validate_repository import main
+        from unittest.mock import patch
+        with patch("sys.argv", ["validate_repository.py"]):
+            self.assertEqual(main(["--root", str(ROOT), "--phase", "scaffold",
+                                   "--repo-visibility", "public"]), 0)
+
     def test_public_pages_urls_reject_markup_injection(self):
         self.assertTrue(safe_public_page_url("https://matpomgit.github.io/msc-example/"))
         self.assertFalse(safe_public_page_url("https://host.example/)[malicious](x"))
