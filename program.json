@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "template_version": "1.0.0",
+  "type": "arc-program",
+  "programme": "arc-REPLACE",
+  "title": "REPLACE_PROGRAM_NAME",
+  "owner": "REPLACE_OWNER",
+  "scope": "REPLACE_SCIENTIFIC_SCOPE",
+  "default_branch": "main",
+  "license_spdx": "UNDECIDED",
+  "pages_status": "not_configured",
+  "pages_url": null,
+  "public_catalog_policy": "explicit_opt_in",
+  "scientific_state": "scaffold",
+  "owner_of_raw_data": false
+}

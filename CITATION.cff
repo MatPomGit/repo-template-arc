@@ -1,0 +1,7 @@
+cff-version: 1.2.0
+message: "TEMPLATE: replace this citation before publishing the program."
+title: "ARC REPLACE PROGRAM — TEMPLATE"
+type: software
+authors:
+  - name: "REPLACE_AUTHOR"
+version: "0.1.0"

@@ -1,0 +1,16 @@
+schema_version: 1
+repository_type: research_program
+template_version: 1.0.0
+programme: arc-REPLACE
+scientific_owner: REPLACE_OWNER
+updated: null
+phase: scaffold
+projects_registered: 0
+papers_registered: 0
+public_catalog_status: not_configured
+pages_status: not_configured
+hardware_validation_status: not_run
+last_live_audit: null
+known_blockers:
+  - configure_programme_owner_scope_and_projects
+next_action: inventory_primary_msc_repositories

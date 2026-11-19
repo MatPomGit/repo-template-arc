@@ -1,0 +1,16 @@
+{
+  "id": "REPLACE_PROJECT_ID",
+  "title": "REPLACE_PROJECT_TITLE",
+  "repository": "MatPomGit/msc-example",
+  "url": "https://github.com/MatPomGit/msc-example",
+  "role": "primary",
+  "primary_program": "arc-neuro",
+  "line": "ndd",
+  "status": "planned",
+  "visibility": "private",
+  "public_listing": false,
+  "default_branch": "main",
+  "snapshot_sha": null,
+  "pages_url": null,
+  "submodule_path": null
+}

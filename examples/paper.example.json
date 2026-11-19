@@ -1,0 +1,11 @@
+{
+  "id": "REPLACE_PAPER_ID",
+  "title": "REPLACE_PAPER_TITLE",
+  "owner_project_id": "REPLACE_PROJECT_ID",
+  "canonical_repository": "MatPomGit/msc-example",
+  "manuscript_path": "manuscripts/P01",
+  "stage": "concept",
+  "doi": null,
+  "preprint_url": null,
+  "preregistration_url": null
+}
