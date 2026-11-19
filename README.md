@@ -3,6 +3,7 @@
 **Rodzaj repozytorium:** program naukowy `arc-*`  
 **Program:** `arc-REPLACE`  
 **Wersja szablonu:** `1.0.0`  
+**Autor podstawowy:** Mateusz Pomianek; dodatkowi współautorzy po potwierdzeniu wkładu  
 **Stan naukowy:** indeks planowany, bez potwierdzonych wyników empirycznych
 
 ## Misja i granice programu
@@ -28,6 +29,10 @@ python scripts/bootstrap.py --mode audit-live
 ```
 
 Weryfikacja `audit-live` **nie zmienia** przypiętych commitów i nie uruchamia kodu projektów podrzędnych. Brak dostępu do prywatnego repozytorium daje `UNAVAILABLE`, nie `PASS`.
+
+## Audyt i plan napraw
+
+Zobacz [niezależny audyt szablonu ARC z 2026-11-19](reviews/2026-11-19-template-audit.md), zawierający priorytety P0–P2 i test akceptacyjny. Publiczne repozytoria mogą używać GitHub-hosted runners do bezpiecznych, izolowanych kontroli CI; nie oznacza to, że szablon już ma workflow.
 
 ## Otwartość
 
