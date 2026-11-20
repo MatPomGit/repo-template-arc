@@ -34,7 +34,12 @@ def render(root:Path)->str:
 
 def main(argv:list[str]|None=None)->int:
     root=Path(__file__).resolve().parents[1]
-    path=root/"docs/projects.md"
+    path=root/"pages/projects.md"
+    if path.is_symlink() or not path.parent.is_dir() or path.parent.is_symlink():
+        raise SystemExit("UNAVAILABLE: public pages directory unsafe or missing")
+    policy=json.loads((root/"config/pages-policy.json").read_text(encoding="utf-8"))
+    if policy.get("public_files") is None or "projects.md" not in policy["public_files"]:
+        raise SystemExit("UNAVAILABLE: projects.md not allowlisted for publication")
     path.write_text(render(root),encoding="utf-8")
     print("Public project catalog generated; private projects excluded")
     return 0
