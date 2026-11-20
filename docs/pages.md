@@ -4,7 +4,7 @@
 
 ## 1. Architektura i granice publikacji
 
-Źródłem witryny jest **wyłącznie `pages/`**; `docs/` zawiera dokumentację techniczną, ADR, polityki bezpieczeństwa i procedury agentów. Konfiguracja `mkdocs.yml` wymaga `docs_dir: pages` oraz `site_dir: site`. Każda publiczna strona i zasób źródłowy musi być jawnie wskazany w `config/pages-policy.json`; katalog wynikowy `site/` podlega niezależnemu audytowi po `mkdocs build --strict`.
+Źródłem witryny jest **wyłącznie `pages/`**; `docs/` zawiera dokumentację techniczną, ADR, polityki bezpieczeństwa i procedury agentów. Konfiguracja `mkdocs.yml` wymaga `docs_dir: pages` oraz `site_dir: site`. Każda publiczna strona i zasób źródłowy musi być jawnie wskazany w `config/pages-policy.json`. Kontrola obejmuje także 24 zatwierdzone zasoby motywu z SHA-256, skrypty w końcowym HTML oraz sumy i wybrane metadane obrazów. Motyw nie ładuje zewnętrznego `highlight.js`. Katalog wynikowy `site/` podlega niezależnemu audytowi `python scripts/validate_site.py --strict` po `mkdocs build --strict`.
 
 Nie przenoś na portal `portfolio/`, `areas/`, `program.json`, `research/`, `equipment/`, `AGENTS.md`, `.github/`, `docs/`, plików danych, logów, nazw prywatnych projektów ani raportów `audit-live`. Katalog publiczny `pages/projects.md` powstaje przez `scripts/build_public_catalog.py` wyłącznie z projektów o `visibility=public`, `public_listing=true` i zweryfikowanym publicznym URL. Generator nie powinien otwierać prywatnych repozytoriów ani kopiować ich plików. **Nawet nazwy projektów prywatnych nie mogą trafić do publicznej historii Git.**
 
