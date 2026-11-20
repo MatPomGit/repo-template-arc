@@ -35,6 +35,7 @@ REQUIRED = (
     "equipment/README.md", "software/README.md",
     "docs/index.md", "docs/scientific-scope.md", "docs/publication-policy.md",
     "docs/data-policy.md", "docs/submodules.md", "docs/pages.md",
+    "docs/releases.md",
     "docs/documentation.md", "docs/architecture/README.md",
     "docs/architecture/portfolio-boundaries.md", "docs/architecture/data-flow.md",
     "docs/architecture/reproducibility.md", "docs/adr/README.md",

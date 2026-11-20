@@ -1,17 +1,51 @@
-# Zasady publicznego portalu GitHub Pages
+# GitHub Pages programu badawczego ARC
 
-**GitHub Pages publikuje wyłącznie `pages/`, nigdy `docs/`.** `docs/` zawiera dokumenty techniczne, polityki, analizy bezpieczeństwa i instrukcje agentów. Źródło witryny w `mkdocs.yml` to `docs_dir: pages`, a katalog budowania to `site/`.
+**Zakres:** publiczny portal *programu badawczego*, a nie strona pojedynczej aplikacji, manuskryptu ani wewnętrzny panel zarządzania. Szablon ma status `scaffold`; obecność `pages/` nie oznacza publikacji. Szczegółowe protokoły i wyniki należą do kanonicznych projektów `msc-*`, a kod aplikacji i bibliotek do `app-*` i `lib-*`.
 
-## Jawna lista zasobów
+## 1. Architektura i granice publikacji
 
-Każdy plik HTML, Markdown, CSS, JavaScript, obraz i inne dopuszczone rozszerzenie w `pages/` musi mieć wpis w `config/pages-policy.json`. `scripts/validate_pages.py` sprawdza allowlistę, granice ścieżek, symlinki, niezatwierdzoną konfigurację budowania i wybrane niedopuszczalne treści. `scripts/build_public_catalog.py` zapisuje tylko `pages/projects.md`, wybierając jawne, publiczne i zatwierdzone projekty. Nie kopiuj nigdy `portfolio/`, `docs/`, `.github/`, `AGENTS.md` ani prywatnego wyniku `audit-live`.
+Źródłem witryny jest **wyłącznie `pages/`**; `docs/` zawiera dokumentację techniczną, ADR, polityki bezpieczeństwa i procedury agentów. Konfiguracja `mkdocs.yml` wymaga `docs_dir: pages` oraz `site_dir: site`. Każda publiczna strona i zasób źródłowy musi być jawnie wskazany w `config/pages-policy.json`; katalog wynikowy `site/` podlega niezależnemu audytowi po `mkdocs build --strict`.
 
-## Treść i widoczność
+Nie przenoś na portal `portfolio/`, `areas/`, `program.json`, `research/`, `equipment/`, `AGENTS.md`, `.github/`, `docs/`, plików danych, logów, nazw prywatnych projektów ani raportów `audit-live`. Katalog publiczny `pages/projects.md` powstaje przez `scripts/build_public_catalog.py` wyłącznie z projektów o `visibility=public`, `public_listing=true` i zweryfikowanym publicznym URL. Generator nie powinien otwierać prywatnych repozytoriów ani kopiować ich plików. **Nawet nazwy projektów prywatnych nie mogą trafić do publicznej historii Git.**
 
-Na stronie **nigdy** nie umieszczaj poleceń do agenta AI, promptów, notatek redakcyjnych, komunikatów dla autora, `TODO`, `REPLACE`, opisów organizacji pracy agenta ani porad o wspomaganiu prowadzenia repozytorium. Publiczny język ma być neutralny naukowo i skierowany do odbiorców spoza zespołu.
+GitHub Pages w repozytorium prywatnym może być publiczne. Przed publikacją sprawdź rzeczywistą widoczność, domenę, ustawienia uprawnień i plany kosztowe. **Zakaz `Deploy from a branch` z `main`, katalogu głównego lub `/docs`.** Publikuj dopiero osobno zatwierdzony `site/`, za pomocą izolowanego artefaktu workflow lub kontrolowanej gałęzi zawierającej wyłącznie wynik. Sam szablon nie włącza automatycznego deploymentu.
 
-**Prywatne repozytorium nie gwarantuje prywatności GitHub Pages.** Przed włączeniem witryny sprawdź rzeczywiste ustawienia widoczności, uprawnienia, domenę, plany kosztowe i wygenerowane pliki. Jeśli wymagana poufność nie może być zapewniona, zrezygnuj z publikacji.
+## 2. Informacja naukowa dla odbiorcy zewnętrznego
 
-**Zabroniony jest tryb `Deploy from a branch` z `main:/docs` lub root repo.** Samo `mkdocs.yml` nie uniemożliwia ujawnienia tych źródeł przez ustawienia GitHub. Możliwe jest wyłącznie osobno autoryzowane wydanie wygenerowanego `site/` z dokładnie zatwierdzonych materiałów, np. przez kontrolowany artefakt GitHub Actions lub dedykowaną gałąź zawierającą tylko treści publiczne.
+Publiczna strona powinna jasno wyjaśniać cel programu, pytania badawcze, zakres metod, rolę projektów oraz znaczenie wyników bez przypisywania badaniom statusu, którego nie potwierdzają dowody. Zachowaj neutralny, naukowy i przystępny język. Preferowana architektura informacji:
 
-Przed każdą publikacją: kontrola wszystkich plików i metadanych obrazów, praw i źródeł, linków, wygenerowanego HTML, prywatności, rzeczywistego stanu repozytorium oraz niezależna recenzja finalnego SHA. Zielone testy potwierdzają jedynie statyczną kontrolę. Składnia URL nie dowodzi własności domeny ani zgody na jej publikację; każde zatwierdzenie musi mieć osobny zapis decyzji właściciela. W izolowanym CI wykonuj `mkdocs build --strict` oraz `python scripts/validate_site.py` dla powstałego HTML. Także poprawny render nie potwierdza rzeczywistej widoczności wdrożenia. Skan statyczny nie zastępuje oceny redakcyjnej i prawnej. Bez osobnej zgody właściciela nie dodawaj workflow automatycznie publikującego na merge.
+| Sekcja | Zawartość |
+| --- | --- |
+| O programie | Cele, zakres, główne pytania i kryteria przypisywania projektów do ARC |
+| Kierunki badań | Zweryfikowane, ogólne opisy linii badawczych bez wewnętrznych planów |
+| Projekty | Wyłącznie projekty odrębnie dopuszczone do publicznego katalogu, z linkiem do kanonicznego źródła |
+| Publikacje | Wyłącznie potwierdzone pozycje, identyfikatory MSC, autorzy, data, rzeczywisty DOI/preprint i udokumentowany status |
+| Metody i odtwarzalność | Publiczny opis podejścia, zakresu metod, wersji i ograniczeń; nieujawniający prywatnych danych |
+| Materiały i cytowanie | Odnośniki do zweryfikowanych, legalnie rozpowszechnianych zasobów; wersja migawki ARC |
+
+Nie twórz pustych zakładek ani dublowanych ręcznie list `portfolio/*.json`. Jeśli lista publikacji nie ma niezależnie zatwierdzonych rekordów, w ogóle nie dodawaj zakładki. Nazwy zakładek powinny odpowiadać tytułom stron. Wiele wersji językowych musi przejść identyczną kontrolę merytoryczną i ujawniania danych.
+
+## 3. Powiązanie ARC, MSC, APP, LIB i urządzeń
+
+ARC jest **indeksem programu i zależności**, a nie właścicielem wszystkich wyników: jedna pozycja `MSC-*` ma jedno kanoniczne `owner_project_id`. Pozostałe przypisania są wyłącznie `related`. Dla opublikowanej pozycji podawaj identyfikator, tytuł i link do źródłowego manuskryptu tylko wtedy, gdy jest publicznie dostępny i jego status `submitted` / `accepted` / `published` potwierdza odpowiedni dowód. Sama obecność DOI/URL w rejestrze nie uprawnia do ujawnienia treści.
+
+Aplikacje `app-*` i biblioteki `lib-*` opisuj jedynie jako odrębne, wersjonowane narzędzia, z zatwierdzonym odnośnikiem. Nie kopiuj kodu, dokumentacji implementacyjnej, prywatnych kontraktów ani niezweryfikowanych deklaracji o działaniu aparatury. Publiczna karta sprzętu nie może zawierać prywatnych identyfikatorów, ścieżek, adresów sieciowych czy danych uczestników; wewnętrzne karty urządzeń należą do odrębnego prywatnego repozytorium `devices`.
+
+## 4. Wizualizacje, prywatność i dostępność
+
+Dopuszczalne są zatwierdzone schematy, ilustracje objaśniające metody, syntetyczne przykłady i wykresy, dla których można zweryfikować źródło, jednostki, skale, metodę obliczeń oraz status wyników. Dane rzeczywiste publikuj dopiero po ocenie zgody, reidentyfikacji, praw i polityki udostępniania. Nie publikuj surowych EEG, okulometrii, wideo, psychometrii, plików uczestników, materiałów wrażliwych ani identyfikowalnych logów.
+
+Dla każdego obrazu sprawdź EXIF/XMP/IPTC, miniatury, informacje GPS i osadzone identyfikatory; usuń zbędne metadane. Przy wykresach podawaj etykiety osi, jednostki, liczebność, zakres niepewności i pochodzenie danych, jeśli jest to potrzebne do interpretacji. Zadbaj o responsywność, kontrast, nawigację klawiaturą i cel WCAG 2.2 AA. Nie wprowadzaj niezaufanych zewnętrznych skryptów, trackerów, fontów z CDN i formularzy zbierających dane bez osobnej analizy bezpieczeństwa i prywatności.
+
+Na publicznej stronie **nie wolno umieszczać** instrukcji dla agentów AI, promptów, wewnętrznych procedur, notatek redakcyjnych, komunikatów do właściciela, oznaczeń `TODO`/`REPLACE`, ani porad dotyczących pracy nad repozytorium i `CONTRIBUTING`. Tekst ma być samodzielną informacją dla czytelnika. Regex wykrywa tylko część takich treści, dlatego obowiązkowy pozostaje przegląd redakcyjny.
+
+## 5. Bramka publikacyjna i kontrola po wdrożeniu
+
+1. Ustal aktualne SHA, poziom uprawnień, status publiczny każdego rekordu i dowody uprawniające do jego ujawnienia. Potwierdź, że w publicznym ARC nie ma nawet ścieżek prywatnych projektów.
+2. Uruchom `python scripts/validate_repository.py --phase scaffold`, `python scripts/build_public_catalog.py` i ponownie `python scripts/validate_pages.py`. Generator może zmienić wyłącznie `pages/projects.md`; porównaj wynik z zatwierdzonym katalogiem i źródłami.
+3. W izolowanym CI wykonaj `mkdocs build --strict` i `python scripts/validate_site.py`. Sprawdź cały `site/`, wygenerowany HTML, indeks wyszukiwania, skrypty, obrazy, metadane, linki i zgodność nawigacji. Nie traktuj poprawnego builda jako zatwierdzenia publikacji.
+4. Wymagaj niezależnej recenzji finalnego SHA oraz osobnej, jawnej zgody właściciela na publikację konkretnego portalu i zakresu treści. Dopiero wtedy wolno skonfigurować kontrolowane GitHub Pages; brak automatycznego deployu przy merge.
+5. Sprawdź rzeczywistą witrynę po wdrożeniu, HTTPS, widoczność, strony 404, dostępność, linki i możliwość wycofania. Zachowaj identyfikator wdrożenia, SHA i protokół decyzji.
+
+W przypadku wycieku zatrzymaj publikację, zabezpiecz dowody i wycofaj witrynę, następnie wykonaj procedurę [reagowania na incydent](security/incident-response.md). Usunięcie pliku z aktualnego builda nie usuwa kopii w pamięci przeglądarek i archiwach. **Wydanie migawki programu ARC jest odrębne od publikacji witryny:** zasady zawiera [procedura wydań](releases.md).
+
