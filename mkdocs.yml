@@ -2,6 +2,9 @@
 site_name: "Program badawczy ARC"
 docs_dir: pages
 site_dir: site
+theme:
+  name: mkdocs
+  highlightjs: false
 nav:
   - O programie: index.md
   - Projekty: projects.md
