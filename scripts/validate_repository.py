@@ -2,6 +2,7 @@
 from __future__ import annotations
 import argparse
 import configparser
+import ipaddress
 import json
 import re
 import subprocess
@@ -55,6 +56,8 @@ SHA256 = re.compile(r"^[a-f0-9]{64}$")
 DOI = re.compile(r"^10\.\d{4,9}/\S+$")
 PROJECT_FIELDS = frozenset(("id","title","repository","url","role","primary_program","line","status","visibility","public_listing","default_branch","snapshot_sha","pages_url","submodule_path"))
 PAPER_FIELDS = frozenset(("id","title","owner_project_id","canonical_repository","manuscript_path","stage","doi","preprint_url","preregistration_url","publication_url","stage_evidence"))
+PROGRAM_FIELDS = frozenset(("schema_version","template_version","type","programme","title","owner","scope","default_branch","license_spdx","pages_status","pages_url","public_catalog_policy","scientific_state","owner_of_raw_data","repository_visibility"))
+AREA_LINE_FIELDS = frozenset(("id","title"))
 DEPENDENCY_FIELDS = frozenset(("project_id","ref","version","sha","role","contract_path","validation_status","notes"))
 STAGE_EVIDENCE_KINDS = {"submitted":"submission_receipt","accepted":"editorial_decision","published":"publication_record"}
 SHA40 = re.compile(r"^[0-9a-f]{40}$")
@@ -80,9 +83,19 @@ def safe_public_page_url(url: object) -> bool:
         return (parsed.scheme == "https" and parsed.hostname is not None
                 and parsed.username is None and parsed.password is None
                 and parsed.port is None and not parsed.query and not parsed.fragment
-                and parsed.hostname.lower() not in ("localhost", "127.0.0.1"))
+                and not parsed.hostname.lower().endswith((".local", ".localhost", ".internal"))
+                and parsed.hostname.lower() != "localhost"
+                and _public_hostname(parsed.hostname))
     except ValueError:
         return False
+
+
+def _public_hostname(host: str) -> bool:
+    """Reject IP literals that resolve to private or special-use ranges."""
+    try:
+        return ipaddress.ip_address(host).is_global
+    except ValueError:
+        return True
 
 
 def load_json(root: Path, relative: str, issues: list[str]):
@@ -122,6 +135,8 @@ def validate(root: Path, phase: str = "scaffold") -> list[str]:
     dependencies = load_json(root, "portfolio/dependencies.json", issues)
     if not all(isinstance(obj, dict) for obj in (meta, areas, projects, papers, dependencies)):
         return sorted(set(issues + ["Invalid ARC root JSON object type"]))
+    if set(meta) - PROGRAM_FIELDS:
+        issues.append("Undeclared programme metadata fields")
     for filename, obj, fields in (
         ("areas/index.json", areas, {"lines","schema_version"}),
         ("portfolio/projects.json", projects, {"projects","schema_version"}),
@@ -159,6 +174,8 @@ def validate(root: Path, phase: str = "scaffold") -> list[str]:
     issues.extend(check_state(root, meta, project_items, paper_items))
     lines, project_ids, project_repos = set(), set(), {}
     for line in areas.get("lines", []) if isinstance(areas.get("lines"), list) else []:
+        if isinstance(line, dict) and set(line) - AREA_LINE_FIELDS:
+            issues.append("Undeclared research line metadata fields")
         if not isinstance(line, dict) or not IDENTIFIER.fullmatch(str(line.get("id", ""))):
             issues.append("Invalid research line identifier")
             continue

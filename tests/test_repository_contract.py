@@ -155,6 +155,9 @@ class ARCContractTests(unittest.TestCase):
         self.assertTrue(safe_public_page_url("https://matpomgit.github.io/msc-example/"))
         self.assertFalse(safe_public_page_url("https://host.example/)[malicious](x"))
         self.assertFalse(safe_public_page_url("https://user:pw@host.example/path"))
+        self.assertFalse(safe_public_page_url("https://192.168.0.10/"))
+        self.assertFalse(safe_public_page_url("https://[::1]/"))
+        self.assertFalse(safe_public_page_url("https://server.local/"))
 
     def test_freshness_produces_stale_without_modification(self):
         fake=type("Result", (),{"returncode":0,"stdout": "b"*40+"\trefs/heads/main\n"})

@@ -47,6 +47,22 @@ class MetadataTests(unittest.TestCase):
             o["projects"][0]["private_summary"]="DO_NOT_PUBLISH"
             f.write_text(json.dumps(o),encoding="utf-8")
             self.assertTrue(any("Undeclared project metadata" in e for e in validate(root)))
+    def test_undeclared_area_line_metadata_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=self.fixture(d)
+            f=root/"areas/index.json"
+            o=json.loads(f.read_text())
+            o["lines"][0]["confidential_programme_name"]="PRIVATE"
+            f.write_text(json.dumps(o),encoding="utf-8")
+            self.assertTrue(any("Undeclared research line metadata" in e for e in validate(root)))
+    def test_undeclared_programme_field_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=self.fixture(d)
+            f=root/"program.json"
+            o=json.loads(f.read_text())
+            o["internal_token_reference"]="PRIVATE"
+            f.write_text(json.dumps(o),encoding="utf-8")
+            self.assertTrue(any("Undeclared programme metadata" in e for e in validate(root)))
     def test_extra_paper_field_rejected(self):
         with tempfile.TemporaryDirectory() as d:
             root=self.fixture(d)
