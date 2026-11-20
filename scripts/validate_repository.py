@@ -43,9 +43,11 @@ REQUIRED = (
     "config/pages-policy.json", "pages/index.md", "pages/projects.md",
     "scripts/validate_repository.py", "scripts/bootstrap.py",
     "scripts/build_public_catalog.py", "scripts/validate_pages.py",
-    "scripts/validate_documentation.py", "scripts/validate_state.py", "tests/test_repository_contract.py",
+    "scripts/validate_documentation.py", "scripts/validate_state.py",
+    "scripts/validate_site.py", "tests/test_repository_contract.py",
     "tests/test_pages_policy.py", "tests/test_documentation_policy.py",
-    "tests/test_agent_policy.py",
+    "tests/test_agent_policy.py", "tests/test_state_policy.py",
+    "tests/test_metadata_policy.py", "tests/test_site_policy.py",
 )
 IDENTIFIER = re.compile(r"^[a-z][a-z0-9-]{2,63}$")
 PAPER_IDENTIFIER = re.compile(r"^(?:MSC-[A-Z0-9]+(?:-[A-Z0-9]+)*|[a-z][a-z0-9-]{2,63})$")
@@ -70,7 +72,7 @@ def github_repo_url(repo: str, url: str) -> bool:
 
 
 def safe_public_page_url(url: object) -> bool:
-    """Accept a plain HTTPS URL, never embedded credentials or Markdown payloads."""
+    """Syntactic check only: neither approval nor domain ownership is verified."""
     if not isinstance(url, str) or any(c.isspace() or c in "<>[]()\\" for c in url):
         return False
     try:
@@ -201,7 +203,7 @@ def validate(root: Path, phase: str = "scaffold") -> list[str]:
             if p.get("visibility") != "public":
                 issues.append(f"Private project marked for public listing: {ident}")
             if not safe_public_page_url(p.get("pages_url")):
-                issues.append(f"No verified public Pages URL for listed project: {ident}")
+                issues.append(f"Missing syntactically valid public Pages URL for listed project: {ident}")
         sha = p.get("snapshot_sha")
         if sha is not None and (not isinstance(sha, str) or not SHA40.fullmatch(sha)):
             issues.append(f"Invalid snapshot SHA: {ident}")

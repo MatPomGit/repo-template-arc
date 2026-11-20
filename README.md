@@ -22,6 +22,7 @@ Rejestr kanonicznych projektów jest w [`portfolio/projects.json`](portfolio/pro
 python scripts/validate_repository.py --phase scaffold
 python scripts/validate_documentation.py
 python scripts/validate_pages.py
+# Po izolowanym zbudowaniu MkDocs: python scripts/validate_site.py
 python -m unittest discover -s tests -v
 python scripts/build_public_catalog.py
 # Jeśli skonfigurowano submoduły, pobierz przypięte wersje:
