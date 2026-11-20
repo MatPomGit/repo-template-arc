@@ -151,7 +151,7 @@ def main() -> int:
     errors = check_pages(args.root)
     for error in errors:
         print("FAIL:", error)
-    print("msc-pages:", "FAIL" if errors else "PASS")
+    print("arc-pages:", "FAIL" if errors else "PASS")
     return 1 if errors else 0
 
 
