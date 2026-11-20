@@ -24,7 +24,7 @@
     "js/darkmode.js": "6660ca90a0b34be68edd0503102d013e6d4ea2d4ed8ffdca1ef17e2b69226d90",
     "search/lunr.js": "c1a28d9e95163292fbcc07ff794f1f0e1ade8741c513afe96d5b1046a18110bc",
     "search/main.js": "22961b345ceba9b3a9146577190672a7b1c6881bb84c05bec1e2d0f3a3312389",
-    "search/worker.js": "b486eab6682d02b7c6ec7bdc965bb051661ee2c6e2c73c",
+    "search/worker.js": "b486eab6682d02b7c6ec7bdc965bb051661ee2c6a42bb3442b559cb2c6e2c73c",
     "webfonts/fa-brands-400.ttf": "5656d596bc597165a42182f67b2b9f17d2ae47a9e3ef1b042b9a729739730705",
     "webfonts/fa-brands-400.woff2": "3a8924cd5203a28628716aedb5cef0943da4c3b44e3ffcee90ab06387b41c490",
     "webfonts/fa-regular-400.ttf": "5d02dc9b858e3c85a794f87e379857f4fedc4e26cf15001714a9a0e0b1d2294d",
