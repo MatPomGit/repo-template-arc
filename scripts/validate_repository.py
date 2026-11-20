@@ -13,6 +13,7 @@ from urllib.parse import urlparse
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from validate_documentation import check_documentation
 from validate_pages import check_pages
+from validate_state import check_state
 
 ALLOWED_PROGRAMMES = frozenset(("arc-neuro", "arc-ai", "arc-xr", "arc-robo"))
 ALLOWED_ROLES = frozenset(("primary", "related"))
@@ -42,11 +43,18 @@ REQUIRED = (
     "config/pages-policy.json", "pages/index.md", "pages/projects.md",
     "scripts/validate_repository.py", "scripts/bootstrap.py",
     "scripts/build_public_catalog.py", "scripts/validate_pages.py",
-    "scripts/validate_documentation.py", "tests/test_repository_contract.py",
+    "scripts/validate_documentation.py", "scripts/validate_state.py", "tests/test_repository_contract.py",
     "tests/test_pages_policy.py", "tests/test_documentation_policy.py",
     "tests/test_agent_policy.py",
 )
 IDENTIFIER = re.compile(r"^[a-z][a-z0-9-]{2,63}$")
+PAPER_IDENTIFIER = re.compile(r"^(?:MSC-[A-Z0-9]+(?:-[A-Z0-9]+)*|[a-z][a-z0-9-]{2,63})$")
+SHA256 = re.compile(r"^[a-f0-9]{64}$")
+DOI = re.compile(r"^10\.\d{4,9}/\S+$")
+PROJECT_FIELDS = frozenset(("id","title","repository","url","role","primary_program","line","status","visibility","public_listing","default_branch","snapshot_sha","pages_url","submodule_path"))
+PAPER_FIELDS = frozenset(("id","title","owner_project_id","canonical_repository","manuscript_path","stage","doi","preprint_url","preregistration_url","publication_url","stage_evidence"))
+DEPENDENCY_FIELDS = frozenset(("project_id","ref","version","sha","role","contract_path","validation_status","notes"))
+STAGE_EVIDENCE_KINDS = {"submitted":"submission_receipt","accepted":"editorial_decision","published":"publication_record"}
 SHA40 = re.compile(r"^[0-9a-f]{40}$")
 REPOSITORY = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
 
@@ -110,6 +118,16 @@ def validate(root: Path, phase: str = "scaffold") -> list[str]:
     projects = load_json(root, "portfolio/projects.json", issues)
     papers = load_json(root, "portfolio/papers.json", issues)
     dependencies = load_json(root, "portfolio/dependencies.json", issues)
+    if not all(isinstance(obj, dict) for obj in (meta, areas, projects, papers, dependencies)):
+        return sorted(set(issues + ["Invalid ARC root JSON object type"]))
+    for filename, obj, fields in (
+        ("areas/index.json", areas, {"lines","schema_version"}),
+        ("portfolio/projects.json", projects, {"projects","schema_version"}),
+        ("portfolio/papers.json", papers, {"papers","schema_version"}),
+        ("portfolio/dependencies.json", dependencies, {"tools","equipment","datasets","schema_version"}),
+    ):
+        if set(obj) - fields or ("schema_version" in obj and type(obj["schema_version"]) is not int):
+            issues.append("Unexpected registry fields or schema type: " + filename)
     if meta.get("schema_version") != 1 or meta.get("type") != "arc-program":
         issues.append("Invalid program.json schema_version/type")
     if meta.get("template_version") != "1.0.0":
@@ -134,6 +152,9 @@ def validate(root: Path, phase: str = "scaffold") -> list[str]:
         if not isinstance(dependencies.get(key), list):
             issues.append(f"portfolio/dependencies.json requires {key} array")
 
+    project_items = projects.get("projects", []) if isinstance(projects.get("projects"), list) else []
+    paper_items = papers.get("papers", []) if isinstance(papers.get("papers"), list) else []
+    issues.extend(check_state(root, meta, project_items, paper_items))
     lines, project_ids, project_repos = set(), set(), {}
     for line in areas.get("lines", []) if isinstance(areas.get("lines"), list) else []:
         if not isinstance(line, dict) or not IDENTIFIER.fullmatch(str(line.get("id", ""))):
@@ -151,6 +172,10 @@ def validate(root: Path, phase: str = "scaffold") -> list[str]:
     for p in registered_projects:
         if not isinstance(p, dict):
             issues.append("Invalid project record type"); continue
+        if set(p) - PROJECT_FIELDS:
+            issues.append("Undeclared project metadata fields: " + str(p.get("id", "?")))
+        if not isinstance(p.get("title"), str) or not p["title"].strip():
+            issues.append("Missing project title")
         ident, repo, url = p.get("id", ""), p.get("repository", ""), p.get("url", "")
         if not IDENTIFIER.fullmatch(str(ident)) or ident in project_ids:
             issues.append(f"Invalid or duplicate project id: {ident}")
@@ -191,8 +216,12 @@ def validate(root: Path, phase: str = "scaffold") -> list[str]:
     for p in papers.get("papers", []) if isinstance(papers.get("papers"), list) else []:
         if not isinstance(p, dict):
             issues.append("Invalid paper record type"); continue
+        if set(p) - PAPER_FIELDS:
+            issues.append("Undeclared paper metadata fields: " + str(p.get("id", "?")))
+        if not isinstance(p.get("title"), str) or not p["title"].strip():
+            issues.append("Missing paper title")
         ident, owner = p.get("id", ""), p.get("owner_project_id")
-        if not IDENTIFIER.fullmatch(str(ident)) or ident in paper_ids:
+        if not PAPER_IDENTIFIER.fullmatch(str(ident)) or ident in paper_ids:
             issues.append(f"Invalid or duplicate paper id: {ident}")
         paper_ids.add(ident)
         if owner not in project_ids:
@@ -201,27 +230,77 @@ def validate(root: Path, phase: str = "scaffold") -> list[str]:
             issues.append(f"Canonical repository mismatch for paper: {ident}")
         if p.get("stage") not in ALLOWED_STAGES:
             issues.append(f"Unknown paper stage: {ident}")
-        if not isinstance(p.get("manuscript_path"), str) or ".." in p["manuscript_path"] or p["manuscript_path"].startswith("/"):
+        manuscript_path = p.get("manuscript_path")
+        if not isinstance(manuscript_path, str) or not manuscript_path or "\\" in manuscript_path or ".." in Path(manuscript_path).parts or manuscript_path.startswith("/"):
             issues.append(f"Invalid manuscript path: {ident}")
+        doi = p.get("doi")
+        if doi is not None and (not isinstance(doi, str) or not DOI.fullmatch(doi)):
+            issues.append(f"Invalid DOI syntax: {ident}")
+        for field in ("preprint_url","preregistration_url","publication_url"):
+            value = p.get(field)
+            if value is not None and not safe_public_page_url(value):
+                issues.append(f"Invalid public paper URL {field}: {ident}")
+        if p.get("stage") in STAGE_EVIDENCE_KINDS:
+            evidence = p.get("stage_evidence")
+            expected_kind = STAGE_EVIDENCE_KINDS[p["stage"]]
+            if (not isinstance(evidence, dict) or set(evidence) != {"kind", "sha256", "checked_on"}
+                    or evidence.get("kind") != expected_kind
+                    or not isinstance(evidence.get("sha256"), str) or not SHA256.fullmatch(evidence["sha256"])
+                    or not isinstance(evidence.get("checked_on"), str)
+                    or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", evidence["checked_on"])):
+                issues.append(f"Missing or invalid status evidence: {ident}")
+            if p["stage"] == "published" and doi is None and p.get("publication_url") is None:
+                issues.append(f"Published paper lacks DOI/publication URL: {ident}")
+        elif p.get("stage_evidence") is not None:
+            issues.append(f"Unexpected stage evidence: {ident}")
 
     for group in ("tools", "equipment", "datasets"):
         group_records = dependencies.get(group, []) if isinstance(dependencies.get(group), list) else []
         for p in group_records:
-            if not isinstance(p, dict) or p.get("project_id") not in project_ids or not p.get("ref"):
+            if (not isinstance(p, dict) or set(p) - DEPENDENCY_FIELDS
+                    or p.get("project_id") not in project_ids
+                    or not isinstance(p.get("ref"), str) or not p["ref"].strip()):
                 issues.append(f"Invalid {group} dependency reference")
 
-    subpaths = [p.get("submodule_path") for p in registered_projects if isinstance(p, dict) and p.get("submodule_path")]
-    if subpaths:
-        gmod = root / ".gitmodules"
+    submodule_records = {
+        p["submodule_path"]: p for p in registered_projects
+        if isinstance(p, dict) and isinstance(p.get("submodule_path"), str)
+    }
+    subpaths = [p.get("submodule_path") for p in registered_projects
+                if isinstance(p, dict) and p.get("submodule_path")]
+    if len(subpaths) != len(set(subpaths)):
+        issues.append("Duplicate submodule path")
+    gmod = root / ".gitmodules"
+    if gmod.is_symlink():
+        issues.append("Unsafe .gitmodules symlink")
+    elif gmod.exists() or subpaths:
         if not gmod.is_file():
             issues.append("Submodule entries exist but .gitmodules is absent")
         else:
-            text = gmod.read_text(encoding="utf-8")
-            for s in subpaths:
-                if not re.search(r"(?m)^\s*path\s*=\s*" + re.escape(s) + r"\s*$", text):
-                    issues.append(f"Submodule missing from .gitmodules: {s}")
-    if len(set(subpaths)) != len(subpaths):
-        issues.append("Duplicate submodule path")
+            cfg = configparser.ConfigParser(interpolation=None, strict=True)
+            try:
+                cfg.read_string(gmod.read_text(encoding="utf-8"))
+                found: set[str] = set()
+                for section in cfg.sections():
+                    match = re.fullmatch(r'submodule "([^"]+)"', section)
+                    if not match or set(cfg[section]) != {"path", "url"}:
+                        issues.append("Unrecognised .gitmodules section/options: " + section)
+                        continue
+                    path, url = cfg[section]["path"], cfg[section]["url"]
+                    if not safe_submodule_path(path) or path in found:
+                        issues.append("Invalid/duplicate .gitmodules path: " + path)
+                    found.add(path)
+                    record = submodule_records.get(path)
+                    if record is None:
+                        issues.append("Unregistered submodule path: " + path)
+                    elif not github_repo_url(record.get("repository", ""), record.get("url", "")):
+                        issues.append("Untrusted canonical submodule URL: " + path)
+                    elif url not in {record["url"], record["url"] + ".git"}:
+                        issues.append("Untrusted submodule URL: " + path)
+                for path in set(subpaths) - found:
+                    issues.append("Submodule missing from .gitmodules: " + path)
+            except (configparser.Error, OSError, UnicodeError):
+                issues.append("Invalid .gitmodules syntax")
     if subpaths and (root / ".git").exists():
         # Validate the *committed* gitlinks against registry snapshots (read-only).
         for p in registered_projects:

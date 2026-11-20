@@ -123,6 +123,10 @@ class ARCContractTests(unittest.TestCase):
                 json.dumps({"lines": [{"id": "ndd", "title": "NDD"}]}), encoding="utf-8")
             (dst / "portfolio/projects.json").write_text(
                 json.dumps({"projects": [candidate()]}), encoding="utf-8")
+            state = dst / "PROJECT_STATE.yaml"
+            state.write_text(state.read_text().replace("programme: arc-REPLACE", "programme: arc-neuro")
+                             .replace("projects_registered: 0", "projects_registered: 1")
+                             .replace("phase: scaffold", "phase: active"), encoding="utf-8")
             self.assertEqual(validate(dst, "scaffold"), [])
 
     def test_unconfigured_repo_cannot_register_private_project(self):

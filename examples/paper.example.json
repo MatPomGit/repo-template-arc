@@ -1,5 +1,5 @@
 {
-  "id": "REPLACE_PAPER_ID",
+  "id": "MSC-CR-P05",
   "title": "REPLACE_PAPER_TITLE",
   "owner_project_id": "REPLACE_PROJECT_ID",
   "canonical_repository": "MatPomGit/msc-example",
@@ -7,5 +7,7 @@
   "stage": "concept",
   "doi": null,
   "preprint_url": null,
-  "preregistration_url": null
+  "preregistration_url": null,
+  "publication_url": null,
+  "stage_evidence": null
 }
