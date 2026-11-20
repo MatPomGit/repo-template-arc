@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "source_dir": "pages",
+  "output_dir": "site",
+  "mkdocs_config": "mkdocs.yml",
+  "public_files": [
+    "index.md",
+    "projects.md"
+  ],
+  "note": "No automatic publishing. Review every public asset and rendered HTML before authorized deployment."
+}

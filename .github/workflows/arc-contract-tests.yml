@@ -27,10 +27,16 @@ jobs:
           lfs: false
       - name: Validate scaffold and verified repository visibility
         run: python3 -B scripts/validate_repository.py --phase scaffold --repo-visibility "$REPO_VISIBILITY"
+      - name: Validate documentation character budgets
+        run: python3 -B scripts/validate_documentation.py
+      - name: Validate public Pages boundary
+        run: python3 -B scripts/validate_pages.py
       - name: Run offline unit tests
         run: python3 -B -m unittest discover -s tests -v
       - name: Confirm public catalog is deterministic
         run: |
           set -euo pipefail
           python3 -B scripts/build_public_catalog.py
-          git diff --exit-code -- docs/projects.md
+          git diff --exit-code -- pages/projects.md
+          python3 -B scripts/validate_pages.py
+          python3 -B scripts/validate_documentation.py
