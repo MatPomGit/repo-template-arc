@@ -57,5 +57,14 @@ jobs:
           python3 -m venv /tmp/arc-mkdocs
           /tmp/arc-mkdocs/bin/pip install --disable-pip-version-check --no-input 'mkdocs==1.6.1'
           /tmp/arc-mkdocs/bin/mkdocs build --strict
+      - name: Inventory rendered static assets for reviewed ARC Pages policy
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          for p in sorted(Path("site").rglob("*")):
+              if p.is_file():
+                  print("ARC SITE ASSET:", p.relative_to("site").as_posix(), hashlib.sha256(p.read_bytes()).hexdigest())
+          PY
       - name: Audit generated HTML
         run: python3 -B scripts/validate_site.py
