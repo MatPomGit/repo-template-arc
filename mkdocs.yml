@@ -1,15 +1,7 @@
-site_name: "ARC REPLACE_PROGRAM_NAME"
-site_description: "Zatwierdzony publiczny katalog badań programu ARC"
-site_url: ""
-docs_dir: docs
+# Public site: isolated, explicitly allowlisted pages/ only.
+site_name: "Program badawczy ARC"
+docs_dir: pages
 site_dir: site
 nav:
-  - Start: index.md
+  - O programie: index.md
   - Projekty: projects.md
-  - Zakres: scientific-scope.md
-  - Polityka publikacyjna: publication-policy.md
-  - Dane: data-policy.md
-  - Zarządzanie: governance.md
-  - Submoduły: submodules.md
-  - O witrynie: pages.md
-  - Decyzje: decisions.md

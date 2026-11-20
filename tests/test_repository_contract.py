@@ -11,7 +11,7 @@ from unittest.mock import patch
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/"scripts"))
 from validate_repository import validate, github_repo_url, safe_public_page_url
-from build_public_catalog import render
+from build_public_catalog import render, write_catalog
 from check_freshness import inspect_project
 
 
@@ -48,6 +48,32 @@ class ARCContractTests(unittest.TestCase):
             result=render(root)
             self.assertNotIn("Private project",result)
             self.assertNotIn("internal.example",result)
+
+    def test_public_catalog_is_written_only_to_pages(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp)
+            for folder in ("portfolio", "pages", "docs", "config"):
+                (root/folder).mkdir()
+            (root/"portfolio/projects.json").write_text(
+                json.dumps({"projects":[]}), encoding="utf-8")
+            (root/"config/pages-policy.json").write_text(
+                json.dumps({"public_files":["index.md","projects.md"]}), encoding="utf-8")
+            output=write_catalog(root)
+            self.assertEqual(output, root/"pages/projects.md")
+            self.assertFalse((root/"docs/projects.md").exists())
+            self.assertEqual(output.read_text(encoding="utf-8"), render(root))
+
+    def test_public_catalog_is_blocked_without_allowlist(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp)
+            for folder in ("portfolio", "pages", "config"):
+                (root/folder).mkdir()
+            (root/"portfolio/projects.json").write_text(
+                json.dumps({"projects":[]}), encoding="utf-8")
+            (root/"config/pages-policy.json").write_text(
+                json.dumps({"public_files":["index.md"]}), encoding="utf-8")
+            with self.assertRaisesRegex(SystemExit, "not allowlisted"):
+                write_catalog(root)
 
     def test_duplicate_project_ids_blocked(self):
         with tempfile.TemporaryDirectory() as d:
@@ -97,6 +123,10 @@ class ARCContractTests(unittest.TestCase):
                 json.dumps({"lines": [{"id": "ndd", "title": "NDD"}]}), encoding="utf-8")
             (dst / "portfolio/projects.json").write_text(
                 json.dumps({"projects": [candidate()]}), encoding="utf-8")
+            state = dst / "PROJECT_STATE.yaml"
+            state.write_text(state.read_text().replace("programme: arc-REPLACE", "programme: arc-neuro")
+                             .replace("projects_registered: 0", "projects_registered: 1")
+                             .replace("phase: scaffold", "phase: active"), encoding="utf-8")
             self.assertEqual(validate(dst, "scaffold"), [])
 
     def test_unconfigured_repo_cannot_register_private_project(self):
@@ -125,6 +155,9 @@ class ARCContractTests(unittest.TestCase):
         self.assertTrue(safe_public_page_url("https://matpomgit.github.io/msc-example/"))
         self.assertFalse(safe_public_page_url("https://host.example/)[malicious](x"))
         self.assertFalse(safe_public_page_url("https://user:pw@host.example/path"))
+        self.assertFalse(safe_public_page_url("https://192.168.0.10/"))
+        self.assertFalse(safe_public_page_url("https://[::1]/"))
+        self.assertFalse(safe_public_page_url("https://server.local/"))
 
     def test_freshness_produces_stale_without_modification(self):
         fake=type("Result", (),{"returncode":0,"stdout": "b"*40+"\trefs/heads/main\n"})

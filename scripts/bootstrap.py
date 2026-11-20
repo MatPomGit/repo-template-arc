@@ -26,10 +26,20 @@ def main(argv:list[str]|None=None) -> int:
     if not (root/".git").exists():
         print("BLOCKED: requires an actual Git checkout for submodules")
         return 2
+    # Block unregistered/untrusted top-level URLs and avoid nested recursive fetches.
+    try:
+        from validate_repository import validate
+    except ImportError:
+        from scripts.validate_repository import validate
+    problems = validate(root, "scaffold")
+    if problems:
+        for issue in problems:
+            print("BLOCKED:", issue)
+        return 2
     env=os.environ.copy()
     env["GIT_TERMINAL_PROMPT"]="0"
     try:
-        r=subprocess.run(["git","-C",str(root),"submodule","update","--init","--recursive"],
+        r=subprocess.run(["git","-C",str(root),"submodule","update","--init"],
             env=env,check=False,timeout=120)
     except (FileNotFoundError,OSError,subprocess.TimeoutExpired):
         print("UNAVAILABLE: git or credentials inaccessible")

@@ -6,10 +6,16 @@
 4. Każdy artykuł w `portfolio/papers.json` ma **jednego** właściciela projektu. Zależności w `portfolio/dependencies.json` wskazują sprzęt i narzędzia przez ID, bez dublowania kart urządzeń i kodu aplikacji.
 5. Git submodule nie jest obowiązkowy. Jeśli program ma fizycznie pobierać repozytorium podrzędne, wykonaj świadomie `git submodule add <URL> <sciezka>`, zapisz `submodule_path` i commit SHA w rejestrze. Następnie użytkownik pobiera program jednym `python scripts/bootstrap.py --mode reproduce` albo `git clone --recurse-submodules`.
 6. W trybie `audit-live` wykonaj zdalną weryfikację każdego projektu zamiast ufać historycznym SHA z submodułów. Przypięte commity aktualizuj dopiero oddzielnym PR po testach; nie zmieniaj snapshotu historycznych eksperymentów.
-7. Uruchom walidację `python scripts/validate_repository.py --phase scaffold`, testy `python -m unittest discover -s tests -v` i generację katalogu `python scripts/build_public_catalog.py`. Publikację strony poprzedź niezależnym przeglądem treści.
+7. Uruchom `python scripts/validate_repository.py --phase scaffold`, `python scripts/validate_documentation.py`, `python scripts/validate_pages.py`, `python -m unittest discover -s tests -v` i generację katalogu `python scripts/build_public_catalog.py`. Generator zapisuje tylko `pages/projects.md`, nigdy dokumentację `docs/`. Po wygenerowaniu ponownie sprawdź treść, listę dozwolonych plików i poprawność katalogu. Publikacja wymaga osobnej zgody i przeglądu realnie wygenerowanej witryny.
 8. Tryb `--phase publish` sprawdza wybrane blokady redakcyjne, ale nie stanowi potwierdzenia etycznego ani naukowego i nie uruchamia zdalnej publikacji. Włączenie `is_template` w GitHub wymaga praw administracyjnych.
 
 Szablon ma być niewielki. Katalogi protokołów, eksperymentów, manuskryptów i analiz należą do repozytoriów `msc-*`; biblioteki i aplikacje do `lib-*` i `app-*`.
+
+## Dokumentacja projektu i polityka strony
+
+`ARCHITECTURE.md` opisuje kanoniczny model ARC, a `docs/architecture/` rzeczywiste przepływy danych i zależności. `docs/adr/` dokumentuje istotne decyzje techniczne, `docs/security/` model zagrożeń, a `GOVERNANCE.md` role i bramki odpowiedzialności. Przy rozwoju projektu aktualizuj te dokumenty wraz z rejestrami `portfolio/`; szczegółowe metody, kod i artefakty należą do właściwych `msc-*`, `app-*` i `lib-*`. Zobacz [standard i limity znaków](docs/documentation.md).
+
+**Dla stron GitHub Pages zawsze wybieraj oddzielne `pages/`**. Nie publikuj `docs/`, `AGENTS.md`, procedur wewnętrznych, statusów roboczych ani komentarzy dla agentów i autora. Dla prywatnych repozytoriów osobno sprawdź widoczność witryny; nie zakładaj, że pozostanie prywatna. Zakaz trybu `Deploy from a branch` wskazującego `main:/docs` lub korzeń repo. Zewnętrzne uruchomienie jest osobną decyzją właściciela. Nie dodawaj `CONTRIBUTING.md`.
 
 ## Autorstwo i współpraca
 
