@@ -34,7 +34,8 @@
     "docs/scientific-scope.md": 8500,
     "pages/index.md": 6000,
     "pages/projects.md": 6000,
-    "CHANGELOG.md": 15000
+    "CHANGELOG.md": 15000,
+    "docs/releases.md": 9500
   },
   "glob_limits": {
     "docs/**/*.md": 10000,

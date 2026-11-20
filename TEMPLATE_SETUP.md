@@ -28,3 +28,9 @@ Dla publicznych repozytoriów dopuszcza się GitHub-hosted runners, np. `ubuntu-
 ## Kontrola widoczności i CI
 
 Szablon rozpoczyna się od `repository_visibility: unconfigured`. Dopiero po weryfikacji ustawień nowego repozytorium wpisz `public` lub `private`. Nie wpisuj żadnych informacji o prywatnych projektach do publicznego ARC, nawet z `public_listing: false`, gdyż cała historia Git jest jawna. W publicznych repozytoriach izolowany `pull_request` workflow sprawdza strukturę i testy z `--repo-visibility public`, a w prywatnych automatyczny job jest pomijany. Bieżące SHA prywatnych projektów przechowuj wyłącznie w prywatnym rejestrze Research Autopilot. Strona Pages i `publish` pozostają osobnymi bramkami.
+
+## GitHub Pages oraz wydania programu
+
+Portal programu opisuje badania odbiorcy zewnętrznemu i korzysta wyłącznie z zatwierdzonego `pages/`. Przestrzegaj [wytycznych Pages ARC](docs/pages.md), odrębnej listy plików, kontroli końcowego HTML, prywatności rekordów i osobnej zgody na deployment. Nie publikuj `docs/`, kart urządzeń, prywatnych manuskryptów, promptów i informacji o agentach. Brak zatwierdzonych publicznych projektów nie uprawnia do stworzenia fikcyjnego katalogu.
+
+Wersjonowane [wydania ARC](docs/releases.md) dotyczą **migawek rejestru i pakietów odtwarzalności**, nie artykułów MSC ani oprogramowania APP/LIB. Rozdziel `VERSION` programu od `template_version`; nie myl `--phase publish` z autoryzacją GitHub Release. Każdy artefakt i wynik kontroli powiąż z exact SHA, dowodami pochodzenia, prawami i odrębnym zatwierdzeniem właściciela. Nie dodawaj automatycznych workflow wydawniczych do wzorca.

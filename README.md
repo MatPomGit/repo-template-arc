@@ -39,7 +39,7 @@ Zobacz [niezależny audyt szablonu ARC z 2026-11-19](reviews/2026-11-19-template
 
 ## Architektura i bezpieczeństwo
 
-[Architektura](ARCHITECTURE.md), [zarządzanie](GOVERNANCE.md), [model zagrożeń](docs/security/threat-model.md), [decyzje ADR](docs/adr/README.md), [standard dokumentacji](docs/documentation.md), [polityka GitHub Pages](docs/pages.md) i [wsparcie](SUPPORT.md). Nie twórz osobnego `CONTRIBUTING.md`.
+[Architektura](ARCHITECTURE.md), [zarządzanie](GOVERNANCE.md), [model zagrożeń](docs/security/threat-model.md), [decyzje ADR](docs/adr/README.md), [standard dokumentacji](docs/documentation.md), [polityka GitHub Pages](docs/pages.md), [wydania programu](docs/releases.md) i [wsparcie](SUPPORT.md). Nie twórz osobnego `CONTRIBUTING.md`.
 
 ## Otwartość
 
