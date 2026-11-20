@@ -12,5 +12,6 @@
   "pages_url": null,
   "public_catalog_policy": "explicit_opt_in",
   "scientific_state": "scaffold",
-  "owner_of_raw_data": false
+  "owner_of_raw_data": false,
+  "repository_visibility": "unconfigured"
 }

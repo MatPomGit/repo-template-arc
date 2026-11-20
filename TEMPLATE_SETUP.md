@@ -1,7 +1,7 @@
 # Konfiguracja ARC Template v1.0.0
 
 1. Utwórz repozytorium `arc-neuro`, `arc-ai`, `arc-xr` lub `arc-robo` (po sprawdzeniu, czy już istnieje); wybierz prywatność. Skopiuj wszystkie pliki bez historii źródłowej.
-2. W `program.json` ustaw rzeczywistą nazwę programu, właściciela, zakres i politykę publicznej witryny. Zastąp pola `REPLACE` w README, AGENTS, RESEARCH, PROJECT_STATE i docs. W `CITATION.cff` zachowaj Mateusza Pomianka jako autora podstawowego, a opcjonalnych współautorów dopisz po potwierdzeniu wkładu. Ustal odpowiednią licencję w LICENSE, nie przyznawaj jej automatycznie.
+2. W `program.json` ustaw `repository_visibility: public` albo `private` zgodnie z rzeczywistą widocznością GitHub, nazwę programu, właściciela, zakres i politykę publicznej witryny. Repozytorium pozostające `unconfigured` nie może rejestrować badań. Zastąp pola `REPLACE` w README, AGENTS, RESEARCH, PROJECT_STATE i docs. W `CITATION.cff` zachowaj Mateusza Pomianka jako autora podstawowego, a opcjonalnych współautorów dopisz po potwierdzeniu wkładu. Ustal odpowiednią licencję w LICENSE, nie przyznawaj jej automatycznie.
 3. W `areas/index.json` zarejestruj linie (np. w ARC Neuro: ndd, affect, cognition, social, psychometrics), a w `portfolio/projects.json` dodaj kanoniczne projekty `msc-*` lub dotychczasowe repozytoria o statusie `primary`/`related`.
 4. Każdy artykuł w `portfolio/papers.json` ma **jednego** właściciela projektu. Zależności w `portfolio/dependencies.json` wskazują sprzęt i narzędzia przez ID, bez dublowania kart urządzeń i kodu aplikacji.
 5. Git submodule nie jest obowiązkowy. Jeśli program ma fizycznie pobierać repozytorium podrzędne, wykonaj świadomie `git submodule add <URL> <sciezka>`, zapisz `submodule_path` i commit SHA w rejestrze. Następnie użytkownik pobiera program jednym `python scripts/bootstrap.py --mode reproduce` albo `git clone --recurse-submodules`.
@@ -18,3 +18,7 @@ Mateusz Pomianek pozostaje co najmniej jednym z autorów każdego repozytorium p
 ## Runner i bezpieczeństwo CI
 
 Dla publicznych repozytoriów dopuszcza się GitHub-hosted runners, np. `ubuntu-latest`, do bezpiecznych, izolowanych testów struktury i rejestrów. Nie jest wymagany stały runner lokalny. W przypadku repozytoriów prywatnych najpierw ustal zasady poufności, koszty i zakres dostępu. Nigdy nie przekazuj prywatnych tokenów ani danych uczestników do PR z niezaufanych forków. `audit-live` prywatnych źródeł przeprowadza się oddzielnie, po autoryzacji; respektuj zero dodatkowych wydatków bez zgody. Zaplanowane zabezpieczenia opisuje [audyt](reviews/2026-11-19-template-audit.md).
+
+## Kontrola widoczności i CI
+
+Szablon rozpoczyna się od `repository_visibility: unconfigured`. Dopiero po weryfikacji ustawień nowego repozytorium wpisz `public` lub `private`. Nie wpisuj żadnych informacji o prywatnych projektach do publicznego ARC, nawet z `public_listing: false`, gdyż cała historia Git jest jawna. W publicznych repozytoriach izolowany `pull_request` workflow sprawdza strukturę i testy z `--repo-visibility public`, a w prywatnych automatyczny job jest pomijany. Bieżące SHA prywatnych projektów przechowuj wyłącznie w prywatnym rejestrze Research Autopilot. Strona Pages i `publish` pozostają osobnymi bramkami.

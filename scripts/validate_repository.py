@@ -95,6 +95,11 @@ def validate(root: Path, phase: str = "scaffold") -> list[str]:
     if meta.get("template_version") != "1.0.0":
         issues.append("Unexpected program template version")
     programme = meta.get("programme")
+    declared_visibility = meta.get("repository_visibility", "unconfigured")
+    if declared_visibility not in ("unconfigured", "public", "private"):
+        issues.append("Invalid program.json repository_visibility")
+    if phase == "publish" and declared_visibility == "unconfigured":
+        issues.append("Set repository_visibility before publishing")
     if phase == "publish" and programme not in ALLOWED_PROGRAMMES:
         issues.append("Programme must be one of four approved ARC names")
     if meta.get("owner_of_raw_data") is not False or meta.get("public_catalog_policy") != "explicit_opt_in":
@@ -121,6 +126,8 @@ def validate(root: Path, phase: str = "scaffold") -> list[str]:
             issues.append(f"Missing line title: {line['id']}")
 
     registered_projects = projects.get("projects", []) if isinstance(projects.get("projects"), list) else []
+    if registered_projects and declared_visibility == "unconfigured":
+        issues.append("Set repository_visibility before registering projects")
     for p in registered_projects:
         if not isinstance(p, dict):
             issues.append("Invalid project record type"); continue
@@ -143,6 +150,8 @@ def validate(root: Path, phase: str = "scaffold") -> list[str]:
             issues.append(f"Project references unknown research line: {ident}")
         if p.get("visibility") not in ALLOWED_VISIBILITY or not isinstance(p.get("public_listing"), bool):
             issues.append(f"Invalid visibility/public_listing: {ident}")
+        if declared_visibility != "private" and p.get("visibility") != "public":
+            issues.append(f"Private project metadata unsafe in nonprivate ARC source: {ident}")
         if p.get("public_listing"):
             if p.get("visibility") != "public":
                 issues.append(f"Private project marked for public listing: {ident}")
@@ -240,8 +249,25 @@ def main(argv: list[str] | None = None) -> int:
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument("--root",type=Path,default=Path(__file__).resolve().parents[1])
     p.add_argument("--phase",choices=("scaffold","publish"),default="scaffold")
+    p.add_argument("--repo-visibility", choices=("unknown", "private", "public"),
+                   default="unknown", help="Actual visibility established outside this repository")
     a=p.parse_args(argv)
     issues=validate(a.root,a.phase)
+    if a.repo_visibility != "unknown":
+        import json
+        try:
+            meta=json.loads((a.root / "program.json").read_text(encoding="utf-8"))
+            declared = meta.get("repository_visibility")
+            is_empty_template = (
+                declared == "unconfigured"
+                and meta.get("programme") == "arc-REPLACE"
+                and json.loads((a.root / "portfolio/projects.json").read_text(
+                    encoding="utf-8")).get("projects") == []
+            )
+            if declared != a.repo_visibility and not is_empty_template:
+                issues.append("Declared visibility disagrees with verified repository visibility")
+        except (OSError, ValueError, TypeError, AttributeError):
+            issues.append("Cannot independently check declared visibility")
     for issue in issues: print("FAIL:",issue)
     print(f"arc-program-contract: {'FAIL' if issues else 'PASS'}; phase={a.phase}; findings={len(issues)}")
     return 1 if issues else 0
