@@ -8,11 +8,13 @@ ARC (strategia, rejestry, publiczny katalog)
   |-- portfolio/projects.json         kanoniczne badania i ich SHA
   |-- portfolio/papers.json           artykuły i jeden właściciel
   |-- portfolio/dependencies.json     aparatura, dane, app/lib
-  |-- docs/projects.md                tylko publicznie zatwierdzone wpisy
+  |-- pages/projects.md               tylko publicznie zatwierdzone wpisy
   +-- [opcjonalne git submodules]     źródła projektów, nie kopie
           |-- msc-*                  nauka i strony badań
           +-- starsze repo           migracja kontrolowana
 ```
+
+**Granice publikacji:** `docs/` przechowuje dokumentację techniczną, bezpieczeństwa i decyzji architektonicznych; nigdy nie jest źródłem Pages. `pages/` zawiera wyłącznie przeglądnięte materiały dla odbiorców, z jawną listą dopuszczenia. [Architektura szczegółowa](docs/architecture/README.md), [ADR](docs/adr/README.md) i [model zagrożeń](docs/security/threat-model.md) nie są automatycznie publiczne.
 
 **Niezmiennik:** jedna pozycja artykułu -> jeden `owner_project_id` -> jedno kanoniczne repozytorium. Wieloprogramowe powiązania to tagi i `related`, nie duplikaty.
 

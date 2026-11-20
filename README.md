@@ -14,12 +14,14 @@ Zastąp ten akapit zwięzłym opisem pytań naukowych, kryterium przypisania man
 
 Rejestr kanonicznych projektów jest w [`portfolio/projects.json`](portfolio/projects.json), artykułów w [`portfolio/papers.json`](portfolio/papers.json), zależności w [`portfolio/dependencies.json`](portfolio/dependencies.json). Projekt `msc-*` ma własny protokół, manuskrypt, dane referencyjne i GitHub Pages; ARC utrzymuje tylko odnośniki oraz metadane zależności. Starsze repozytoria mogą być wskazywane pod obecną nazwą do czasu kontrolowanej migracji.
 
-[Publiczny katalog projektów](docs/projects.md) jest generowany z pozycji jawnie zatwierdzonych do publikacji. Program ARC nie jest repozytorium surowych danych uczestników ani pakietem aplikacji.
+[Publiczny katalog projektów](pages/projects.md) jest generowany z pozycji jawnie zatwierdzonych do publikacji. Program ARC nie jest repozytorium surowych danych uczestników ani pakietem aplikacji.
 
 ## Uruchomienie
 
 ```bash
 python scripts/validate_repository.py --phase scaffold
+python scripts/validate_documentation.py
+python scripts/validate_pages.py
 python -m unittest discover -s tests -v
 python scripts/build_public_catalog.py
 # Jeśli skonfigurowano submoduły, pobierz przypięte wersje:
@@ -32,7 +34,11 @@ Weryfikacja `audit-live` **nie zmienia** przypiętych commitów i nie uruchamia 
 
 ## Audyt i plan napraw
 
-Zobacz [niezależny audyt szablonu ARC z 2026-11-19](reviews/2026-11-19-template-audit.md), zawierający priorytety P0–P2 i test akceptacyjny. Publiczne repozytoria mogą używać GitHub-hosted runners do bezpiecznych, izolowanych kontroli CI; nie oznacza to, że szablon już ma workflow.
+Zobacz [niezależny audyt szablonu ARC z 2026-11-19](reviews/2026-11-19-template-audit.md), zawierający priorytety P0–P2 i test akceptacyjny. Publiczne repozytoria mogą korzystać z istniejących izolowanych kontroli CI, bez sekretów i bez dostępu do prywatnych projektów; wynik testu nie jest zgodą na publikację.
+
+## Architektura i bezpieczeństwo
+
+[Architektura](ARCHITECTURE.md), [zarządzanie](GOVERNANCE.md), [model zagrożeń](docs/security/threat-model.md), [decyzje ADR](docs/adr/README.md), [standard dokumentacji](docs/documentation.md), [polityka GitHub Pages](docs/pages.md) i [wsparcie](SUPPORT.md). Nie twórz osobnego `CONTRIBUTING.md`.
 
 ## Otwartość
 

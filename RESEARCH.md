@@ -11,7 +11,7 @@
 - ARC XR: interfejsy AR/VR/MR i przestrzenne zachowanie.
 - ARC Robo: działanie, percepcja i bezpieczeństwo robotów.
 
-Każdy manuskrypt ma tylko jednego właściciela w rejestrze. Istniejące czasopisma, preprinty i DOI są stanami udokumentowanymi w oryginalnym projekcie `msc-*`. Program nie przechowuje fałszywych wyników ani nie zmienia statusu publikacji bez dowodów.
+Każdy manuskrypt ma tylko jednego właściciela w rejestrze. Istniejące czasopisma, preprinty i DOI są stanami udokumentowanymi w oryginalnym projekcie `msc-*`. Program nie przechowuje fałszywych wyników ani nie zmienia statusu publikacji bez dowodów. Publiczna witryna jest odrębnym opracowaniem w `pages/`, bez notatek redakcyjnych, poleceń agentowych i informacji o wewnętrznych automatyzacjach.
 
 ## Rejestr dowodów
 
