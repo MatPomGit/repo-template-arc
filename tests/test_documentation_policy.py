@@ -91,7 +91,7 @@ class DocumentationPolicyTests(unittest.TestCase):
             root = self.fixture(Path(tmp) / "arc")
             (root / "pages/additional.md").write_text("x" * 6001, encoding="utf-8")
             self.assertTrue(any("DOC LENGTH EXCEEDED: pages/additional.md" in e
-                                for e in validator.check_documentation(root))
+                                for e in validator.check_documentation(root)))
 
 
 if __name__ == "__main__":
