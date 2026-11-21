@@ -176,7 +176,7 @@ def validate(root: Path, phase: str = "scaffold", verified_repository: str | Non
     template_version = meta.get("template_version")
     if (not isinstance(template_version, str) or
             not re.fullmatch(r"(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)", template_version)):
-        issues.append("Invalid template version (expected numeric SemVer core)")
+        issues.append("Unexpected program template version (expected numeric SemVer core)")
     if schema_version == 2:
         for rel, obj in (("portfolio/projects.json", projects),
                          ("portfolio/papers.json", papers),
