@@ -45,6 +45,9 @@ Zobacz [niezależny audyt szablonu ARC z 2026-11-19](reviews/2026-11-19-template
 
 ## Architektura i bezpieczeństwo
 
+[Kontrole CI i wymagane bramki PR](docs/operations/ci-gates.md) dokumentują różnicę między PASS testów, uprawnionym review i rzeczywistą ochroną gałęzi.
+
+
 [Architektura](ARCHITECTURE.md), [zarządzanie](GOVERNANCE.md), [model zagrożeń](docs/security/threat-model.md), [decyzje ADR](docs/adr/README.md), [standard dokumentacji](docs/documentation.md), [polityka GitHub Pages](docs/pages.md), [wydania programu](docs/releases.md) i [wsparcie](SUPPORT.md). Nie twórz osobnego `CONTRIBUTING.md`.
 
 ## Otwartość
