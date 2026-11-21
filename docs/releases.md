@@ -1,6 +1,6 @@
 # Wydania i wersjonowanie programu badawczego ARC
 
-**Przedmiot wydania:** zweryfikowana, odtwarzalna **migawka programu i jego publicznych metadanych**, a nie publikacja artykułu naukowego, danych uczestników, aplikacji ani bibliotek. Kanoniczne wyniki badań pozostają w `msc-*`, a oprogramowanie w `app-*` i `lib-*`. GitHub Release, publikacja Pages, DOI, prerejestracja i zgłoszenie do czasopisma są odrębnymi czynnościami, z odrębnymi zgodami i dowodami. Szablon ma status `scaffold`; aktualnie nie jest dopuszczony do wydania.
+**Przedmiot wydania:** zweryfikowana, odtwarzalna **migawka programu i jego publicznych metadanych**, a nie publikacja artykułu naukowego, danych uczestników, aplikacji ani bibliotek. Kanoniczne wyniki badań pozostają w repozytorium ich właściciela (lokalne ARC albo zewnętrzne MSC), a oprogramowanie w `app-*` i `lib-*`. GitHub Release, publikacja Pages, DOI, prerejestracja i zgłoszenie do czasopisma są odrębnymi czynnościami, z odrębnymi zgodami i dowodami. Szablon ma status `scaffold`; aktualnie nie jest dopuszczony do wydania.
 
 ## 1. Tożsamość, wersje i zakres
 
@@ -33,7 +33,7 @@ Kontrola strukturalna manifestu może potwierdzić spójność SHA plików i sta
 ## 4. Bramka wydania R0–R3
 
 1. **R0 – zakres i tożsamość:** nazwa jednego z programów ARC, właściciel, rzeczywista widoczność, kompletne kanoniczne rejestry, brak placeholderów, wybrana licencja i potwierdzone prawa do treści.
-2. **R1 – zgodność rejestrów:** pozytywny wynik `python scripts/validate_repository.py --phase scaffold`, kontrola `PROJECT_STATE.yaml`, unikalnych `owner_project_id`, spójności SHA submodułów, identyfikatorów projektów i zależności, brak wpisów prywatnych w publicznym ARC.
+2. **R1 – zgodność rejestrów:** pozytywny wynik `python scripts/validate_repository.py --phase scaffold`, kontrola `PROJECT_STATE.yaml`, jednoznacznej własności `local`/`external` dla każdego MSC, spójności SHA submodułów, identyfikatorów projektów i zależności, brak wpisów prywatnych w publicznym ARC.
 3. **R2 – odtwarzalność i dowody:** manifest na **exact SHA**, konkretne artefakty i sumy, wyniki testów w czystym środowisku, deterministyczny generator katalogu, weryfikacja publicznych źródeł i renderu. Dla reprodukcji korzystaj z trybu `reproduce`, a nie `audit-live`; brak dostępnej próbki lub sprzętu oznacz `UNAVAILABLE`/`NOT_RUN`.
 4. **R3 – decyzja i dystrybucja:** niezależny review, wymagane checki CI realnie egzekwowane przez ochronę `main`, zatwierdzenie właściciela osobno dla **wersji, artefaktu, kanału i publiczności**. Jeśli ruleset nie wymaga checków/review, status `GATE_UNENFORCED / HOLD`; samo zielone CI to za mało.
 
@@ -41,7 +41,7 @@ Procedura `python scripts/validate_repository.py --phase publish` dotyczy kontro
 
 ## 5. Publikacje naukowe i DOI
 
-Statusy artykułu `submitted`, `accepted` i `published` wolno deklarować wyłącznie z odpowiednim `stage_evidence` w kanonicznym projekcie `msc-*`. Wpis do katalogu ARC nie oznacza zgody czasopisma, recenzji naukowej ani możliwości upublicznienia tekstu. Prawdziwy DOI, data i URL wymagają niezależnej weryfikacji; nie przypisuj DOI repozytorium ani artefaktowi „na zapas”.
+Statusy artykułu `submitted`, `accepted` i `published` wolno deklarować wyłącznie z odpowiednim `stage_evidence` w kanonicznym repozytorium (lokalnym ARC lub zewnętrznym MSC). Wpis do katalogu ARC nie oznacza zgody czasopisma, recenzji naukowej ani możliwości upublicznienia tekstu. Prawdziwy DOI, data i URL wymagają niezależnej weryfikacji; nie przypisuj DOI repozytorium ani artefaktowi „na zapas”.
 
 Rozróżniaj wersję programu, wersję datasetu, wersję kodu, wersję protokołu i etap publikacji. Wydania `arc-reproducibility` mogą zawierać metadane zbioru, ale udostępnienie samych danych odbywa się według odrębnej polityki danego zasobu. Zmiana wyników analizy po wydaniu wymaga nowej wersji artefaktu i odnotowania wpływu na powiązane manuskrypty, nie korekty wstecznej bez śladu.
 
