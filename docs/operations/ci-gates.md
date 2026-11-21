@@ -6,6 +6,7 @@ Wymagany wynik techniczny przed merge:
 - arc-program-contract: PASS, zerowe findings, kontrola widoczności repozytorium;
 - walidacja katalogu pages, dokumentacji, SHA oraz deterministyczności;
 - testy E2E generatorów, walidacja study.yaml i schematów, kontrola testów negatywnych;
+- kompilacja wygenerowanego `main.tex` przez `latexmk` na izolowanym runnerze;
 - MkDocs build --strict i audyt całego HTML.
 
 Przed merge sprawdź pozytywny wynik CI, diff i bezpieczeństwo finalnego exact SHA. Niezależne review jest opcjonalne, bez obowiązkowego `APPROVED`. W aktywnym ruleset `main` (ID `27653249`) istnieje wymóg PR z zerem zatwierdzeń, ale `required_status_checks=[]`, więc **nie wymusza on sukcesu żadnego testu**. W tym repozytorium właściwy check do wybrania z GitHub Actions to `offline-arc-validation` ([udany przebieg](https://github.com/MatPomGit/repo-template-arc/actions/runs/44894848491)). Reguła ma też `do_not_enforce_on_create=true`. Po dodaniu checku zweryfikuj ponownie konfigurację i wykonaj negatywny test blokady merge. Do tego czasu raportuj `CI_NOT_ENFORCED` i sprawdzaj CI przed merge; brak formalnej ochrony nie oznacza sukcesu testów.
