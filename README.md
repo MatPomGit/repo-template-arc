@@ -16,6 +16,12 @@ Rejestr kanonicznych projektów jest w [`portfolio/projects.json`](portfolio/pro
 
 [Publiczny katalog projektów](pages/projects.md) jest generowany z pozycji jawnie zatwierdzonych do publikacji. Program ARC nie jest repozytorium surowych danych uczestników ani pakietem aplikacji.
 
+## Generatory ARC i manuskryptów
+
+Nowy program inicjalizuje się poprzez `python scripts/init_arc.py --programme arc-neuro --repository OWNER/arc-neuro --title "Nazwa" --owner "Autor" --scope "Zakres naukowy" --visibility public --area ndd`. Komenda **domyślnie nie zapisuje plików**; po przeglądzie dodaj `--apply`. Skrypt nie przyznaje zgody na publikację.
+
+Lokalny manuskrypt tworzy `python scripts/new_manuscript.py --id MSC-ADHD-P01 --title "Tytuł" --area ndd --study-type empirical`. Również wymaga `--apply`; tworzy `main.tex`, `study.yaml`, `references.bib` i aktualizuje kanoniczny rejestr. Walidacja planu: `python scripts/validate_study.py --path manuscripts/MSC-ADHD-P01/study.yaml --paper-id MSC-ADHD-P01`. Zależności walidacji: `pip install -r requirements-research.txt`.
+
 ## Uruchomienie
 
 ```bash
