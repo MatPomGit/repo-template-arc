@@ -1,6 +1,6 @@
 # Migracja programów ARC v1 do v2
 
-Migracja dotyczy kanonicznych rejestrów programu i nie powoduje przenoszenia plików TeX, pobierania cudzych repozytoriów ani zmiany autorstwa. Gdy stan źródeł jest niejednoznaczny, operacja ma zostać zablokowana.
+Migracja dotyczy kanonicznych rejestrów programu i nie powoduje przenoszenia plików TeX, pobierania cudzych repozytoriów ani zmiany autorstwa. **Zmieniany jest wyłącznie `schema_version` (1 → 2); `template_version` zachowuje istniejącą wartość SemVer, ponieważ opisuje pochodzenie szablonu, a nie schemat danych.** Gdy stan źródeł jest niejednoznaczny, operacja ma zostać zablokowana.
 
 ## Procedura operacyjna
 
