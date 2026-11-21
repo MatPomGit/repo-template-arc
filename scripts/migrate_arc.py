@@ -216,7 +216,8 @@ def _convert(root: Path, repository: str, mapping: dict):
             problems.append("Unknown manuscript path in mapping: "+key)
 
     meta2=dict(meta)
-    meta2.update(schema_version=2,template_version="0.1.0",
+    # The data schema changes; the provenance version of the template does not.
+    meta2.update(schema_version=2,
                  repository_full_name=repository,manuscript_root=manuscript_root)
     projects2={"schema_version":2,"projects":projects["projects"]}
     papers2={"schema_version":2,"papers":sorted(out,key=lambda x:x["id"])}
@@ -231,8 +232,7 @@ def _convert(root: Path, repository: str, mapping: dict):
         safe_public_page_url))
     state_path=root/"PROJECT_STATE.yaml"
     state=state_path.read_text(encoding="utf-8")
-    for old,new in (("schema_version: 1","schema_version: 2"),
-                    ("template_version: 1.0.0","template_version: 0.1.0")):
+    for old,new in (("schema_version: 1","schema_version: 2"),):
         if old not in state:
             problems.append("State migration marker missing: "+old)
         else:
