@@ -1,5 +1,6 @@
 """Strict stdlib parser for the limited flat PROJECT_STATE.yaml contract."""
 from __future__ import annotations
+import json
 import re
 from pathlib import Path
 KEY = re.compile(r"^([a-z][a-z0-9_]*):(?:[ ]*(.*))?$")
@@ -47,7 +48,20 @@ def read_state(path: Path) -> tuple[dict, list[str]]:
         if not value or value.startswith(("!","&","*","[","{")) or "#" in value:
             errors.append("PROJECT_STATE.yaml unsupported scalar: " + key)
             continue
-        state[key] = None if value == "null" else value
+        if key == "scientific_owner" and value.startswith('"'):
+            # JSON double-quoted strings are valid YAML scalars; keep legacy
+            # plain owner names readable without interpreting booleans.
+            try:
+                owner = json.loads(value)
+            except ValueError:
+                errors.append("PROJECT_STATE.yaml invalid quoted scientific_owner")
+                continue
+            if not isinstance(owner, str) or not owner.strip():
+                errors.append("PROJECT_STATE.yaml invalid scientific_owner")
+                continue
+            state[key] = owner
+        else:
+            state[key] = None if value == "null" else value
     if set(state) != FIELDS:
         errors.append("PROJECT_STATE.yaml missing mandatory field")
     return state, sorted(set(errors))
