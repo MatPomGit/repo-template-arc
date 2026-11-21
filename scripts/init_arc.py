@@ -26,6 +26,9 @@ def initialize(root: Path, *, programme: str, repository: str,
     if any(not isinstance(value, str) or not value.strip() or "\n" in value or "\r" in value
            for value in (title, owner, scope)) or "#" in owner or ":" in owner:
         raise ValueError("Invalid title, owner or scope")
+    if (owner != owner.strip() or owner == "null" or owner.startswith(("!", "&", "*", "[", "{"))
+            or any(ord(char) < 32 for char in owner)):
+        raise ValueError("Owner cannot be serialized as a PROJECT_STATE scalar")
     if len(set(areas)) != len(areas) or any(not AREA.fullmatch(x) for x in areas):
         raise ValueError("Invalid or duplicate research area")
 
