@@ -117,7 +117,7 @@ def safe_submodule_path(v: str) -> bool:
     return v == p.as_posix() and not p.is_absolute() and len(p.parts) >= 2 and all(x not in ("..", ".", "") for x in p.parts)
 
 
-def validate(root: Path, phase: str = "scaffold") -> list[str]:
+def validate(root: Path, phase: str = "scaffold", verified_repository: str | None = None) -> list[str]:
     issues: list[str] = []
     if not root.is_dir():
         return ["Missing repository root"]
@@ -200,6 +200,13 @@ def validate(root: Path, phase: str = "scaffold") -> list[str]:
 
     project_items = projects.get("projects", []) if isinstance(projects.get("projects"), list) else []
     paper_items = papers.get("papers", []) if isinstance(papers.get("papers"), list) else []
+    if verified_repository is not None:
+        if not REPOSITORY.fullmatch(verified_repository):
+            issues.append("Invalid externally verified repository identity")
+        elif not (programme=="arc-REPLACE" and declared_visibility=="unconfigured"
+                  and not project_items and not paper_items):
+            if meta.get("repository_full_name")!=verified_repository:
+                issues.append("Canonical repository differs from verified GitHub repository")
     issues.extend(check_state(root, meta, project_items, paper_items))
     lines, project_ids, project_repos = set(), set(), {}
     for line in areas.get("lines", []) if isinstance(areas.get("lines"), list) else []:
@@ -408,8 +415,10 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--phase",choices=("scaffold","publish"),default="scaffold")
     p.add_argument("--repo-visibility", choices=("unknown", "private", "public"),
                    default="unknown", help="Actual visibility established outside this repository")
+    p.add_argument("--repo-full-name",default=None,
+                   help="Trusted repository identity (GitHub Actions: GITHUB_REPOSITORY)")
     a=p.parse_args(argv)
-    issues=validate(a.root,a.phase)
+    issues=validate(a.root,a.phase,verified_repository=a.repo_full_name)
     if a.repo_visibility != "unknown":
         import json
         try:

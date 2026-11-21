@@ -2,10 +2,12 @@
 from __future__ import annotations
 import json
 import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+from jsonschema import Draft202012Validator
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/"scripts"))
@@ -179,10 +181,102 @@ class RegistryV2Tests(unittest.TestCase):
                              .replace("phase: active","phase: planned"))
             self.assertEqual([],validate(root))
 
+    def test_local_manuscript_rejects_wrong_area_and_extra_segments(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=self.fixture(d)
+            source=root/"manuscripts/MSC-CR-P05/main.tex"
+            for root_dir,path in (
+                ("papers","papers/cognition/MSC-CR-P05/main.tex"),
+                ("manuscripts","manuscripts/unexpected/MSC-CR-P05/main.tex"),
+                ("papers","papers/ndd/extra/MSC-CR-P05/main.tex"),
+            ):
+                with self.subTest(path=path):
+                    target=root/path
+                    target.parent.mkdir(parents=True,exist_ok=True)
+                    target.write_bytes(source.read_bytes())
+                    meta=json.loads((root/"program.json").read_text())
+                    meta["manuscript_root"]=root_dir
+                    self.write(root,"program.json",meta)
+                    record=paper()
+                    record["manuscript"]["path"]=path
+                    self.write(root,"portfolio/papers.json",
+                               {"schema_version":2,"papers":[record]})
+                    self.assertTrue(any("path is not standard" in e for e in validate(root)))
+
+    def test_repository_identity_compares_with_trusted_input(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=self.fixture(d)
+            self.assertEqual([],validate(root,verified_repository="MatPomGit/arc-neuro"))
+            result=validate(root,verified_repository="Other/arc-neuro")
+            self.assertTrue(any("differs from verified GitHub" in e for e in result),result)
+
+    def test_dependency_json_schema_matches_python_xor_semantics(self):
+        schema=json.loads((ROOT/"schemas/dependencies.v2.schema.json").read_text())
+        checker=Draft202012Validator(schema)
+        variants=(
+            ({"paper_id":"MSC-CR-P05","ref":"lib-test"},True),
+            ({"paper_id":None,"ref":"lib-test"},False),
+            ({"paper_id":"","ref":"lib-test"},False),
+            ({"paper_id":"   ","ref":"lib-test"},False),
+            ({"paper_id":"MSC-CR-P05","project_id":None,"ref":"lib-test"},False),
+            ({"paper_id":"MSC-CR-P05","project_id":"msc-example","ref":"lib-test"},False),
+            ({"ref":"lib-test"},False),
+        )
+        with tempfile.TemporaryDirectory() as d:
+            root=self.fixture(d)
+            for group in ("tools","equipment","datasets"):
+                for row,expected in variants:
+                    with self.subTest(group=group,row=row):
+                        data={"schema_version":2,"tools":[],"equipment":[],"datasets":[]}
+                        data[group]=[row]
+                        self.write(root,"portfolio/dependencies.json",data)
+                        self.assertEqual(expected,checker.is_valid(data),row)
+                        self.assertEqual(expected,not validate(root),row)
+
+    def test_local_manuscript_git_provenance(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=self.fixture(d)
+            def git(*args):
+                result=subprocess.run(["git","-C",str(root),*args],
+                                      capture_output=True,text=True,check=True)
+                return result.stdout.strip()
+            git("init","-q")
+            git("add",".")
+            git("-c","user.name=ARC Test","-c","user.email=arc-test@example.invalid",
+                "commit","-q","-m","test manuscript")
+            commit=git("rev-parse","HEAD")
+            blob=git("rev-parse",f"{commit}:manuscripts/MSC-CR-P05/main.tex")
+            record=paper()
+            record["manuscript"].update(commit_sha=commit,blob_sha=blob)
+            self.write(root,"portfolio/papers.json",
+                       {"schema_version":2,"papers":[record]})
+            self.assertEqual([],validate(root))
+            record["manuscript"]["blob_sha"]="0"*40
+            self.write(root,"portfolio/papers.json",
+                       {"schema_version":2,"papers":[record]})
+            self.assertTrue(any("disagrees with pinned commit" in e
+                                for e in validate(root)))
+            record["manuscript"].update(commit_sha="0"*40,blob_sha=blob)
+            self.write(root,"portfolio/papers.json",
+                       {"schema_version":2,"papers":[record]})
+            self.assertTrue(any("UNAVAILABLE local manuscript" in e
+                                for e in validate(root)))
+
+    def test_local_blob_only_checks_current_contents(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=self.fixture(d)
+            record=paper()
+            record["manuscript"]["blob_sha"]="0"*40
+            self.write(root,"portfolio/papers.json",
+                       {"schema_version":2,"papers":[record]})
+            self.assertTrue(any("disagrees with current file" in e
+                                for e in validate(root)))
+
     def test_json_schemas_parse(self):
         for name in ("program","papers","projects","dependencies"):
             cfg=json.loads((ROOT/"schemas"/(name+".v2.schema.json")).read_text())
             self.assertEqual(cfg["properties"]["schema_version"]["const"],2)
+            Draft202012Validator.check_schema(cfg)
         paper_cfg=json.loads((ROOT/"schemas/papers.v2.schema.json").read_text())
         fields=set(paper_cfg["properties"]["papers"]["items"]["properties"])
         self.assertEqual(fields,PAPER_FIELDS)
