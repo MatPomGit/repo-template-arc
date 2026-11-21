@@ -2,6 +2,8 @@
 
 - Program / linia badawcza:
 - Kanoniczne repozytoria, których dotyczy PR:
+- Identyfikatory MSC, których dotyczy zmiana:
+- Tryb właściciela (`local` / `external`) i kanoniczne repozytorium:
 - Czy zmienia właściciela manuskryptu? (tak/nie)
 - Czy ujawnia wpis publicznie? (tak/nie)
 

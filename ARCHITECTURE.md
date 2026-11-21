@@ -17,10 +17,10 @@ ARC (strategia, rejestry, publiczny katalog)
 
 **Granice publikacji:** `docs/` przechowuje dokumentację techniczną, bezpieczeństwa i decyzji architektonicznych; nigdy nie jest źródłem Pages. `pages/` zawiera wyłącznie przeglądnięte materiały dla odbiorców, z jawną listą dopuszczenia. [Architektura szczegółowa](docs/architecture/README.md), [ADR](docs/adr/README.md) i [model zagrożeń](docs/security/threat-model.md) nie są automatycznie publiczne.
 
-**Niezmiennik:** jeden globalny identyfikator MSC -> jedno kanoniczne repozytorium (`local` ARC albo `external` MSC) -> dokładnie jeden właściciel. Obecny walidator v1 nie rejestruje jeszcze źródeł `local`; wymagane jest odrębne wdrożenie schematu v2. Dla lokalnego manuskryptu nie twórz fikcyjnego `owner_project_id`. Wieloprogramowe powiązania to tagi i `related`, nie duplikaty.
+**Niezmiennik:** jeden globalny identyfikator MSC -> jedno kanoniczne repozytorium (`local` ARC albo `external` MSC) -> dokładnie jeden właściciel. Dla lokalnego manuskryptu nie twórz fikcyjnego `owner_project_id`. Wieloprogramowe powiązania to tagi i `related`, nie duplikaty.
 
 **Główne programy:** `arc-neuro` (w tym `ndd/`), `arc-ai`, `arc-xr`, `arc-robo`. Nie tworzyć `arc-ndd` ani `arc-eye`. Eye tracking jest rodziną metod i narzędzi.
 
 **Dwa widoki SHA:** `snapshot_sha` służy do odtwarzania i wersjonowania indeksu; `remote_head_sha` jest odczytywany na żywo przez narzędzie audytu i nie zastępuje automatycznie snapshotu. Nie porównywać daty `README.md` z rzeczywistym stanem zdalnego repo.
 
-**Sprzęt:** indeks zawiera tylko `equipment_id`, `contract_path`, `validation_status`; prawdziwe kontrakty i identyfikatory fizyczne pozostają w kanonicznym katalogu Research Autopilot. Nie utożsamiać standardowego Quest 3 z urządzeniem do śledzenia wzroku.
+**Sprzęt:** indeks zawiera tylko `equipment_id`, `contract_path`, `validation_status`; prawdziwe kontrakty i identyfikatory fizyczne pozostają w prywatnym repozytorium `devices`; Research Autopilot korzysta z referencji. Nie utożsamiać standardowego Quest 3 z urządzeniem do śledzenia wzroku.

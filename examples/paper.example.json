@@ -1,10 +1,23 @@
 {
   "id": "MSC-CR-P05",
   "title": "REPLACE_PAPER_TITLE",
-  "owner_project_id": "REPLACE_PROJECT_ID",
-  "canonical_repository": "MatPomGit/msc-example",
-  "manuscript_path": "manuscripts/P01",
-  "stage": "concept",
+  "area": "cognition",
+  "research_state": "planned",
+  "publication_stage": "concept",
+  "relation": "primary",
+  "owner": {
+    "mode": "local",
+    "repository": "MatPomGit/arc-neuro",
+    "project_id": null
+  },
+  "manuscript": {
+    "path": "manuscripts/MSC-CR-P05/main.tex",
+    "format": "latex",
+    "commit_sha": null,
+    "blob_sha": null
+  },
+  "study_plan": null,
+  "public_listing": false,
   "doi": null,
   "preprint_url": null,
   "preregistration_url": null,

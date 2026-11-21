@@ -14,9 +14,12 @@ PROJECT={"id":"msc-example","title":"Public project","repository":"MatPomGit/msc
 "url":"https://github.com/MatPomGit/msc-example","role":"primary","primary_program":"arc-neuro",
 "line":"ndd","status":"active","visibility":"public","public_listing":False,
 "default_branch":"main","snapshot_sha":None,"pages_url":None,"submodule_path":None}
-PAPER={"id":"MSC-CR-P05","title":"Hypothesis","owner_project_id":"msc-example",
-"canonical_repository":"MatPomGit/msc-example","manuscript_path":"manuscripts/P05",
-"stage":"published","doi":None,"preprint_url":None,"preregistration_url":None}
+PAPER={"id":"MSC-CR-P05","title":"Hypothesis","area":"ndd",
+"research_state":"planned","publication_stage":"published","relation":"primary",
+"owner":{"mode":"external","repository":"MatPomGit/msc-example","project_id":"msc-example"},
+"manuscript":{"path":"manuscripts/P05/main.tex","format":"latex"},
+"study_plan":None,"public_listing":False,"doi":None,
+"preprint_url":None,"preregistration_url":None,"publication_url":None,"stage_evidence":None}
 
 class MetadataTests(unittest.TestCase):
     def fixture(self,d):
@@ -31,8 +34,8 @@ class MetadataTests(unittest.TestCase):
               .replace("papers_registered: 0","papers_registered: 1")
               .replace("phase: scaffold","phase: active"),encoding="utf-8")
         (root/"areas/index.json").write_text(json.dumps({"lines":[{"id":"ndd","title":"NDD"}]}),encoding="utf-8")
-        (root/"portfolio/projects.json").write_text(json.dumps({"projects":[PROJECT.copy()]}),encoding="utf-8")
-        (root/"portfolio/papers.json").write_text(json.dumps({"papers":[PAPER.copy()]}),encoding="utf-8")
+        (root/"portfolio/projects.json").write_text(json.dumps({"schema_version":2,"projects":[PROJECT.copy()]}),encoding="utf-8")
+        (root/"portfolio/papers.json").write_text(json.dumps({"schema_version":2,"papers":[PAPER.copy()]}),encoding="utf-8")
         return root
     def test_published_requires_evidence(self):
         with tempfile.TemporaryDirectory() as d:
@@ -84,7 +87,7 @@ class MetadataTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             root=self.fixture(d)
             f=root/"portfolio/papers.json"
-            f.write_text(json.dumps({"papers":[]}),encoding="utf-8")
+            f.write_text(json.dumps({"schema_version":2,"papers":[]}),encoding="utf-8")
             st=root/"PROJECT_STATE.yaml"
             st.write_text(st.read_text().replace("papers_registered: 1","papers_registered: 0"),encoding="utf-8")
             f=root/"portfolio/projects.json"

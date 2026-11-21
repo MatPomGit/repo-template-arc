@@ -2,7 +2,7 @@
 
 **Rodzaj repozytorium:** program naukowy `arc-*`  
 **Program:** `arc-REPLACE`  
-**Wersja szablonu:** `1.0.0`  
+**Wersja szablonu:** `2.0.0`  
 **Autor podstawowy:** Mateusz Pomianek; dodatkowi współautorzy po potwierdzeniu wkładu  
 **Stan naukowy:** indeks planowany, bez potwierdzonych wyników empirycznych
 

@@ -15,6 +15,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from validate_documentation import check_documentation
 from validate_pages import check_pages
 from validate_state import check_state
+from validate_registry_v2 import validate_registry_v2
 
 ALLOWED_PROGRAMMES = frozenset(("arc-neuro", "arc-ai", "arc-xr", "arc-robo"))
 ALLOWED_ROLES = frozenset(("primary", "related"))
@@ -46,6 +47,7 @@ REQUIRED = (
     "scripts/validate_repository.py", "scripts/bootstrap.py",
     "scripts/build_public_catalog.py", "scripts/validate_pages.py",
     "scripts/validate_documentation.py", "scripts/validate_state.py",
+
     "scripts/validate_site.py", "tests/test_repository_contract.py",
     "tests/test_pages_policy.py", "tests/test_documentation_policy.py",
     "tests/test_agent_policy.py", "tests/test_state_policy.py",
@@ -57,7 +59,7 @@ SHA256 = re.compile(r"^[a-f0-9]{64}$")
 DOI = re.compile(r"^10\.\d{4,9}/\S+$")
 PROJECT_FIELDS = frozenset(("id","title","repository","url","role","primary_program","line","status","visibility","public_listing","default_branch","snapshot_sha","pages_url","submodule_path"))
 PAPER_FIELDS = frozenset(("id","title","owner_project_id","canonical_repository","manuscript_path","stage","doi","preprint_url","preregistration_url","publication_url","stage_evidence"))
-PROGRAM_FIELDS = frozenset(("schema_version","template_version","type","programme","title","owner","scope","default_branch","license_spdx","pages_status","pages_url","public_catalog_policy","scientific_state","owner_of_raw_data","repository_visibility"))
+PROGRAM_FIELDS = frozenset(("schema_version","template_version","type","programme","repository_full_name","manuscript_root","title","owner","scope","default_branch","license_spdx","pages_status","pages_url","public_catalog_policy","scientific_state","owner_of_raw_data","repository_visibility"))
 AREA_LINE_FIELDS = frozenset(("id","title"))
 DEPENDENCY_FIELDS = frozenset(("project_id","ref","version","sha","role","contract_path","validation_status","notes"))
 STAGE_EVIDENCE_KINDS = {"submitted":"submission_receipt","accepted":"editorial_decision","published":"publication_record"}
@@ -115,7 +117,7 @@ def safe_submodule_path(v: str) -> bool:
     return v == p.as_posix() and not p.is_absolute() and len(p.parts) >= 2 and all(x not in ("..", ".", "") for x in p.parts)
 
 
-def validate(root: Path, phase: str = "scaffold") -> list[str]:
+def validate(root: Path, phase: str = "scaffold", verified_repository: str | None = None) -> list[str]:
     issues: list[str] = []
     if not root.is_dir():
         return ["Missing repository root"]
@@ -138,6 +140,8 @@ def validate(root: Path, phase: str = "scaffold") -> list[str]:
         return sorted(set(issues + ["Invalid ARC root JSON object type"]))
     if set(meta) - PROGRAM_FIELDS:
         issues.append("Undeclared programme metadata fields")
+    if meta.get("schema_version") == 2 and set(meta) != PROGRAM_FIELDS:
+        issues.append("Missing required programme v2 fields")
     for filename, obj, fields in (
         ("areas/index.json", areas, {"lines","schema_version"}),
         ("portfolio/projects.json", projects, {"projects","schema_version"}),
@@ -146,11 +150,35 @@ def validate(root: Path, phase: str = "scaffold") -> list[str]:
     ):
         if set(obj) - fields or ("schema_version" in obj and type(obj["schema_version"]) is not int):
             issues.append("Unexpected registry fields or schema type: " + filename)
-    if meta.get("schema_version") != 1 or meta.get("type") != "arc-program":
+    # v1 remains supported without v2-only schemas/tests, permitting audit before migration.
+    if meta.get("schema_version") == 2:
+        for rel in ("schemas/program.v2.schema.json", "schemas/projects.v2.schema.json",
+                    "schemas/papers.v2.schema.json", "schemas/dependencies.v2.schema.json"):
+            f = root / rel
+            if not f.is_file() or f.is_symlink() or not f.read_bytes().strip():
+                issues.append("Missing v2 schema: " + rel)
+    schema_version = meta.get("schema_version")
+    if type(schema_version) is not int or schema_version not in (1, 2) or meta.get("type") != "arc-program":
         issues.append("Invalid program.json schema_version/type")
-    if meta.get("template_version") != "1.0.0":
+    expected_version = "2.0.0" if schema_version == 2 else "1.0.0"
+    if meta.get("template_version") != expected_version:
         issues.append("Unexpected program template version")
+    if schema_version == 2:
+        for rel, obj in (("portfolio/projects.json", projects),
+                         ("portfolio/papers.json", papers),
+                         ("portfolio/dependencies.json", dependencies)):
+            if obj.get("schema_version") != 2:
+                issues.append("Registry requires schema_version 2: " + rel)
     programme = meta.get("programme")
+    if schema_version == 2:
+        if meta.get("manuscript_root") not in ("manuscripts", "papers"):
+            issues.append("Invalid manuscript_root (expected manuscripts or papers)")
+        repo_name = meta.get("repository_full_name")
+        if repo_name is not None and (not isinstance(repo_name, str) or
+                                      not REPOSITORY.fullmatch(repo_name) or
+                                      not isinstance(programme, str) or
+                                      not repo_name.endswith("/" + programme)):
+            issues.append("Invalid program canonical repository identity")
     declared_visibility = meta.get("repository_visibility", "unconfigured")
     if declared_visibility not in ("unconfigured", "public", "private"):
         issues.append("Invalid program.json repository_visibility")
@@ -172,6 +200,13 @@ def validate(root: Path, phase: str = "scaffold") -> list[str]:
 
     project_items = projects.get("projects", []) if isinstance(projects.get("projects"), list) else []
     paper_items = papers.get("papers", []) if isinstance(papers.get("papers"), list) else []
+    if verified_repository is not None:
+        if not REPOSITORY.fullmatch(verified_repository):
+            issues.append("Invalid externally verified repository identity")
+        elif not (programme=="arc-REPLACE" and declared_visibility=="unconfigured"
+                  and not project_items and not paper_items):
+            if meta.get("repository_full_name")!=verified_repository:
+                issues.append("Canonical repository differs from verified GitHub repository")
     issues.extend(check_state(root, meta, project_items, paper_items))
     lines, project_ids, project_repos = set(), set(), {}
     for line in areas.get("lines", []) if isinstance(areas.get("lines"), list) else []:
@@ -194,6 +229,8 @@ def validate(root: Path, phase: str = "scaffold") -> list[str]:
             issues.append("Invalid project record type"); continue
         if set(p) - PROJECT_FIELDS:
             issues.append("Undeclared project metadata fields: " + str(p.get("id", "?")))
+        if schema_version == 2 and set(p) != PROJECT_FIELDS:
+            issues.append("Missing required project v2 fields: " + str(p.get("id", "?")))
         if not isinstance(p.get("title"), str) or not p["title"].strip():
             issues.append("Missing project title")
         ident, repo, url = p.get("id", ""), p.get("repository", ""), p.get("url", "")
@@ -234,6 +271,8 @@ def validate(root: Path, phase: str = "scaffold") -> list[str]:
 
     paper_ids = set()
     for p in papers.get("papers", []) if isinstance(papers.get("papers"), list) else []:
+        if schema_version == 2:
+            continue
         if not isinstance(p, dict):
             issues.append("Invalid paper record type"); continue
         if set(p) - PAPER_FIELDS:
@@ -277,10 +316,16 @@ def validate(root: Path, phase: str = "scaffold") -> list[str]:
     for group in ("tools", "equipment", "datasets"):
         group_records = dependencies.get(group, []) if isinstance(dependencies.get(group), list) else []
         for p in group_records:
+            if schema_version == 2:
+                continue
             if (not isinstance(p, dict) or set(p) - DEPENDENCY_FIELDS
                     or p.get("project_id") not in project_ids
                     or not isinstance(p.get("ref"), str) or not p["ref"].strip()):
                 issues.append(f"Invalid {group} dependency reference")
+
+    if schema_version == 2:
+        issues.extend(validate_registry_v2(root, meta, paper_items, dependencies,
+                                           project_repos, lines, safe_public_page_url))
 
     submodule_records = {
         p["submodule_path"]: p for p in registered_projects
@@ -370,8 +415,10 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--phase",choices=("scaffold","publish"),default="scaffold")
     p.add_argument("--repo-visibility", choices=("unknown", "private", "public"),
                    default="unknown", help="Actual visibility established outside this repository")
+    p.add_argument("--repo-full-name",default=None,
+                   help="Trusted repository identity (GitHub Actions: GITHUB_REPOSITORY)")
     a=p.parse_args(argv)
-    issues=validate(a.root,a.phase)
+    issues=validate(a.root,a.phase,verified_repository=a.repo_full_name)
     if a.repo_visibility != "unknown":
         import json
         try:

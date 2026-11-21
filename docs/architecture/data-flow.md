@@ -5,7 +5,8 @@
 | Przepływ | Kanoniczne źródło | Reguła |
 | --- | --- | --- |
 | Rejestr projektów i ich własności | `portfolio/projects.json` | Jeden właściciel, jawna widoczność i SHA |
-| Artykuły i identyfikatory | `portfolio/papers.json` | Bez fałszywych DOI i statusów |
+| Artykuły i identyfikatory | `portfolio/papers.json` | Jedna własność `local`/`external`, bez fałszywych DOI i statusów |
+| Lokalne manuskrypty | `manuscript_root/.../MSC-*/main.tex` | Kanoniczny commit ARC, nie kopia zewnętrznego źródła |
 | Zależności sprzętowe i oprogramowanie | `portfolio/dependencies.json` | Wyłącznie referencje, bez kopiowania prywatnych źródeł |
 | Odtwarzanie | `snapshot_sha` i gitlink | Historyczny stan zachowany |
 | Odczyt na żywo | `remote_head_sha` / `audit-live` | Nie modyfikuje checkoutu; brak dostępu = `UNAVAILABLE` |

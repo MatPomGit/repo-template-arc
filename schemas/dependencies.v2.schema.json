@@ -1,0 +1,266 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ARC dependencies v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "tools",
+    "equipment",
+    "datasets"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 2
+    },
+    "tools": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ref"
+        ],
+        "properties": {
+          "paper_id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "project_id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "version": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "sha": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "role": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "contract_path": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "validation_status": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "notes": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "oneOf": [
+          {
+            "required": [
+              "paper_id"
+            ],
+            "not": {
+              "required": [
+                "project_id"
+              ]
+            }
+          },
+          {
+            "required": [
+              "project_id"
+            ],
+            "not": {
+              "required": [
+                "paper_id"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "equipment": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ref"
+        ],
+        "properties": {
+          "paper_id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "project_id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "version": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "sha": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "role": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "contract_path": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "validation_status": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "notes": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "oneOf": [
+          {
+            "required": [
+              "paper_id"
+            ],
+            "not": {
+              "required": [
+                "project_id"
+              ]
+            }
+          },
+          {
+            "required": [
+              "project_id"
+            ],
+            "not": {
+              "required": [
+                "paper_id"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "datasets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ref"
+        ],
+        "properties": {
+          "paper_id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "project_id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "version": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "sha": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "role": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "contract_path": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "validation_status": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "notes": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "oneOf": [
+          {
+            "required": [
+              "paper_id"
+            ],
+            "not": {
+              "required": [
+                "project_id"
+              ]
+            }
+          },
+          {
+            "required": [
+              "project_id"
+            ],
+            "not": {
+              "required": [
+                "paper_id"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}

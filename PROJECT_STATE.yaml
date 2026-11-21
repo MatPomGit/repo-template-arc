@@ -1,6 +1,6 @@
-schema_version: 1
+schema_version: 2
 repository_type: research_program
-template_version: 1.0.0
+template_version: 2.0.0
 programme: arc-REPLACE
 scientific_owner: REPLACE_OWNER
 updated: null
