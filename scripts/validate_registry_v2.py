@@ -56,7 +56,7 @@ def verify_local_manuscript_provenance(root, path, commit_sha, blob_sha):
         if blob_sha is not None and SHA40.fullmatch(blob_sha):
             raw=(root/path).read_bytes()
             actual=hashlib.sha1(
-                b"blob "+str(len(raw)).encode("ascii")+b"\\0"+raw
+                b"blob "+str(len(raw)).encode("ascii")+b"\0"+raw
             ).hexdigest()
             if actual!=blob_sha:
                 issues.append("Local manuscript blob SHA disagrees with current file: "+path)
@@ -75,7 +75,7 @@ def verify_local_manuscript_provenance(root, path, commit_sha, blob_sha):
     if result.returncode!=0 or not result.stdout.strip():
         return ["UNAVAILABLE local manuscript commit provenance (commit/path missing): "+path]
     match=re.fullmatch(
-        r"100(?:644|755) blob ([a-f0-9]{40})\\t"+re.escape(path)+r"\\n?",
+        r"100(?:644|755) blob ([a-f0-9]{40})\t"+re.escape(path)+r"\n?",
         result.stdout,
     )
     if match is None:
