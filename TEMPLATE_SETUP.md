@@ -9,6 +9,8 @@
 7. Uruchom `python scripts/validate_repository.py --phase scaffold`, `python scripts/validate_documentation.py`, `python scripts/validate_pages.py`, `python -m unittest discover -s tests -v` i generację katalogu `python scripts/build_public_catalog.py`. Generator zapisuje tylko `pages/projects.md`, nigdy dokumentację `docs/`. Po wygenerowaniu ponownie sprawdź treść, listę dozwolonych plików i poprawność katalogu. Publikacja wymaga osobnej zgody i przeglądu realnie wygenerowanej witryny.
 8. Tryb `--phase publish` sprawdza wybrane blokady redakcyjne, ale nie stanowi potwierdzenia etycznego ani naukowego i nie uruchamia zdalnej publikacji. Włączenie `is_template` w GitHub wymaga praw administracyjnych.
 
+W publicznym ARC przed dodaniem lokalnego TeX, planu lub protokołu potwierdź prawo i zgodę na upublicznienie **samego pliku w repozytorium i historii Git**. Wyłączenie katalogu Pages albo `public_listing: false` nie ukrywa zawartości publicznego repozytorium.
+
 Szablon ma być niewielki. Lokalny kanoniczny manuskrypt oraz jego plan mogą należeć do ARC; zewnętrzne MSC zachowują własne źródła. Biblioteki i aplikacje pozostają w `lib-*` i `app-*`; surowe dane w autoryzowanych magazynach.
 
 ## Dokumentacja projektu i polityka strony

@@ -18,13 +18,13 @@ Dopuszczalne są wersje przedwydaniowe, np. `0.3.0-rc.1`; tag wydania `v0.3.0` m
 | `arc-catalogue` | Zatwierdzone publiczne metadane programu, objaśnienie zakresu, `CITATION.cff`, changelog, odnośniki do publicznych źródeł | Każdy wpis jawnie dopuszczony; brak ścieżek prywatnych projektów, ich nazw, danych, tokenów i wewnętrznych logów |
 | `arc-reproducibility` | Manifest zamrożonych wersji, SHA commitów i sum danych **tylko w uprawnionym zakresie**, konfiguracja oraz instrukcja odtworzenia | Spójne gitlinki, jawne kontrakty, wersje środowiska i skryptów, status dostępu do danych oraz odpowiednio ograniczony kanał dystrybucji |
 
-Paczki ARC nie powinny zawierać manuskryptów, surowych danych, kodu `app-*`/`lib-*`, firmware, pakietów urządzeń ani prywatnych raportów `audit-live`. Dostęp do artefaktu prywatnego nie może być zastępowany „publicznym zipem”; zakres danych zawsze wynika z zgód, etyki i praw. Dla repozytorium prywatnego przyjmij **private-only** jako domyślny kanał wydania. Widoczność poszczególnych elementów sprawdzaj niezależnie od widoczności repo.
+Pakiety `arc-catalogue` i `arc-reproducibility` nie powinny zawierać pełnych manuskryptów, nawet jeśli ARC jest ich kanonicznym właścicielem. Lokalny TeX może należeć do repozytorium ARC, ale jego publikacja i odrębne wydanie manuskryptu podlegają osobnej decyzji. Pakiety nie obejmują także surowych danych, kodu `app-*`/`lib-*`, firmware, pakietów urządzeń ani prywatnych raportów `audit-live`. Dostęp do artefaktu prywatnego nie może być zastępowany „publicznym zipem”; zakres danych zawsze wynika z zgód, etyki i praw. Dla repozytorium prywatnego przyjmij **private-only** jako domyślny kanał wydania. Widoczność poszczególnych elementów sprawdzaj niezależnie od widoczności repo.
 
 ## 3. Manifest dowodowy
 
 Dla planowanej wersji przygotuj **nieśledzony** manifest `outputs/arc-release-manifest.json` zawierający co najmniej: `schema_version`, `kind`, `version`, `programme`, `commit_sha`, `audience` (`public`/`restricted`), sumy SHA-256 kanonicznych rejestrów i co najmniej jednego konkretnego artefaktu oraz rzeczywiste wyniki kontroli. Manifest powinien wiązać:
  
-`ARC commit -> program.json -> areas/index.json -> portfolio/projects.json + papers.json + dependencies.json -> project snapshot SHA -> MSC manuscript / app-lib release -> dataset manifest / checksum -> scientific result / verified DOI`.
+`ARC commit -> program.json -> areas/index.json -> portfolio/projects.json + papers.json + dependencies.json -> canonical owner SHA (ARC/local albo project snapshot SHA/external) -> manuscript source / app-lib release -> dataset manifest / checksum -> scientific result / verified DOI`.
 
 Elementy niepubliczne opisuj wyłącznie w chronionym obiegu. Nie wystawiaj URL lub nawet nazwy prywatnego `msc-*` w publicznym manifeście. Stan `STALE` w audycie live oznacza pojawienie się nowego commita, a nie brak odtwarzalności historycznej migawki; `UNAVAILABLE` nie znaczy `PASS`.
 
