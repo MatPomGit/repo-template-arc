@@ -91,7 +91,10 @@
                 ]
               },
               "repository": {
-                "type": "string",
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"
               },
               "project_id": {
@@ -99,8 +102,69 @@
                   "string",
                   "null"
                 ]
+              },
+              "redacted": {
+                "const": true
               }
-            }
+            },
+            "oneOf": [
+              {
+                "properties": {
+                  "mode": {
+                    "const": "local"
+                  },
+                  "repository": {
+                    "type": "string"
+                  },
+                  "project_id": {
+                    "type": "null"
+                  }
+                },
+                "not": {
+                  "required": [
+                    "redacted"
+                  ]
+                }
+              },
+              {
+                "properties": {
+                  "mode": {
+                    "const": "external"
+                  },
+                  "repository": {
+                    "type": "string"
+                  },
+                  "project_id": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "not": {
+                  "required": [
+                    "redacted"
+                  ]
+                }
+              },
+              {
+                "properties": {
+                  "mode": {
+                    "const": "external"
+                  },
+                  "repository": {
+                    "type": "null"
+                  },
+                  "project_id": {
+                    "type": "null"
+                  },
+                  "redacted": {
+                    "const": true
+                  }
+                },
+                "required": [
+                  "redacted"
+                ]
+              }
+            ]
           },
           "manuscript": {
             "oneOf": [
@@ -205,8 +269,48 @@
                 }
               }
             ]
+          },
+          "public_summary": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 320
           }
-        }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "owner": {
+                  "required": [
+                    "redacted"
+                  ]
+                }
+              },
+              "required": [
+                "owner"
+              ]
+            },
+            "then": {
+              "properties": {
+                "relation": {
+                  "const": "related"
+                },
+                "public_listing": {
+                  "const": false
+                },
+                "manuscript": {
+                  "type": "null"
+                },
+                "study_plan": {
+                  "type": "null"
+                }
+              }
+            }
+          }
+        ]
       }
     }
   }

@@ -16,6 +16,12 @@ Rejestr kanonicznych projektów jest w [`portfolio/projects.json`](portfolio/pro
 
 [Publiczny katalog projektów](pages/projects.md) jest generowany z pozycji jawnie zatwierdzonych do publikacji. Program ARC nie jest repozytorium surowych danych uczestników ani pakietem aplikacji.
 
+## Generatory ARC i manuskryptów
+
+Nowy program inicjalizuje się poprzez `python scripts/init_arc.py --programme arc-neuro --repository OWNER/arc-neuro --title "Nazwa" --owner "Autor" --scope "Zakres naukowy" --visibility public --area ndd`. Komenda **domyślnie nie zapisuje plików**; po przeglądzie dodaj `--apply`. Skrypt nie przyznaje zgody na publikację.
+
+Lokalny manuskrypt tworzy `python scripts/new_manuscript.py --id MSC-ADHD-P01 --title "Tytuł" --area ndd --study-type empirical`. Również wymaga `--apply`; tworzy `main.tex`, `study.yaml`, `references.bib` i aktualizuje kanoniczny rejestr. Walidacja planu: `python scripts/validate_study.py --path manuscripts/MSC-ADHD-P01/study.yaml --paper-id MSC-ADHD-P01`. Zależności walidacji: `pip install -r requirements-research.txt`.
+
 ## Uruchomienie
 
 ```bash
@@ -37,7 +43,16 @@ Weryfikacja `audit-live` **nie zmienia** przypiętych commitów i nie uruchamia 
 
 Zobacz [niezależny audyt szablonu ARC z 2026-11-19](reviews/2026-11-19-template-audit.md), zawierający priorytety P0–P2 i test akceptacyjny. Publiczne repozytoria mogą korzystać z istniejących izolowanych kontroli CI, bez sekretów i bez dostępu do prywatnych projektów; wynik testu nie jest zgodą na publikację.
 
+## Katalog artykułów i migracja
+
+Publiczny katalog artykułów jest generowany wyłącznie z zatwierdzonych opisów w kanonicznym rejestrze, w oddzielnym katalogu `pages/`. Uruchom `python scripts/build_article_catalog.py`. Dla publikacji wymagane są `public_listing=true` i zatwierdzony `public_summary`; prywatne repozytoria i niepubliczne źródła są wykluczone.
+
+Istniejące ARC aktualizuj ostrożnie: `python scripts/migrate_arc.py --mode inventory`, następnie `--mode plan` i dopiero świadome `--mode apply` z exact SHA. [Instrukcja migracji v1 → v2](docs/migrations/schema-v2.md).
+
 ## Architektura i bezpieczeństwo
+
+[Kontrole CI i wymagane bramki PR](docs/operations/ci-gates.md) dokumentują różnicę między PASS testów, uprawnionym review i rzeczywistą ochroną gałęzi.
+
 
 [Architektura](ARCHITECTURE.md), [zarządzanie](GOVERNANCE.md), [model zagrożeń](docs/security/threat-model.md), [decyzje ADR](docs/adr/README.md), [standard dokumentacji](docs/documentation.md), [polityka GitHub Pages](docs/pages.md), [wydania programu](docs/releases.md) i [wsparcie](SUPPORT.md). Nie twórz osobnego `CONTRIBUTING.md`.
 

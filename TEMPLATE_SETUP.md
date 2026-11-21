@@ -1,5 +1,7 @@
 # Konfiguracja ARC Template v2.0.0
 
+Dla migracji programu zastosuj [procedurę v1 → v2](docs/migrations/schema-v2.md) z exact SHA i bez automatycznego przenoszenia źródeł. Dla nowego repozytorium preferuj `scripts/init_arc.py` zamiast ręcznych edycji wielu plików. Generator i `scripts/new_manuscript.py` domyślnie działają w trybie dry-run; zapis wymaga jawnego `--apply`. Oba są przeznaczone do pracy w zatwierdzonym lokalnym checkout, bez uruchamiania kodu z nieznanych źródeł.
+
 1. Utwórz repozytorium `arc-neuro`, `arc-ai`, `arc-xr` lub `arc-robo` (po sprawdzeniu, czy już istnieje); wybierz prywatność. Skopiuj wszystkie pliki bez historii źródłowej.
 2. W `program.json` ustaw `repository_visibility: public` albo `private` oraz kanoniczne `repository_full_name` zgodne z GitHub zgodnie z rzeczywistą widocznością GitHub, nazwę programu, właściciela, zakres i politykę publicznej witryny. Repozytorium pozostające `unconfigured` nie może rejestrować badań. Zastąp pola `REPLACE` w README, AGENTS, RESEARCH, PROJECT_STATE i docs. W `CITATION.cff` zachowaj Mateusza Pomianka jako autora podstawowego, a opcjonalnych współautorów dopisz po potwierdzeniu wkładu. Ustal odpowiednią licencję w LICENSE, nie przyznawaj jej automatycznie.
 3. W `areas/index.json` zarejestruj linie (np. w ARC Neuro: ndd, affect, cognition, social, psychometrics), a w `portfolio/projects.json` zarejestruj tylko rzeczywiście istniejące **zewnętrzne** projekty `msc-*` lub historyczne o statusie `primary`/`related`. Dla lokalnego manuskryptu nie dodawaj fikcyjnego projektu.

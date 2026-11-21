@@ -16,6 +16,7 @@ from validate_documentation import check_documentation
 from validate_pages import check_pages
 from validate_state import check_state
 from validate_registry_v2 import validate_registry_v2
+from validate_study import validate_study
 
 ALLOWED_PROGRAMMES = frozenset(("arc-neuro", "arc-ai", "arc-xr", "arc-robo"))
 ALLOWED_ROLES = frozenset(("primary", "related"))
@@ -117,6 +118,11 @@ def safe_submodule_path(v: str) -> bool:
     return v == p.as_posix() and not p.is_absolute() and len(p.parts) >= 2 and all(x not in ("..", ".", "") for x in p.parts)
 
 
+def safe_relative_study_path(path: str) -> bool:
+    return (not path.startswith("/") and "\\" not in path and
+            all(part not in ("", ".", "..") for part in path.split("/")))
+
+
 def validate(root: Path, phase: str = "scaffold", verified_repository: str | None = None) -> list[str]:
     issues: list[str] = []
     if not root.is_dir():
@@ -153,7 +159,13 @@ def validate(root: Path, phase: str = "scaffold", verified_repository: str | Non
     # v1 remains supported without v2-only schemas/tests, permitting audit before migration.
     if meta.get("schema_version") == 2:
         for rel in ("schemas/program.v2.schema.json", "schemas/projects.v2.schema.json",
-                    "schemas/papers.v2.schema.json", "schemas/dependencies.v2.schema.json"):
+                    "schemas/papers.v2.schema.json", "schemas/dependencies.v2.schema.json",
+                    "schemas/study.v1.schema.json", "scripts/init_arc.py",
+                    "scripts/new_manuscript.py", "scripts/validate_study.py",
+                    "scripts/_generator_io.py", "requirements-research.txt",
+                    "tests/test_generators.py", "scripts/build_article_catalog.py",
+                    "scripts/migrate_arc.py", "tests/test_article_catalog.py",
+                    "tests/test_migrations.py"):
             f = root / rel
             if not f.is_file() or f.is_symlink() or not f.read_bytes().strip():
                 issues.append("Missing v2 schema: " + rel)
@@ -326,6 +338,13 @@ def validate(root: Path, phase: str = "scaffold", verified_repository: str | Non
     if schema_version == 2:
         issues.extend(validate_registry_v2(root, meta, paper_items, dependencies,
                                            project_repos, lines, safe_public_page_url))
+        for manuscript in paper_items:
+            if not isinstance(manuscript, dict):
+                continue
+            study = manuscript.get("study_plan")
+            if (isinstance(study, str) and study.endswith(".yaml") and
+                    safe_relative_study_path(study)):
+                issues.extend(validate_study(root, study, str(manuscript.get("id", ""))))
 
     submodule_records = {
         p["submodule_path"]: p for p in registered_projects

@@ -35,7 +35,8 @@
     "pages/index.md": 6000,
     "pages/projects.md": 6000,
     "CHANGELOG.md": 15000,
-    "docs/releases.md": 9500
+    "docs/releases.md": 9500,
+    "pages/articles.md": 100000
   },
   "glob_limits": {
     "docs/**/*.md": 10000,

@@ -1,0 +1,220 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Research plan for one ARC MSC manuscript",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "paper_id",
+    "study_type",
+    "research_question",
+    "hypotheses",
+    "design",
+    "outcomes",
+    "analysis",
+    "evidence"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "paper_id": {
+      "type": "string",
+      "pattern": "^MSC-[A-Z0-9]+(?:-[A-Z0-9]+)*$"
+    },
+    "study_type": {
+      "enum": [
+        "empirical",
+        "simulation",
+        "methods",
+        "review",
+        "theoretical"
+      ]
+    },
+    "research_question": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "hypotheses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "statement",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^H[1-9][0-9]*$"
+          },
+          "statement": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "enum": [
+              "proposed",
+              "frozen",
+              "tested",
+              "rejected"
+            ]
+          }
+        }
+      },
+      "uniqueItems": true
+    },
+    "design": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "unit_of_analysis",
+        "population",
+        "sample_size"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "unit_of_analysis": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "population": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sample_size": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        }
+      }
+    },
+    "outcomes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "primary",
+        "secondary"
+      ],
+      "properties": {
+        "primary": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name",
+                "unit",
+                "definition"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "unit": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "definition": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          ]
+        },
+        "secondary": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "unit",
+              "definition"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "unit": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "definition": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "analysis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "methods",
+        "validation"
+      ],
+      "properties": {
+        "methods": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "validation": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "empirical_results",
+        "protocol_frozen"
+      ],
+      "properties": {
+        "empirical_results": {
+          "enum": [
+            "not_available",
+            "available",
+            "not_applicable"
+          ]
+        },
+        "protocol_frozen": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

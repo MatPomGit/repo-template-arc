@@ -100,6 +100,41 @@ class RegistryV2Tests(unittest.TestCase):
             st.write_text(st.read_text().replace("projects_registered: 0","projects_registered: 1"))
             self.assertEqual([],validate(root))
 
+    def test_private_external_related_reference_can_be_redacted(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=self.fixture(d)
+            p=paper("external")
+            p["relation"]="related"
+            p["owner"]={"mode":"external","repository":None,"project_id":None,
+                        "redacted":True}
+            p["manuscript"]=None
+            self.write(root,"portfolio/papers.json",{"schema_version":2,"papers":[p]})
+            self.assertEqual([],validate(root))
+            schema=json.loads((root/"schemas/papers.v2.schema.json").read_text())
+            self.assertEqual([],list(Draft202012Validator(schema).iter_errors(
+                {"schema_version":2,"papers":[p]})))
+
+    def test_redacted_external_reference_cannot_publish_or_claim_local_source(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=self.fixture(d)
+            schema=json.loads((root/"schemas/papers.v2.schema.json").read_text())
+            p=paper("external")
+            p["relation"]="related"
+            p["owner"]={"mode":"external","repository":None,"project_id":None,
+                        "redacted":True}
+            p["manuscript"]=None
+            for field,value in (("public_listing",True),
+                                ("relation","primary"),
+                                ("manuscript",{"path":"manuscripts/MSC-CR-P05/main.tex",
+                                               "format":"latex"})):
+                with self.subTest(field=field):
+                    test=dict(p)
+                    test[field]=value
+                    self.write(root,"portfolio/papers.json",{"schema_version":2,"papers":[test]})
+                    self.assertTrue(any("redacted external" in x for x in validate(root)))
+                    self.assertTrue(list(Draft202012Validator(schema).iter_errors(
+                        {"schema_version":2,"papers":[test]})))
+
     def test_unregistered_external_owner_rejected(self):
         with tempfile.TemporaryDirectory() as d:
             root=self.fixture(d)
