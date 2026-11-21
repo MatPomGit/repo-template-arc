@@ -50,6 +50,8 @@ jobs:
         run: python3 -B scripts/validate_repository.py --phase scaffold --repo-visibility "$REPO_VISIBILITY" --repo-full-name "$GITHUB_REPOSITORY"
       - name: Validate documentation character budgets
         run: python3 -B scripts/validate_documentation.py
+      - name: Verify optional programme branding is synchronized
+        run: python3 -B scripts/site_branding.py
       - name: Validate public Pages boundary
         run: python3 -B scripts/validate_pages.py
       - name: E1 isolated CLI lifecycle and non-disclosure scenarios
