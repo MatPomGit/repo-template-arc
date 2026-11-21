@@ -81,7 +81,7 @@ def parse_mkdocs(text: str) -> tuple[dict[str, str], list[str], list[str]]:
                 navigation.append(item.group(1))
                 continue
         if mode == "theme":
-            field = re.fullmatch(r"  (name|highlightjs):\s*([a-z]+)\s*", line)
+            field = re.fullmatch(r"  (name|highlightjs|logo):\s*([A-Za-z0-9_./-]+)\s*", line)
             if field and field.group(1) not in theme:
                 theme[field.group(1)] = field.group(2)
                 continue
@@ -90,7 +90,8 @@ def parse_mkdocs(text: str) -> tuple[dict[str, str], list[str], list[str]]:
         errors.append("PAGES CONFIG: isolated docs_dir/pages and site_dir/site required")
     if not keys.get("site_name") or "nav" not in keys or not navigation:
         errors.append("PAGES CONFIG: site name or navigation missing")
-    if keys.get("theme") != "" or theme != {"name": "mkdocs", "highlightjs": "false"}:
+    base_theme = {key: value for key, value in theme.items() if key != "logo"}
+    if keys.get("theme") != "" or base_theme != {"name": "mkdocs", "highlightjs": "false"}:
         errors.append("PAGES CONFIG: approved offline theme required")
     return keys, navigation, errors
 
@@ -131,6 +132,25 @@ def check_pages(root: Path = ROOT) -> list[str]:
         return sorted(set(errors + ["PAGES CONFIG: missing or unreadable mkdocs.yml"]))
     _, nav, config_errors = parse_mkdocs(config)
     errors.extend(config_errors)
+    logo_candidates = [
+        "assets/brand/logo" + ext for ext in (".png", ".webp", ".jpg", ".jpeg")
+        if (root / "pages" / ("assets/brand/logo" + ext)).exists()
+        or (root / "pages" / ("assets/brand/logo" + ext)).is_symlink()
+    ]
+    if len(logo_candidates) > 1:
+        errors.append("PAGES LOGO: multiple programme logo formats")
+    expected_logo = logo_candidates[0] if len(logo_candidates) == 1 else None
+    if expected_logo:
+        logo_file = root / "pages" / expected_logo
+        if (logo_file.is_symlink() or not logo_file.is_file() or
+                expected_logo not in allowed or
+                hashlib.sha256(logo_file.read_bytes()).hexdigest() !=
+                approved_images.get(expected_logo)):
+            errors.append("PAGES LOGO: missing approval or incorrect SHA")
+    configured_logo = re.search(r"(?m)^  logo:\s*([^\n]+)\s*$", config)
+    actual_logo = configured_logo.group(1).strip() if configured_logo else None
+    if actual_logo != expected_logo:
+        errors.append("PAGES LOGO: MkDocs header must match approved local logo")
     if not nav or "index.md" not in nav or any(x not in allowed for x in nav):
         errors.append("PAGES CONFIG: navigation contains unapproved source")
 
