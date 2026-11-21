@@ -19,7 +19,8 @@
     "scientific_state",
     "owner_of_raw_data",
     "repository_visibility",
-    "repository_full_name"
+    "repository_full_name",
+    "manuscript_root"
   ],
   "properties": {
     "schema_version": {
@@ -78,6 +79,12 @@
       "type": [
         "string",
         "null"
+      ]
+    },
+    "manuscript_root": {
+      "enum": [
+        "manuscripts",
+        "papers"
       ]
     }
   }

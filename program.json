@@ -14,5 +14,6 @@
   "scientific_state": "scaffold",
   "owner_of_raw_data": false,
   "repository_visibility": "unconfigured",
-  "repository_full_name": null
+  "repository_full_name": null,
+  "manuscript_root": "manuscripts"
 }

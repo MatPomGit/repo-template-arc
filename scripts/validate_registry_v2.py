@@ -114,7 +114,10 @@ def validate_registry_v2(root,meta,papers,dependencies,project_repos,lines,safe_
             if not safe_path(path) or form not in ("latex","markdown"):
                 issues.append(f"Invalid manuscript path/format: {name}")
             elif mode=="local":
-                if form!="latex" or not path.startswith("manuscripts/") or not path.endswith("/main.tex"):
+                root_dir=meta.get("manuscript_root")
+                if (form!="latex" or root_dir not in ("manuscripts","papers") or
+                        not path.startswith(root_dir+"/") or
+                        not path.endswith("/"+name+"/main.tex")):
                     issues.append(f"Local manuscript path is not standard: {name}")
                 elif not file_inside(root,path):
                     issues.append(f"Local manuscript file missing or symlinked: {name}")

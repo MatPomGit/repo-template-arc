@@ -10,6 +10,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/"scripts"))
 from validate_repository import validate
+from validate_registry_v2 import PAPER_FIELDS, DEP_FIELDS
 
 def paper(mode="local"):
     return {"id":"MSC-CR-P05","title":"Prospective study","area":"ndd",
@@ -48,6 +49,40 @@ class RegistryV2Tests(unittest.TestCase):
         self.assertEqual([],validate(ROOT))
         with tempfile.TemporaryDirectory() as d:
             self.assertEqual([],validate(self.fixture(d)))
+
+    def test_legacy_papers_area_layout_is_supported(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=self.fixture(d)
+            meta=json.loads((root/"program.json").read_text())
+            meta["manuscript_root"]="papers"
+            self.write(root,"program.json",meta)
+            old=root/"manuscripts/MSC-CR-P05/main.tex"
+            new=root/"papers/ndd/MSC-CR-P05/main.tex"
+            new.parent.mkdir(parents=True)
+            old.rename(new)
+            content={"schema_version":2,"papers":[paper()]}
+            content["papers"][0]["manuscript"]["path"]="papers/ndd/MSC-CR-P05/main.tex"
+            self.write(root,"portfolio/papers.json",content)
+            self.assertEqual([],validate(root))
+
+    def test_wrong_id_in_local_folder_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=self.fixture(d)
+            alt=root/"manuscripts/MSC-OTHER-P01/main.tex"
+            alt.parent.mkdir(parents=True)
+            alt.write_text("draft")
+            obj=paper()
+            obj["manuscript"]["path"]="manuscripts/MSC-OTHER-P01/main.tex"
+            self.write(root,"portfolio/papers.json",{"schema_version":2,"papers":[obj]})
+            self.assertTrue(any("path is not standard" in e for e in validate(root)))
+
+    def test_local_repository_owner_must_match_full_name(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=self.fixture(d)
+            obj=paper()
+            obj["owner"]["repository"]="Other/arc-neuro"
+            self.write(root,"portfolio/papers.json",{"schema_version":2,"papers":[obj]})
+            self.assertTrue(any("Local owner must match" in e for e in validate(root)))
 
     def test_external_owner_registered(self):
         with tempfile.TemporaryDirectory() as d:
@@ -123,5 +158,14 @@ class RegistryV2Tests(unittest.TestCase):
         for name in ("program","papers","projects","dependencies"):
             cfg=json.loads((ROOT/"schemas"/(name+".v2.schema.json")).read_text())
             self.assertEqual(cfg["properties"]["schema_version"]["const"],2)
+        paper_cfg=json.loads((ROOT/"schemas/papers.v2.schema.json").read_text())
+        fields=set(paper_cfg["properties"]["papers"]["items"]["properties"])
+        self.assertEqual(fields,PAPER_FIELDS)
+        dependencies=json.loads((ROOT/"schemas/dependencies.v2.schema.json").read_text())
+        dep_fields=set(dependencies["properties"]["tools"]["items"]["properties"])
+        self.assertEqual(dep_fields,DEP_FIELDS)
+        program=json.loads((ROOT/"program.json").read_text())
+        cfg=json.loads((ROOT/"schemas/program.v2.schema.json").read_text())
+        self.assertEqual(set(program),set(cfg["required"]))
 
 if __name__=="__main__": unittest.main()
