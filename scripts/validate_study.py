@@ -4,6 +4,8 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+from _generator_io import safe_target
+from validate_registry_v2 import safe_path
 
 
 def validate_study(root: Path, relative: str, expected_id: str) -> list[str]:
@@ -11,18 +13,28 @@ def validate_study(root: Path, relative: str, expected_id: str) -> list[str]:
     try:
         import yaml
         from jsonschema import Draft202012Validator
+        from jsonschema.exceptions import SchemaError
     except ImportError:
         return ["STUDY_DEPENDENCIES_UNAVAILABLE: install requirements-research.txt"]
+    if not safe_path(relative) or not root.is_dir():
+        return ["STUDY_INVALID_PATH: " + str(relative)]
     path = root / relative
-    if not path.is_file() or path.is_symlink():
+    schema_path = root / "schemas/study.v1.schema.json"
+    try:
+        # Reject symlinked ancestors too, before reading either the study or schema.
+        safe_target(root, path)
+        safe_target(root, schema_path)
+    except (OSError, ValueError):
+        return ["STUDY_INVALID_PATH: " + relative]
+    if not path.is_file() or not schema_path.is_file():
         return ["STUDY_INVALID_PATH: " + relative]
     try:
-        if path.stat().st_size > 131072:
+        if path.stat().st_size > 131072 or schema_path.stat().st_size > 131072:
             return ["STUDY_TOO_LARGE: " + relative]
         data = yaml.safe_load(path.read_text(encoding="utf-8"))
-        schema = json.loads((root / "schemas/study.v1.schema.json").read_text(encoding="utf-8"))
+        schema = json.loads(schema_path.read_text(encoding="utf-8"))
         Draft202012Validator.check_schema(schema)
-    except (OSError, ValueError, yaml.YAMLError) as exc:
+    except (OSError, ValueError, UnicodeError, yaml.YAMLError, SchemaError) as exc:
         return ["STUDY_INVALID_FORMAT: " + relative + ": " + type(exc).__name__]
     errors = ["STUDY_SCHEMA: " + relative + " /" + "/".join(map(str, e.path)) + ": " + e.message
               for e in Draft202012Validator(schema).iter_errors(data)]
@@ -51,7 +63,6 @@ def main() -> int:
     parser.add_argument("--path",required=True,help="Relative study.yaml path")
     parser.add_argument("--paper-id",required=True)
     args=parser.parse_args()
-    from validate_registry_v2 import safe_path
     if not safe_path(args.path):
         parser.exit(2, "STUDY_INVALID_PATH\n")
     errors=validate_study(args.root,args.path,args.paper_id)

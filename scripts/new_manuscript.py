@@ -59,12 +59,50 @@ def create(root: Path, *, ident: str, title: str, area: str,
         raise ValueError("Invalid paper records")
     existing = [p for p in register["papers"] if p.get("id") == ident]
     if existing:
-        if (len(existing) == 1 and existing[0].get("title") == title
-                and existing[0].get("manuscript", {}).get("path") ==
-                str(files["main.tex"].relative_to(root))
-                and all(f.is_file() and not f.is_symlink() for f in files.values())):
+        from validate_repository import validate
+        from validate_study import validate_study
+        try:
+            import yaml
+        except ImportError as exc:
+            raise ValueError("Cannot verify existing manuscript without PyYAML") from exc
+        record = existing[0]
+        recorded_owner = record.get("owner")
+        recorded_manuscript = record.get("manuscript")
+        study_path = str(files["study.yaml"].relative_to(root))
+        matches = (
+            len(existing) == 1
+            and record.get("title") == title
+            and record.get("area") == area
+            and record.get("relation") == "primary"
+            and isinstance(recorded_owner, dict)
+            and recorded_owner.get("mode") == "local"
+            and recorded_owner.get("repository") == repository
+            and recorded_owner.get("project_id") is None
+            and isinstance(recorded_manuscript, dict)
+            and recorded_manuscript.get("format") == "latex"
+            and recorded_manuscript.get("path") == str(files["main.tex"].relative_to(root))
+            and record.get("study_plan") == study_path
+            and all(f.is_file() and f.stat().st_size > 0 for f in files.values())
+        )
+        if matches:
+            errors = validate_study(root, study_path, ident)
+            if errors:
+                matches = False
+            else:
+                try:
+                    current_study = yaml.safe_load(files["study.yaml"].read_text(encoding="utf-8"))
+                except (OSError, ValueError, yaml.YAMLError):
+                    matches = False
+                else:
+                    matches = isinstance(current_study, dict) and current_study.get("study_type") == study_type
+            if matches and authors is not None:
+                source_now = files["main.tex"].read_text(encoding="utf-8")
+                matches = r"\author{" + tex_escape(authors) + "}" in source_now
+            if matches:
+                matches = not validate(root)
+        if matches:
             return []
-        raise ValueError("MSC identifier already in use for different content")
+        raise ValueError("MSC identifier already in use for different or invalid content")
     if directory.exists() or directory.is_symlink():
         raise FileExistsError("Manuscript directory already exists")
 
