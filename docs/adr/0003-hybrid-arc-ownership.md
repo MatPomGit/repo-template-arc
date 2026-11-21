@@ -19,4 +19,4 @@ Wyłącznie odrębne MSC mnożą repozytoria; kopiowanie manuskryptów narusza j
 
 ## Konsekwencje
 
-Przejście z v1 na v2 jest zmianą kontraktu, realizowaną osobnym PR. ADR nie przenosi samodzielnie istniejących źródeł i nie stanowi zgody na publiczne ujawnienie treści. Przed akceptacją konieczne są testy i weryfikacja rzeczywistych projektów.
+Przejście z v1 na v2 jest zmianą kontraktu, realizowaną osobnym PR. Do wdrożenia rejestru v2 lokalne pozycje nie mogą być zapisywane w rejestrze v1 przez tworzenie fikcyjnych projektów. ADR nie przenosi samodzielnie istniejących źródeł i nie stanowi zgody na publiczne ujawnienie treści. W publicznym ARC commit manuskryptu, planu lub protokołu ujawnia ich zawartość i historię niezależnie od `pages/`; wymagane jest osobne potwierdzenie praw do udostępnienia. Przed akceptacją konieczne są testy i weryfikacja rzeczywistych projektów.

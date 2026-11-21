@@ -20,6 +20,10 @@ Lokalny plik `main.tex` niewpisany w v1 wymaga mapy `sources` z rzeczywistym tyt
 
 W obrębie jednego ARC nie mogą współistnieć dwa aktywne katalogi źródłowe `papers/` i `manuscripts/` bez uprzedniej normalizacji. Dopuszczona jest struktura `papers/<area>/<MSC-ID>/main.tex` i nowa `manuscripts/<MSC-ID>/main.tex`.
 
+## Spójność rejestru i dowodów
+
+Wpis każdej zależności zawiera dokładnie jeden niepusty identyfikator `paper_id` albo `project_id`. Drugi klucz musi być nieobecny, nie `null`. Lokalny `commit_sha` wiąże ścieżkę `main.tex` z historycznym drzewem Git, a `blob_sha` sprawdza konkretną zawartość. Brak wskazanego SHA oznacza `NOT_RUN`; brak obiektu w checkout oznacza `UNAVAILABLE`, nie `PASS`. Tożsamość repozytorium należy porównać z zewnętrznie potwierdzonym `GITHUB_REPOSITORY` (CLI: `--repo-full-name`).
+
 ## Ograniczenia bezpieczeństwa
 
 Tryby `inventory` i `plan` są read-only. `apply` wymaga exact SHA oraz czystego drzewa plików śledzonych przez Git. Zapis obejmuje pięć plików konfiguracyjnych/rejestrowych. Po zapisie narzędzie waliduje program; przy błędzie podejmuje próbę przywrócenia oryginałów. Nie zastępuje to kopii zapasowej oraz możliwości powrotu do SHA źródłowego. Nie uruchamiaj `apply` bez zweryfikowania aktualnej widoczności repozytorium i praw do ujawnienia samych plików w historii Git.

@@ -1,6 +1,8 @@
 """Pure offline ARC registry v2 checks. The v1 validator is retained for migration."""
 from __future__ import annotations
+import hashlib
 import re
+import subprocess
 from pathlib import Path
 
 MSC=re.compile(r"^MSC-[A-Z0-9]+(?:-[A-Z0-9]+)*$")
@@ -44,6 +46,44 @@ def file_inside(root, path):
         if current.is_symlink():
             return False
     return current.is_file()
+
+
+def verify_local_manuscript_provenance(root, path, commit_sha, blob_sha):
+    """Verify Git blob linkage offline; missing historical Git objects are UNAVAILABLE."""
+    issues=[]
+    if not file_inside(root,path):
+        return issues  # The path validator reports this separately.
+    if commit_sha is None:
+        if blob_sha is not None and SHA40.fullmatch(blob_sha):
+            raw=(root/path).read_bytes()
+            actual=hashlib.sha1(
+                b"blob "+str(len(raw)).encode("ascii")+b"\\0"+raw
+            ).hexdigest()
+            if actual!=blob_sha:
+                issues.append("Local manuscript blob SHA disagrees with current file: "+path)
+        return issues
+    if not SHA40.fullmatch(commit_sha):
+        return issues  # Syntax is reported separately.
+    if not (root/".git").exists():
+        return ["UNAVAILABLE local manuscript commit provenance (no Git metadata): "+path]
+    try:
+        result=subprocess.run(
+            ["git","-C",str(root),"ls-tree",commit_sha,"--",path],
+            capture_output=True,text=True,timeout=10,check=False,
+        )
+    except (OSError,subprocess.TimeoutExpired):
+        return ["UNAVAILABLE local manuscript commit provenance (Git check failed): "+path]
+    if result.returncode!=0 or not result.stdout.strip():
+        return ["UNAVAILABLE local manuscript commit provenance (commit/path missing): "+path]
+    match=re.fullmatch(
+        r"100(?:644|755) blob ([a-f0-9]{40})\\t"+re.escape(path)+r"\\n?",
+        result.stdout,
+    )
+    if match is None:
+        return ["Invalid committed manuscript Git object (expected regular blob): "+path]
+    if blob_sha is not None and SHA40.fullmatch(blob_sha) and match.group(1)!=blob_sha:
+        issues.append("Local manuscript blob SHA disagrees with pinned commit: "+path)
+    return issues
 
 
 def validate_registry_v2(root,meta,papers,dependencies,project_repos,lines,safe_url):
@@ -122,9 +162,11 @@ def validate_registry_v2(root,meta,papers,dependencies,project_repos,lines,safe_
                 issues.append(f"Invalid manuscript path/format: {name}")
             elif mode=="local":
                 root_dir=meta.get("manuscript_root")
-                if (form!="latex" or root_dir not in ("manuscripts","papers") or
-                        not path.startswith(root_dir+"/") or
-                        not path.endswith("/"+name+"/main.tex")):
+                expected=(
+                    f"manuscripts/{name}/main.tex" if root_dir=="manuscripts" else
+                    f"papers/{p.get('area')}/{name}/main.tex" if root_dir=="papers" else None
+                )
+                if form!="latex" or path!=expected:
                     issues.append(f"Local manuscript path is not standard: {name}")
                 elif not file_inside(root,path):
                     issues.append(f"Local manuscript file missing or symlinked: {name}")
@@ -132,6 +174,12 @@ def validate_registry_v2(root,meta,papers,dependencies,project_repos,lines,safe_
                 val=manuscript.get(field)
                 if val is not None and (not isinstance(val,str) or not SHA40.fullmatch(val)):
                     issues.append(f"Invalid manuscript {field}: {name}")
+            if (mode=="local" and safe_path(path) and form=="latex"
+                    and isinstance(manuscript.get("commit_sha"),(str,type(None)))
+                    and isinstance(manuscript.get("blob_sha"),(str,type(None)))):
+                issues.extend(verify_local_manuscript_provenance(
+                    root,path,manuscript.get("commit_sha"),manuscript.get("blob_sha")
+                ))
         plan=p.get("study_plan")
         if plan is not None and (not safe_path(plan) or not plan.endswith(".yaml")
                                   or not file_inside(root,plan)):
@@ -165,14 +213,18 @@ def validate_registry_v2(root,meta,papers,dependencies,project_repos,lines,safe_
                 continue
             if set(item)-DEP_FIELDS:
                 issues.append(f"Undeclared {group} dependency fields")
-            pid=item.get("project_id")
-            mid=item.get("paper_id")
-            if (pid is None)==(mid is None):
+            has_project="project_id" in item
+            has_paper="paper_id" in item
+            if has_project==has_paper:
                 issues.append(f"Dependency requires exactly one owner: {group}")
-            elif pid is not None and (not isinstance(pid,str) or pid not in project_repos):
-                issues.append(f"Unknown dependency project: {group}")
-            elif mid is not None and (not isinstance(mid,str) or mid not in paper_ids):
-                issues.append(f"Unknown dependency paper: {group}")
+            elif has_project:
+                pid=item["project_id"]
+                if not isinstance(pid,str) or not pid.strip() or pid not in project_repos:
+                    issues.append(f"Unknown dependency project: {group}")
+            else:
+                mid=item["paper_id"]
+                if not isinstance(mid,str) or not mid.strip() or mid not in paper_ids:
+                    issues.append(f"Unknown dependency paper: {group}")
             if not isinstance(item.get("ref"),str) or not item["ref"].strip():
                 issues.append(f"Invalid {group} dependency reference")
             sha=item.get("sha")
