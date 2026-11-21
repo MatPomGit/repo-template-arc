@@ -16,7 +16,7 @@ jobs:
   offline-arc-validation:
     if: ${{ github.event.repository.private == false }}
     runs-on: ubuntu-24.04
-    timeout-minutes: 6
+    timeout-minutes: 12
     env:
       REPO_VISIBILITY: public
     steps:
@@ -40,6 +40,12 @@ jobs:
           test "$actual_sha" = "$EXPECTED_SHA"
       - name: Install pinned research-schema dependencies
         run: python3 -m pip install --disable-pip-version-check --no-input -r requirements-research.txt
+      - name: Install minimal LaTeX toolchain for manuscript smoke test
+        run: |
+          sudo apt-get update -qq
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends latexmk texlive-latex-recommended lmodern
+          command -v latexmk
+          command -v pdflatex
       - name: Validate scaffold and verified repository visibility
         run: python3 -B scripts/validate_repository.py --phase scaffold --repo-visibility "$REPO_VISIBILITY" --repo-full-name "$GITHUB_REPOSITORY"
       - name: Validate documentation character budgets
