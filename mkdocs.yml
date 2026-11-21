@@ -8,3 +8,4 @@ theme:
 nav:
   - O programie: index.md
   - Projekty: projects.md
+  - Artykuły: articles.md

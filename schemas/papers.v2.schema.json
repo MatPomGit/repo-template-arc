@@ -205,6 +205,14 @@
                 }
               }
             ]
+          },
+          "public_summary": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 320
           }
         }
       }

@@ -5,7 +5,8 @@
   "mkdocs_config": "mkdocs.yml",
   "public_files": [
     "index.md",
-    "projects.md"
+    "projects.md",
+    "articles.md"
   ],
   "note": "All approved public files and rendered theme assets are reviewed and versioned; no implicit deployment.",
   "approved_theme_assets": {

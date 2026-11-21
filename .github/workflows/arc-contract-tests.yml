@@ -52,7 +52,8 @@ jobs:
         run: |
           set -euo pipefail
           python3 -B scripts/build_public_catalog.py
-          git diff --exit-code -- pages/projects.md
+          python3 -B scripts/build_article_catalog.py
+          git diff --exit-code -- pages/projects.md pages/articles.md
           python3 -B scripts/validate_pages.py
           python3 -B scripts/validate_documentation.py
       - name: Build reviewed public HTML with pinned MkDocs

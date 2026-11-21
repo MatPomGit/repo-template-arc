@@ -16,7 +16,8 @@ EVIDENCE={"submitted":"submission_receipt","accepted":"editorial_decision",
           "published":"publication_record"}
 PAPER_FIELDS={"id","title","area","research_state","publication_stage","relation","owner",
               "manuscript","study_plan","public_listing","doi","preprint_url",
-              "preregistration_url","publication_url","stage_evidence"}
+              "preregistration_url","publication_url","stage_evidence","public_summary"}
+REQUIRED_PAPER_FIELDS = PAPER_FIELDS - {"public_summary"}
 OWNER_FIELDS={"mode","repository","project_id"}
 MANUSCRIPT_FIELDS={"path","format","commit_sha","blob_sha"}
 DEP_FIELDS={"paper_id","project_id","ref","version","sha","role","contract_path",
@@ -54,7 +55,7 @@ def validate_registry_v2(root,meta,papers,dependencies,project_repos,lines,safe_
             continue
         ident=p.get("id")
         name=ident if isinstance(ident,str) else "?"
-        if set(p)!=PAPER_FIELDS:
+        if set(p)-PAPER_FIELDS or REQUIRED_PAPER_FIELDS-set(p):
             issues.append(f"Undeclared paper metadata or missing v2 fields: {name}")
         if not isinstance(ident,str) or not MSC.fullmatch(ident) or ident in paper_ids:
             issues.append(f"Invalid or duplicate MSC paper id: {name}")
@@ -71,6 +72,12 @@ def validate_registry_v2(root,meta,papers,dependencies,project_repos,lines,safe_
             issues.append(f"Unknown paper publication stage: {name}")
         if p.get("relation") not in ("primary","related"):
             issues.append(f"Invalid paper relation: {name}")
+        summary=p.get("public_summary")
+        if summary is not None and (not isinstance(summary,str) or len(summary)>320
+                                    or not summary.strip()):
+            issues.append(f"Invalid public paper summary: {name}")
+        if p.get("public_listing") is True and (not isinstance(summary,str) or not summary.strip()):
+            issues.append(f"Missing public summary for listed paper: {name}")
         if not isinstance(p.get("public_listing"),bool):
             issues.append(f"Invalid paper public_listing: {name}")
         elif p["public_listing"] and meta.get("repository_visibility")!="public":
