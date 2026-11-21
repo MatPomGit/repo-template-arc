@@ -1,6 +1,6 @@
 # ADR-0003: hybrydowa własność manuskryptów ARC
 
-**Status:** proposed  
+**Status:** accepted  
 **Data:** 2026-11-21
 
 ## Kontekst

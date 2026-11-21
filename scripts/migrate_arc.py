@@ -266,6 +266,31 @@ def _check_git(root: Path, expected: str):
         raise ValueError("Git HEAD could not be verified") from error
     if actual!=expected or dirty:
         raise ValueError("Git SHA mismatch or tracked working tree modified")
+    # The tracked working tree may be clean while source_files() discovers
+    # untracked main.tex files. Require every migrated source in expected HEAD.
+    sources = source_files(root)
+    if sources:
+        try:
+            tree = subprocess.run(
+                ["git", "-C", str(root), "ls-tree", "-r", "-z", expected,
+                 "--", "papers", "manuscripts"],
+                capture_output=True, timeout=15, check=False,
+            )
+        except (OSError, subprocess.TimeoutExpired) as error:
+            raise ValueError("Git manuscript tree could not be verified") from error
+        if tree.returncode:
+            raise ValueError("Git manuscript tree could not be verified")
+        committed = set()
+        for entry in tree.stdout.split(b"\0"):
+            if not entry:
+                continue
+            header, separator, name = entry.partition(b"\t")
+            if separator and re.fullmatch(rb"100(?:644|755) blob [0-9a-f]{40}", header):
+                committed.add(name.decode("utf-8"))
+        missing = sorted(set(sources) - committed)
+        if missing:
+            raise ValueError("Uncommitted manuscript source absent from expected SHA: "
+                             + ", ".join(missing[:5]))
 
 
 def execute(root: Path,mode: str,repository: str | None=None,

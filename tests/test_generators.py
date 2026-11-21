@@ -240,6 +240,22 @@ class GeneratorTests(unittest.TestCase):
                 self.assertFalse(list(self.root.rglob(".arc-stage-*")))
                 self.assertFalse(list(self.root.rglob(".arc-restore-*")))
 
+    def test_init_quotes_yaml_ambiguous_owner(self):
+        import yaml
+        for owner in ("true", "- Alice", "0123", 'Alice "Lab"'):
+            with self.subTest(owner=owner), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp) / "arc"
+                shutil.copytree(ROOT, root, ignore=shutil.ignore_patterns(
+                    ".git", "site", "__pycache__"))
+                initialize(root, programme="arc-neuro",
+                           repository="MatPomGit/arc-neuro", title="ARC Neuro",
+                           owner=owner, scope="Study of cognition",
+                           visibility="public", areas=["ndd"], apply=True)
+                state = yaml.safe_load((root / "PROJECT_STATE.yaml").read_text())
+                self.assertIsInstance(state["scientific_owner"], str)
+                self.assertEqual(owner, state["scientific_owner"])
+                self.assertEqual([], validate(root))
+
     def test_tex_special_characters_are_escaped(self):
         self.assertEqual(tex_escape("C#_% &"),r"C\#\_\% \&")
 

@@ -46,7 +46,7 @@ def initialize(root: Path, *, programme: str, repository: str,
     state = state_path.read_text(encoding="utf-8")
     substitutions = (
         ("programme: arc-REPLACE", "programme: " + programme),
-        ("scientific_owner: REPLACE_OWNER", "scientific_owner: " + owner),
+        ("scientific_owner: REPLACE_OWNER", "scientific_owner: " + json.dumps(owner, ensure_ascii=False)),
         ("phase: scaffold", "phase: planned"),
         ("updated: null", "updated: " + date.today().isoformat()),
         ("known_blockers:\n  - configure_programme_owner_scope_and_projects", "known_blockers: []"),
