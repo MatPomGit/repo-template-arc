@@ -61,7 +61,7 @@ class VersionContractTests(unittest.TestCase):
             original = json.loads(path.read_text(encoding="utf-8"))
             for invalid in ([], {}, None, 42):
                 with self.subTest(value=invalid):
-                    path.write_text(json.dumps(dict(original, template_version=invalid)) + "\\n", encoding="utf-8")
+                    path.write_text(json.dumps(dict(original, template_version=invalid)) + "\n", encoding="utf-8")
                     issues = validate(destination)
                     self.assertTrue(any("Unexpected program template version" in x for x in issues), issues)
 
