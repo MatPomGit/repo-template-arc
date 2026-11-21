@@ -59,9 +59,10 @@ def initialize(root: Path, *, programme: str, repository: str,
 
     readme_path = root / "README.md"
     readme = readme_path.read_text(encoding="utf-8")
-    readme = readme.replace("REPLACE_PROGRAM_NAME", title).replace("arc-REPLACE", programme)
+    readme = readme.replace("# ARC — szablon programu badawczego", "# " + title)
+    readme = readme.replace("**Typ:** program ARC (`arc-*`)", "**Program:** `" + programme + "`")
     readme = readme.replace(
-        "Zastąp ten akapit zwięzłym opisem pytań naukowych, kryterium przypisania manuskryptu i odrębności od innych ARC.",
+        "Zakres programu wynika z jego głównych pytań naukowych, a nie wyłącznie z zastosowanej aparatury czy oprogramowania. Programy ARC obejmują neuronaukę i psychoinformatykę, rzeczywistość rozszerzoną, robotykę oraz metody sztucznej inteligencji.",
         scope,
     )
     research_path = root / "RESEARCH.md"
