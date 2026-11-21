@@ -15,7 +15,9 @@ def safe_text(text:str)->str:
 
 def render(root:Path)->str:
     projects=json.loads((root/"portfolio/projects.json").read_text(encoding="utf-8")).get("projects",[])
-    policy=json.loads((root/"config/pages-policy.json").read_text(encoding="utf-8"))
+    policy_file=root/"config/pages-policy.json"
+    policy=(json.loads(policy_file.read_text(encoding="utf-8")) if policy_file.is_file()
+            else {"public_files": [], "approved_image_sha256": {}})
     public=[]
     for p in projects:
         if p.get("visibility")!="public" or p.get("public_listing") is not True:
