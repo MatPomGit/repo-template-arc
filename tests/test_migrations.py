@@ -72,6 +72,10 @@ class MigrationTests(unittest.TestCase):
         result=execute(self.root,"apply",repository="MatPomGit/arc-neuro",
                        expected_sha=sha)
         self.assertEqual(result["status"],"APPLIED")
+        migrated=json.loads((self.root/"program.json").read_text())
+        self.assertEqual(migrated["schema_version"],2)
+        self.assertEqual(migrated["template_version"],"1.0.0")
+        self.assertIn("template_version: 1.0.0", (self.root/"PROJECT_STATE.yaml").read_text())
         self.assertEqual([],validate(self.root))
         self.assertEqual(execute(self.root,"plan")["status"],"ALREADY_V2")
 
