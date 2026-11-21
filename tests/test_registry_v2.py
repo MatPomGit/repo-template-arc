@@ -211,7 +211,7 @@ class RegistryV2Tests(unittest.TestCase):
                 self.write(root,path,obj)
             state=root/"PROJECT_STATE.yaml"
             state.write_text(state.read_text().replace("schema_version: 2","schema_version: 1")
-                             .replace("template_version: 2.0.0","template_version: 1.0.0")
+                             .replace("template_version: 0.1.0","template_version: 1.0.0")
                              .replace("papers_registered: 1","papers_registered: 0")
                              .replace("phase: active","phase: planned"))
             self.assertEqual([],validate(root))

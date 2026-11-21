@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "template_version": "2.0.0",
+  "template_version": "0.1.0",
   "type": "arc-program",
   "programme": "arc-REPLACE",
   "title": "REPLACE_PROGRAM_NAME",

@@ -43,7 +43,7 @@ class MigrationTests(unittest.TestCase):
         state=self.root/"PROJECT_STATE.yaml"
         body=state.read_text()
         body=body.replace("schema_version: 2","schema_version: 1")
-        body=body.replace("template_version: 2.0.0","template_version: 1.0.0")
+        body=body.replace("template_version: 0.1.0","template_version: 1.0.0")
         body=body.replace("programme: arc-REPLACE","programme: arc-neuro")
         state.write_text(body)
         self.assertEqual([],validate(self.root),"Legacy v1 should remain valid")

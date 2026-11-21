@@ -1,15 +1,10 @@
 # Historia zmian
 
-## ARC Template 2.0.0 — faza E1 (prace przedwydaniowe)
+## Zmiany robocze (bez wydania szablonu)
 
-- Dodano test końcowy CLI w osobnej kopii ARC, weryfikujący publiczne i prywatne inicjalizacje, generowanie MSC, walidację, katalog i brak niezamierzonego ujawnienia.
-- Migrator odrzuca niekompletne rejestry v2 zamiast zwracać fałszywe `ALREADY_V2`.
-- Dodano listę kontroli przedwydaniowych; brak zgody na tagowanie lub GitHub Release.
-- `VERSION` pozostaje niezależną wersją migawki programu badawczego.
+- Dodano izolowany test pełnego przebiegu CLI oraz kontrolę braku niezamierzonej publikacji MSC.
+- Migrator odrzuca niespójne rejestry schematu 2 zamiast zwracać fałszywe `ALREADY_V2`.
+- Oddzielono numer schematu danych od numeru rewizji szablonu. Starsze metadane pozostają obsługiwane.
+- Numer `0.1.0` oznacza roboczą rewizję szablonu, nie dowodzi istnienia tagu ani GitHub Release.
 
-
-## 0.1.0 — szkielet projektu
-
-- Skopiowano ARC Template v1.0.0.
-- Nie przypisano jeszcze projektów ani manuskryptów.
-- Brak twierdzenia o zakończonej walidacji naukowej.
+Nie ma potwierdzonej historii wydań szablonu 1.x ani 2.x. Nie odtwarzamy fikcyjnych wydań.

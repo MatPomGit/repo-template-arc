@@ -2,7 +2,7 @@
 
 **Rodzaj repozytorium:** program naukowy `arc-*`  
 **Program:** `arc-REPLACE`  
-**Wersja szablonu:** `2.0.0`  
+**Rewizja szablonu (robocza):** `0.1.0`; **schemat metadanych programu:** `2`  
 **Autor podstawowy:** Mateusz Pomianek; dodatkowi współautorzy po potwierdzeniu wkładu  
 **Stan naukowy:** indeks planowany, bez potwierdzonych wyników empirycznych
 
@@ -47,7 +47,7 @@ Zobacz [niezależny audyt szablonu ARC z 2026-11-19](reviews/2026-11-19-template
 
 Zintegrowany test `tests/test_lifecycle_cli.py` uruchamia prawdziwe komendy CLI w izolowanej kopii szablonu: inicjalizację ARC, stworzenie manuskryptu i `study.yaml`, walidację, generatory katalogu oraz próbę powtórzenia operacji. Sprawdza też, czy tryb `ALREADY_V2` nie maskuje nieprawidłowego rejestru. Wynik tego testu **nie** zastępuje niezależnego review, zasad ochrony `main` ani decyzji o wydaniu.
 
-[Lista kontrolna przygotowania wersji 2.0.0](docs/operations/release-readiness.md) rozróżnia wersję szablonu od wersji wydania danego programu ARC i nie uruchamia GitHub Release.
+[Lista kontrolna przed wydaniem szablonu](docs/operations/release-readiness.md) rozróżnia wersję szablonu od wersji wydania danego programu ARC i nie uruchamia GitHub Release.
 
 ## Katalog artykułów i migracja
 

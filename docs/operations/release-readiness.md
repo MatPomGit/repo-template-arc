@@ -1,6 +1,6 @@
-# ARC Template 2.0.0: kontrole fazy E
+# Kontrole przed wydaniem szablonu ARC
 
-Szablon posiada kontrakt `template_version: 2.0.0`. Plik `VERSION` dotyczy niezależnego **wydania programu badawczego**, a nie automatycznego nadania nowego numeru szablonowi. Nie przestawiaj `VERSION` na 2.0.0 tylko po to, by zgadzał się z numerem schematu. Samo CI nie wykonuje GitHub Release.
+`schema_version: 2` identyfikuje format metadanych programu i rejestrów. `template_version: 0.1.0` identyfikuje roboczą rewizję szablonu, a nie wydanie schematu. W starszych repozytoriach dopuszczamy zastane wartości `template_version: 2.0.0` (schemat 2) oraz `1.0.0` (schemat 1) bez automatycznej zmiany ich metadanych. Plik `VERSION` dotyczy odrębnej wersji programu badawczego. Żadna z tych wartości nie potwierdza utworzenia tagu ani GitHub Release. Samo CI nie wykonuje GitHub Release.
 
 ## E1. Pełny przebieg funkcjonalny
 
