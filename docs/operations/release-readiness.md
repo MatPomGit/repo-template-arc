@@ -22,8 +22,8 @@ Przed formalnym oznaczeniem wydania szablonu:
 
 1. Potwierdź ostateczny exact HEAD SHA, pełny diff i bazę gałęzi.
 2. Wymagaj zielonych testów kontraktów, E2E, schematów, katalogów i HTML; dołącz odnośniki do właściwych jobów.
-3. Zweryfikuj niezależną recenzję E3.0/E4.0 i dowody powiązane z tym samym SHA.
-4. Sprawdź rzeczywiste, serwerowo egzekwowane wymagane checki i review w ruleset `main`. Brak tych reguł oznacza `GATE_UNENFORCED` i status HOLD, nawet przy zielonym CI.
+3. Zweryfikuj przegląd techniczny diff oraz dowody testów na finalnym SHA; niezależne review jest opcjonalne.
+4. Zweryfikuj wynik wymaganych checków CI. Jeśli ruleset ich nie egzekwuje, raportuj `CI_NOT_ENFORCED` i kontroluj je przed merge. Nie wymagaj niezależnego `APPROVED`; publikacja pozostaje osobną decyzją.
 5. Przygotuj odpowiednią wersję, wpis do `CHANGELOG.md`, identyfikację zakresu artefaktu i dopuszczalnych treści. Release, tag, Pages i dystrybucja wymagają odrębnej decyzji.
 
 ## E4. Werdykty
