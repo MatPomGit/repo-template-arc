@@ -165,8 +165,8 @@ class MigrationTests(unittest.TestCase):
 
     def test_rolls_back_when_postvalidation_fails(self):
         # Existing source lacking a required page still causes post-migration failure.
-        sha=self.git_init()
         (self.root/"pages/index.md").unlink()
+        sha=self.git_init()
         before=(self.root/"program.json").read_text()
         with self.assertRaisesRegex(ValueError,"Post-migration validation failed"):
             execute(self.root,"apply",repository="MatPomGit/arc-neuro",expected_sha=sha)

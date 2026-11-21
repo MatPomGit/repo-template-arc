@@ -163,7 +163,9 @@ def validate(root: Path, phase: str = "scaffold") -> list[str]:
                     "schemas/study.v1.schema.json", "scripts/init_arc.py",
                     "scripts/new_manuscript.py", "scripts/validate_study.py",
                     "scripts/_generator_io.py", "requirements-research.txt",
-                    "tests/test_generators.py"):
+                    "tests/test_generators.py", "scripts/build_article_catalog.py",
+                    "scripts/migrate_arc.py", "tests/test_article_catalog.py",
+                    "tests/test_migrations.py"):
             f = root / rel
             if not f.is_file() or f.is_symlink() or not f.read_bytes().strip():
                 issues.append("Missing v2 schema: " + rel)
