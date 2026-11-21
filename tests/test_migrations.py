@@ -173,15 +173,31 @@ class MigrationTests(unittest.TestCase):
         self.assertEqual(before,(self.root/"program.json").read_text())
         self.assertEqual(json.loads(before)["schema_version"],1)
 
-    def test_inventory_and_already_v2(self):
+    def test_inventory_and_incomplete_v2_cannot_claim_success(self):
         info=execute(self.root,"inventory")
         self.assertEqual(info["status"],"INVENTORY")
         self.assertEqual(info["registered_papers"],0)
         meta=json.loads((self.root/"program.json").read_text())
         meta["schema_version"]=2
         self.save("program.json",meta)
-        result=execute(self.root,"plan",repository="MatPomGit/arc-neuro")
-        self.assertEqual(result["status"],"ALREADY_V2")
+        for mode in ("plan","apply"):
+            with self.subTest(mode=mode):
+                before=(self.root/"program.json").read_bytes()
+                result=execute(self.root,mode,repository="MatPomGit/arc-neuro")
+                self.assertEqual(result["status"],"BLOCKED")
+                self.assertTrue(result["blockers"])
+                self.assertEqual(before,(self.root/"program.json").read_bytes())
+
+    def test_already_v2_requires_valid_full_repository(self):
+        sha=self.git_init()
+        result=execute(self.root,"apply",repository="MatPomGit/arc-neuro",
+                       expected_sha=sha)
+        self.assertEqual(result["status"],"APPLIED")
+        self.assertEqual(execute(self.root,"plan")["status"],"ALREADY_V2")
+        bad=self.root/"portfolio/papers.json"
+        bad.write_text('{"schema_version":2,"papers":[{"id":"MSC-TEST-P01"}]}')
+        self.assertEqual(execute(self.root,"plan")["status"],"BLOCKED")
+        self.assertEqual(execute(self.root,"apply")["status"],"BLOCKED")
 
 
 if __name__=="__main__":

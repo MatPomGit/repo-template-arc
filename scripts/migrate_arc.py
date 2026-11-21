@@ -280,6 +280,11 @@ def execute(root: Path,mode: str,repository: str | None=None,
     if mode not in ("plan","apply"):
         raise ValueError("Unsupported migration mode")
     if report["schema_version"]==2:
+        # A schema marker does not certify a completed migration.
+        # Fail closed when registries, state, sources or publication boundaries disagree.
+        issues=validate(root)
+        if issues:
+            return {"status":"BLOCKED",**report,"blockers":issues}
         return {"status":"ALREADY_V2",**report}
     if not repository:
         raise ValueError("Canonical repository is required")
