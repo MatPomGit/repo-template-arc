@@ -172,9 +172,9 @@ def validate(root: Path, phase: str = "scaffold", verified_repository: str | Non
     schema_version = meta.get("schema_version")
     if type(schema_version) is not int or schema_version not in (1, 2) or meta.get("type") != "arc-program":
         issues.append("Invalid program.json schema_version/type")
-    expected_version = "2.0.0" if schema_version == 2 else "1.0.0"
-    if meta.get("template_version") != expected_version:
-        issues.append("Unexpected program template version")
+    allowed_template_versions = {"0.1.0", "2.0.0"} if schema_version == 2 else {"1.0.0"}
+    if meta.get("template_version") not in allowed_template_versions:
+        issues.append("Unexpected program template version for data schema")
     if schema_version == 2:
         for rel, obj in (("portfolio/projects.json", projects),
                          ("portfolio/papers.json", papers),
