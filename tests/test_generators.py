@@ -50,6 +50,14 @@ class GeneratorTests(unittest.TestCase):
         self.init()
         self.assertEqual([],validate(self.root))
 
+    def test_initialized_readme_is_reader_facing(self):
+        self.init()
+        readme = (self.root / "README.md").read_text(encoding="utf-8")
+        self.assertIn("# ARC Neuro", readme)
+        self.assertIn("Study of cognition", readme)
+        self.assertNotIn("stanowi szablon", readme)
+        self.assertNotIn("REPLACE", readme)
+
     def test_cannot_reinitialize_an_arc(self):
         self.init()
         with self.assertRaisesRegex(ValueError,"re-initialize"):
