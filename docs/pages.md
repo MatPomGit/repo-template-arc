@@ -49,3 +49,14 @@ Na publicznej stronie **nie wolno umieszczać** instrukcji dla agentów AI, prom
 
 W przypadku wycieku zatrzymaj publikację, zabezpiecz dowody i wycofaj witrynę, następnie wykonaj procedurę [reagowania na incydent](security/incident-response.md). Usunięcie pliku z aktualnego builda nie usuwa kopii w pamięci przeglądarek i archiwach. **Wydanie migawki programu ARC jest odrębne od publikacji witryny:** zasady zawiera [procedura wydań](releases.md).
 
+
+
+## 6. Identyfikacja wizualna programu i projektów
+
+Nagłówek każdej strony programu używa logo całego ARC, jeżeli jest dostępne w lokalnej, zatwierdzonej postaci `pages/assets/brand/logo.png` (również WebP lub JPEG). Obsługuje to opcja `theme.logo` w MkDocs. Bez logo widoczny pozostaje tytuł programu. Nie stosuje się zastępczego ani fikcyjnego znaku.
+
+Wpis publicznego projektu w katalogu może użyć jego własnego znaku `pages/assets/projects/<project_id>.png` (WebP/JPEG również obsługiwane). Znak jest przypisany do identyfikatora projektu, a nie do samego programu. Logo może pojawić się wyłącznie przy projekcie z `visibility=public` i `public_listing=true`, z poprawnym publicznym adresem. Samo występowanie grafiki w innym repozytorium nie uprawnia do kopiowania jej na Pages.
+
+Każdy obraz musi znajdować się w jawnej liście `config/pages-policy.json:public_files`, z sumą SHA-256 w `approved_image_sha256` odpowiadającą dokładnie opublikowanym bajtom. Kontrolę metadanych i kompletności przeprowadzają walidatory Pages. Dla logo programu `python scripts/site_branding.py --apply` ustawia lokalną ścieżkę w `mkdocs.yml`. Bez tej operacji CI zatrzyma niespójny nagłówek. W CI używany jest tryb tylko do odczytu, `python scripts/site_branding.py`. Publikacja pozostaje osobną czynnością.
+
+Główne README opisuje program i jest przeznaczone dla czytelników zewnętrznych. Komendy konfiguracji, instrukcje redakcyjne, procedury dla agentów i kryteria wewnętrznego przeglądu należą do `TEMPLATE_SETUP.md`, `docs/` oraz `AGENTS.md`, nie do publicznego opisu programu.
