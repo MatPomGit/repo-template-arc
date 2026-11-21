@@ -200,5 +200,21 @@ class MigrationTests(unittest.TestCase):
         self.assertEqual(execute(self.root,"apply")["status"],"BLOCKED")
 
 
+    def test_apply_rejects_untracked_local_manuscript_source(self):
+        sha = self.git_init()
+        source = self.local()  # Created after commit; tracked Git files remain clean.
+        mapping = {"schema_version": 1, "sources": {
+            source: {"mode": "local", "title": "Verified prospective study",
+                     "area": "ndd"}}}
+        self.assertEqual("READY", execute(
+            self.root, "plan", repository="MatPomGit/arc-neuro",
+            mapping=mapping)["status"])
+        before = (self.root / "program.json").read_bytes()
+        with self.assertRaisesRegex(ValueError, "Uncommitted manuscript source"):
+            execute(self.root, "apply", repository="MatPomGit/arc-neuro",
+                    mapping=mapping, expected_sha=sha, confirm_public_sources=True)
+        self.assertEqual(before, (self.root / "program.json").read_bytes())
+
+
 if __name__=="__main__":
     unittest.main()
