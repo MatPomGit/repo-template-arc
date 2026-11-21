@@ -25,12 +25,12 @@
           "paper_id": {
             "type": "string",
             "minLength": 1,
-            "pattern": "\\\\S"
+            "pattern": "\\S"
           },
           "project_id": {
             "type": "string",
             "minLength": 1,
-            "pattern": "\\\\S"
+            "pattern": "\\S"
           },
           "ref": {
             "type": "string"
@@ -108,12 +108,12 @@
           "paper_id": {
             "type": "string",
             "minLength": 1,
-            "pattern": "\\\\S"
+            "pattern": "\\S"
           },
           "project_id": {
             "type": "string",
             "minLength": 1,
-            "pattern": "\\\\S"
+            "pattern": "\\S"
           },
           "ref": {
             "type": "string"
@@ -191,12 +191,12 @@
           "paper_id": {
             "type": "string",
             "minLength": 1,
-            "pattern": "\\\\S"
+            "pattern": "\\S"
           },
           "project_id": {
             "type": "string",
             "minLength": 1,
-            "pattern": "\\\\S"
+            "pattern": "\\S"
           },
           "ref": {
             "type": "string"
