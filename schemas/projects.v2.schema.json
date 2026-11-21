@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ARC project registry v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "projects"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 2
+    },
+    "projects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "title",
+          "repository",
+          "url",
+          "role",
+          "primary_program",
+          "line",
+          "status",
+          "visibility",
+          "public_listing",
+          "default_branch",
+          "snapshot_sha",
+          "pages_url",
+          "submodule_path"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "repository": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "role": {
+            "enum": [
+              "primary",
+              "related"
+            ]
+          },
+          "primary_program": {
+            "type": "string"
+          },
+          "line": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "planned",
+              "active",
+              "paused",
+              "archived"
+            ]
+          },
+          "visibility": {
+            "enum": [
+              "public",
+              "private"
+            ]
+          },
+          "public_listing": {
+            "type": "boolean"
+          },
+          "default_branch": {
+            "type": "string"
+          },
+          "snapshot_sha": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pages_url": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "submodule_path": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

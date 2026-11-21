@@ -42,7 +42,7 @@ class ARCContractTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             root=Path(d)
             (root/"portfolio").mkdir()
-            (root/"portfolio/projects.json").write_text(json.dumps({"projects":[{
+            (root/"portfolio/projects.json").write_text(json.dumps({"schema_version":2,"projects":[{
                 **candidate(),"public_listing":True,"pages_url":"https://internal.example/private"
             }]}),encoding="utf-8")
             result=render(root)
@@ -55,7 +55,7 @@ class ARCContractTests(unittest.TestCase):
             for folder in ("portfolio", "pages", "docs", "config"):
                 (root/folder).mkdir()
             (root/"portfolio/projects.json").write_text(
-                json.dumps({"projects":[]}), encoding="utf-8")
+                json.dumps({"schema_version":2,"projects":[]}), encoding="utf-8")
             (root/"config/pages-policy.json").write_text(
                 json.dumps({"public_files":["index.md","projects.md"]}), encoding="utf-8")
             output=write_catalog(root)
@@ -69,7 +69,7 @@ class ARCContractTests(unittest.TestCase):
             for folder in ("portfolio", "pages", "config"):
                 (root/folder).mkdir()
             (root/"portfolio/projects.json").write_text(
-                json.dumps({"projects":[]}), encoding="utf-8")
+                json.dumps({"schema_version":2,"projects":[]}), encoding="utf-8")
             (root/"config/pages-policy.json").write_text(
                 json.dumps({"public_files":["index.md"]}), encoding="utf-8")
             with self.assertRaisesRegex(SystemExit, "not allowlisted"):
@@ -89,7 +89,7 @@ class ARCContractTests(unittest.TestCase):
             meta["programme"]="arc-neuro"
             (dst/"program.json").write_text(json.dumps(meta),encoding="utf-8")
             (dst/"areas/index.json").write_text(json.dumps({"lines":[{"id":"ndd","title":"NDD"}]}),encoding="utf-8")
-            (dst/"portfolio/projects.json").write_text(json.dumps({"projects":[candidate(),candidate()]}),encoding="utf-8")
+            (dst/"portfolio/projects.json").write_text(json.dumps({"schema_version":2,"projects":[candidate(),candidate()]}),encoding="utf-8")
             self.assertTrue(any("duplicate project" in x.lower() for x in validate(dst,"scaffold")))
 
     def test_public_arc_rejects_private_metadata_even_if_hidden_from_pages(self):
@@ -105,7 +105,7 @@ class ARCContractTests(unittest.TestCase):
             (dst / "areas/index.json").write_text(
                 json.dumps({"lines": [{"id": "ndd", "title": "NDD"}]}), encoding="utf-8")
             (dst / "portfolio/projects.json").write_text(
-                json.dumps({"projects": [candidate()]}), encoding="utf-8")
+                json.dumps({"schema_version":2,"projects": [candidate()]}), encoding="utf-8")
             issues = validate(dst, "scaffold")
             self.assertTrue(any("Private project metadata unsafe" in x for x in issues))
 
@@ -122,7 +122,7 @@ class ARCContractTests(unittest.TestCase):
             (dst / "areas/index.json").write_text(
                 json.dumps({"lines": [{"id": "ndd", "title": "NDD"}]}), encoding="utf-8")
             (dst / "portfolio/projects.json").write_text(
-                json.dumps({"projects": [candidate()]}), encoding="utf-8")
+                json.dumps({"schema_version":2,"projects": [candidate()]}), encoding="utf-8")
             state = dst / "PROJECT_STATE.yaml"
             state.write_text(state.read_text().replace("programme: arc-REPLACE", "programme: arc-neuro")
                              .replace("projects_registered: 0", "projects_registered: 1")
@@ -141,7 +141,7 @@ class ARCContractTests(unittest.TestCase):
             (dst / "areas/index.json").write_text(
                 json.dumps({"lines": [{"id": "ndd", "title": "NDD"}]}), encoding="utf-8")
             (dst / "portfolio/projects.json").write_text(
-                json.dumps({"projects": [candidate()]}), encoding="utf-8")
+                json.dumps({"schema_version":2,"projects": [candidate()]}), encoding="utf-8")
             self.assertTrue(any("Set repository_visibility" in x for x in validate(dst)))
 
     def test_unconfigured_empty_template_accepts_public_ci(self):

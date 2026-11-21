@@ -1,8 +1,15 @@
-# Kanoniczne rejestry programu
+# Kanoniczne rejestry programu ARC (v2)
 
-- `projects.json`: lista niezależnych projektów, także istniejących pod dawnymi nazwami. Pola każdego wpisu: `id`, `title`, `repository`, `url`, `role` (`primary`/`related`), `primary_program`, `line`, `status`, `visibility`, `public_listing`, `default_branch`, `snapshot_sha`, `pages_url`, `submodule_path`.
-- `papers.json`: `id`, `title`, `owner_project_id`, `canonical_repository`, `manuscript_path`, `stage`, `doi`, `preprint_url`, `preregistration_url`. Główny `owner_project_id` jest dokładnie jeden.
-- `dependencies.json`: grupy `tools`, `equipment`, `datasets`. Rekord zawiera `project_id`, `ref` i — zależnie od kategorii — wersję/commit, `equipment_id`, `contract_path` albo manifest/checksum. Brak duplikacji kontraktów aparatury.
-- `areas/index.json`: lista `lines` z `id`, `title`, `description`. W ARC Neuro należy rozważyć `ndd`, `affect`, `cognition`, `social`, `psychometrics`; nie robić z NDD piątego ARC.
+`portfolio/papers.json` jest jedynym **edytowalnym lokalnym rejestrem artykułów ARC**. Zawiera: identyfikator MSC, tytuł, linię badawczą, `research_state`, `publication_stage`, `relation`, `owner`, `manuscript`, `study_plan`, zgodę na umieszczenie w katalogu, DOI, odnośniki i `stage_evidence`. Status naukowy i etap publikacji są oddzielne.
 
-**Publiczne strony** powstają wyłącznie z projektów `public_listing=true`, `visibility=public` i potwierdzoną witryną HTTPS. Repo prywatne nie powinny być indeksowane publicznie bez wyraźnej decyzji.
+- `owner.mode=local`: kanoniczne źródło LaTeX znajduje się w tym ARC, `owner.project_id=null`; nie rejestruj fikcyjnego `msc-*`.
+- `owner.mode=external`: `project_id` wskazuje projekt z `portfolio/projects.json`, a `owner.repository` musi odpowiadać jego repozytorium. Lokalny plan nie jest kopią kanonicznego manuskryptu.
+- `relation=related`: niezależny program wskazuje pozycję innego właściciela. Globalną unikalność ID kontroluje Research Autopilot.
+- `portfolio/dependencies.json`: każda zależność w `tools`, `equipment` lub `datasets` wskazuje **dokładnie jedno** z `paper_id` albo `project_id`. Bez duplikowania kodu i kart aparatury.
+- `areas/index.json`: lista zdefiniowanych linii programu. Same metody (np. eye tracking) nie stanowią osobnych ARC.
+
+`PROJECT_STATE.yaml` przechowuje stan operacyjny i kontrolne liczniki zgodne z rejestrami. Stare v1 obsługuje walidator kompatybilności; przejście wymaga migratora (faza C). Nie twórz osobnego ręcznie utrzymywanego `manuscript_register.md` ani `publication_register.md`.
+
+Publiczna strona jest niezależną, dopuszczaną projekcją `pages/`. `public_listing=true` nie zastępuje zgody na wdrożenie. Publiczne ARC nie może zawierać prywatnych metadanych nawet poza Pages.
+
+Schematy: [program](../schemas/program.v2.schema.json), [projekty](../schemas/projects.v2.schema.json), [artykuły](../schemas/papers.v2.schema.json), [zależności](../schemas/dependencies.v2.schema.json).

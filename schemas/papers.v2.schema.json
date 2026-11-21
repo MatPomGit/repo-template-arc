@@ -1,0 +1,213 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ARC manuscript registry v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "papers"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 2
+    },
+    "papers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "title",
+          "area",
+          "research_state",
+          "publication_stage",
+          "relation",
+          "owner",
+          "manuscript",
+          "study_plan",
+          "public_listing",
+          "doi",
+          "preprint_url",
+          "preregistration_url",
+          "publication_url",
+          "stage_evidence"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^MSC-[A-Z0-9]+(?:-[A-Z0-9]+)*$"
+          },
+          "title": {
+            "type": "string"
+          },
+          "area": {
+            "type": "string"
+          },
+          "research_state": {
+            "enum": [
+              "planned",
+              "active",
+              "paused",
+              "completed",
+              "deferred",
+              "archived"
+            ]
+          },
+          "publication_stage": {
+            "enum": [
+              "concept",
+              "protocol",
+              "preregistered",
+              "collection",
+              "analysis",
+              "draft",
+              "submitted",
+              "accepted",
+              "published",
+              "archived",
+              "withdrawn"
+            ]
+          },
+          "relation": {
+            "enum": [
+              "primary",
+              "related"
+            ]
+          },
+          "owner": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "mode",
+              "repository",
+              "project_id"
+            ],
+            "properties": {
+              "mode": {
+                "enum": [
+                  "local",
+                  "external"
+                ]
+              },
+              "repository": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"
+              },
+              "project_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "manuscript": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "path",
+                  "format"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "format": {
+                    "enum": [
+                      "latex",
+                      "markdown"
+                    ]
+                  },
+                  "commit_sha": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "blob_sha": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          "study_plan": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "public_listing": {
+            "type": "boolean"
+          },
+          "doi": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "preprint_url": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "preregistration_url": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "publication_url": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "stage_evidence": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "kind",
+                  "sha256",
+                  "checked_on"
+                ],
+                "properties": {
+                  "kind": {
+                    "enum": [
+                      "submission_receipt",
+                      "editorial_decision",
+                      "publication_record"
+                    ]
+                  },
+                  "sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "checked_on": {
+                    "type": "string",
+                    "format": "date"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}
