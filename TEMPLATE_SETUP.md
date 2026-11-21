@@ -1,4 +1,4 @@
-# Konfiguracja ARC Template v2.0.0
+# Konfiguracja szablonu programu ARC (rewizja robocza 0.1.0)
 
 Dla migracji programu zastosuj [procedurę v1 → v2](docs/migrations/schema-v2.md) z exact SHA i bez automatycznego przenoszenia źródeł. Dla nowego repozytorium preferuj `scripts/init_arc.py` zamiast ręcznych edycji wielu plików. Generator i `scripts/new_manuscript.py` domyślnie działają w trybie dry-run; zapis wymaga jawnego `--apply`. Oba są przeznaczone do pracy w zatwierdzonym lokalnym checkout, bez uruchamiania kodu z nieznanych źródeł.
 
