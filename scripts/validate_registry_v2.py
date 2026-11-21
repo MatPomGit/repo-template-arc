@@ -21,6 +21,7 @@ PAPER_FIELDS={"id","title","area","research_state","publication_stage","relation
               "preregistration_url","publication_url","stage_evidence","public_summary"}
 REQUIRED_PAPER_FIELDS = PAPER_FIELDS - {"public_summary"}
 OWNER_FIELDS={"mode","repository","project_id"}
+REDACTED_OWNER_FIELDS=OWNER_FIELDS|{"redacted"}
 MANUSCRIPT_FIELDS={"path","format","commit_sha","blob_sha"}
 DEP_FIELDS={"paper_id","project_id","ref","version","sha","role","contract_path",
             "validation_status","notes"}
@@ -125,13 +126,23 @@ def validate_registry_v2(root,meta,papers,dependencies,project_repos,lines,safe_
 
         owner=p.get("owner")
         mode=None
-        if not isinstance(owner,dict) or set(owner)!=OWNER_FIELDS:
+        redacted=(isinstance(owner,dict)
+                  and set(owner)==REDACTED_OWNER_FIELDS
+                  and owner.get("redacted") is True)
+        if not isinstance(owner,dict) or (set(owner)!=OWNER_FIELDS and not redacted):
             issues.append(f"Invalid paper canonical owner: {name}")
         else:
             mode=owner.get("mode")
             r=owner.get("repository")
             pid=owner.get("project_id")
-            if not isinstance(r,str) or not REPO.fullmatch(r):
+            if redacted:
+                if (mode!="external" or r is not None or pid is not None
+                        or p.get("relation")!="related"
+                        or p.get("public_listing") is not False
+                        or p.get("manuscript") is not None
+                        or p.get("study_plan") is not None):
+                    issues.append(f"Invalid redacted external reference: {name}")
+            elif not isinstance(r,str) or not REPO.fullmatch(r):
                 issues.append(f"Invalid canonical repository: {name}")
             if mode=="local":
                 if pid is not None or p.get("relation")!="primary":
@@ -145,7 +156,7 @@ def validate_registry_v2(root,meta,papers,dependencies,project_repos,lines,safe_
                 if meta.get("repository_visibility")=="unconfigured":
                     issues.append(f"Configure ARC visibility before local manuscript: {name}")
             elif mode=="external":
-                if not isinstance(pid,str) or project_repos.get(pid)!=r:
+                if not redacted and (not isinstance(pid,str) or project_repos.get(pid)!=r):
                     issues.append(f"Unknown canonical project for paper: {name}")
             else:
                 issues.append(f"Unknown manuscript ownership mode: {name}")
