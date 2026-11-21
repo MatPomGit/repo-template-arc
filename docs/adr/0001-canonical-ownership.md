@@ -9,7 +9,7 @@ Programy badawcze ARC mogą wykorzystywać wspólne metody, aparaturę i oprogra
 
 ## Propozycja
 
-Jeden manuskrypt ma jedno `owner_project_id` i repozytorium kanoniczne, a programy powiązane używają odnośników `related`. ARC nie utrzymuje źródłowych danych, kodu aplikacji i protokołu badania jako kopii. Publiczny katalog wybiera świadomie zaakceptowane odnośniki.
+Jeden manuskrypt ma jedno globalne ID MSC i jedno repozytorium kanoniczne, którym może być lokalny ARC albo zewnętrzny MSC. Programy powiązane używają `related`. Szczegóły: [ADR-0003](0003-hybrid-arc-ownership.md). ARC nie utrzymuje źródłowych danych, kodu aplikacji i protokołu badania jako kopii. Publiczny katalog wybiera świadomie zaakceptowane odnośniki.
 
 ## Alternatywy i konsekwencje
 

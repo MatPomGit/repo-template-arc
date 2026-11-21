@@ -1,6 +1,6 @@
 # Architektura programu ARC
 
-`arc-*` pełni funkcję portalu naukowego i rejestru źródeł dowodów. `msc-*` jest właścicielem hipotez, protokołów, analiz, danych referencyjnych i manuskryptów, a `app-*` i `lib-*` dostarczają niezależne oprogramowanie. Duże istniejące projekty nie wymagają natychmiastowego przemianowania na `msc-*`.
+`arc-*` jest programem badawczym, rejestrem źródeł dowodów i **może być kanonicznym właścicielem lokalnych manuskryptów**. Projekty zewnętrzne `msc-*` zachowują własne hipotezy, protokoły, analizy i manuskrypty; `app-*` i `lib-*` dostarczają niezależne oprogramowanie. Duże istniejące projekty nie wymagają natychmiastowego przemianowania na `msc-*`.
 
 ```text
 ARC (strategia, rejestry, publiczny katalog)
@@ -8,6 +8,7 @@ ARC (strategia, rejestry, publiczny katalog)
   |-- portfolio/projects.json         kanoniczne badania i ich SHA
   |-- portfolio/papers.json           artykuły i jeden właściciel
   |-- portfolio/dependencies.json     aparatura, dane, app/lib
+  |-- manuscripts/MSC-.../             opcjonalne lokalne źródła TeX
   |-- pages/projects.md               tylko publicznie zatwierdzone wpisy
   +-- [opcjonalne git submodules]     źródła projektów, nie kopie
           |-- msc-*                  nauka i strony badań
@@ -16,7 +17,7 @@ ARC (strategia, rejestry, publiczny katalog)
 
 **Granice publikacji:** `docs/` przechowuje dokumentację techniczną, bezpieczeństwa i decyzji architektonicznych; nigdy nie jest źródłem Pages. `pages/` zawiera wyłącznie przeglądnięte materiały dla odbiorców, z jawną listą dopuszczenia. [Architektura szczegółowa](docs/architecture/README.md), [ADR](docs/adr/README.md) i [model zagrożeń](docs/security/threat-model.md) nie są automatycznie publiczne.
 
-**Niezmiennik:** jedna pozycja artykułu -> jeden `owner_project_id` -> jedno kanoniczne repozytorium. Wieloprogramowe powiązania to tagi i `related`, nie duplikaty.
+**Niezmiennik:** jeden globalny identyfikator MSC -> jedno kanoniczne repozytorium (`local` ARC albo `external` MSC) -> dokładnie jeden właściciel. Obecny walidator v1 nie rejestruje jeszcze źródeł `local`; wymagane jest odrębne wdrożenie schematu v2. Dla lokalnego manuskryptu nie twórz fikcyjnego `owner_project_id`. Wieloprogramowe powiązania to tagi i `related`, nie duplikaty.
 
 **Główne programy:** `arc-neuro` (w tym `ndd/`), `arc-ai`, `arc-xr`, `arc-robo`. Nie tworzyć `arc-ndd` ani `arc-eye`. Eye tracking jest rodziną metod i narzędzi.
 

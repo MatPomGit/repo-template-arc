@@ -12,7 +12,7 @@ Zastąp ten akapit zwięzłym opisem pytań naukowych, kryterium przypisania man
 
 ## Katalog badań
 
-Rejestr kanonicznych projektów jest w [`portfolio/projects.json`](portfolio/projects.json), artykułów w [`portfolio/papers.json`](portfolio/papers.json), zależności w [`portfolio/dependencies.json`](portfolio/dependencies.json). Projekt `msc-*` ma własny protokół, manuskrypt, dane referencyjne i GitHub Pages; ARC utrzymuje tylko odnośniki oraz metadane zależności. Starsze repozytoria mogą być wskazywane pod obecną nazwą do czasu kontrolowanej migracji.
+Rejestr kanonicznych projektów jest w [`portfolio/projects.json`](portfolio/projects.json), artykułów w [`portfolio/papers.json`](portfolio/papers.json), zależności w [`portfolio/dependencies.json`](portfolio/dependencies.json). ARC może prowadzić lokalne kanoniczne manuskrypty w `manuscripts/MSC-*/`, a dla zewnętrznych `msc-*`/repozytoriów historycznych utrzymuje referencje i zależności. Nie przechowuje duplikatów cudzych źródeł. Starsze repozytoria mogą być wskazywane pod obecną nazwą do czasu kontrolowanej migracji.
 
 [Publiczny katalog projektów](pages/projects.md) jest generowany z pozycji jawnie zatwierdzonych do publikacji. Program ARC nie jest repozytorium surowych danych uczestników ani pakietem aplikacji.
 

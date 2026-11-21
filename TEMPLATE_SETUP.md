@@ -3,13 +3,15 @@
 1. Utwórz repozytorium `arc-neuro`, `arc-ai`, `arc-xr` lub `arc-robo` (po sprawdzeniu, czy już istnieje); wybierz prywatność. Skopiuj wszystkie pliki bez historii źródłowej.
 2. W `program.json` ustaw `repository_visibility: public` albo `private` zgodnie z rzeczywistą widocznością GitHub, nazwę programu, właściciela, zakres i politykę publicznej witryny. Repozytorium pozostające `unconfigured` nie może rejestrować badań. Zastąp pola `REPLACE` w README, AGENTS, RESEARCH, PROJECT_STATE i docs. W `CITATION.cff` zachowaj Mateusza Pomianka jako autora podstawowego, a opcjonalnych współautorów dopisz po potwierdzeniu wkładu. Ustal odpowiednią licencję w LICENSE, nie przyznawaj jej automatycznie.
 3. W `areas/index.json` zarejestruj linie (np. w ARC Neuro: ndd, affect, cognition, social, psychometrics), a w `portfolio/projects.json` dodaj kanoniczne projekty `msc-*` lub dotychczasowe repozytoria o statusie `primary`/`related`.
-4. Każdy artykuł w `portfolio/papers.json` ma **jednego** właściciela projektu. Zależności w `portfolio/dependencies.json` wskazują sprzęt i narzędzia przez ID, bez dublowania kart urządzeń i kodu aplikacji.
+4. Każdy artykuł w `portfolio/papers.json` ma **jednego** właściciela kanonicznego: lokalne ARC albo zewnętrzny projekt. Nowy schemat v2 (osobny PR) rozróżnia te tryby bez fikcyjnego właściciela projektu. Dopóki walidator wymaga `schema_version: 1`, nie rejestruj manuskryptów `local` ani nie twórz sztucznego projektu. Zależności w `portfolio/dependencies.json` wskazują sprzęt i narzędzia przez ID, bez dublowania kart urządzeń i kodu aplikacji.
 5. Git submodule nie jest obowiązkowy. Jeśli program ma fizycznie pobierać repozytorium podrzędne, wykonaj świadomie `git submodule add <URL> <sciezka>`, zapisz `submodule_path` i commit SHA w rejestrze. Następnie użytkownik pobiera program jednym `python scripts/bootstrap.py --mode reproduce` albo `git clone --recurse-submodules`.
 6. W trybie `audit-live` wykonaj zdalną weryfikację każdego projektu zamiast ufać historycznym SHA z submodułów. Przypięte commity aktualizuj dopiero oddzielnym PR po testach; nie zmieniaj snapshotu historycznych eksperymentów.
 7. Uruchom `python scripts/validate_repository.py --phase scaffold`, `python scripts/validate_documentation.py`, `python scripts/validate_pages.py`, `python -m unittest discover -s tests -v` i generację katalogu `python scripts/build_public_catalog.py`. Generator zapisuje tylko `pages/projects.md`, nigdy dokumentację `docs/`. Po wygenerowaniu ponownie sprawdź treść, listę dozwolonych plików i poprawność katalogu. Publikacja wymaga osobnej zgody i przeglądu realnie wygenerowanej witryny.
 8. Tryb `--phase publish` sprawdza wybrane blokady redakcyjne, ale nie stanowi potwierdzenia etycznego ani naukowego i nie uruchamia zdalnej publikacji. Włączenie `is_template` w GitHub wymaga praw administracyjnych.
 
-Szablon ma być niewielki. Katalogi protokołów, eksperymentów, manuskryptów i analiz należą do repozytoriów `msc-*`; biblioteki i aplikacje do `lib-*` i `app-*`.
+W publicznym ARC przed dodaniem lokalnego TeX, planu lub protokołu potwierdź prawo i zgodę na upublicznienie **samego pliku w repozytorium i historii Git**. Wyłączenie katalogu Pages albo `public_listing: false` nie ukrywa zawartości publicznego repozytorium.
+
+Szablon ma być niewielki. Lokalny kanoniczny manuskrypt oraz jego plan mogą należeć do ARC; zewnętrzne MSC zachowują własne źródła. Biblioteki i aplikacje pozostają w `lib-*` i `app-*`; surowe dane w autoryzowanych magazynach.
 
 ## Dokumentacja projektu i polityka strony
 
