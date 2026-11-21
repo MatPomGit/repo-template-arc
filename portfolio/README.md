@@ -2,7 +2,7 @@
 
 `portfolio/papers.json` jest jedynym **edytowalnym lokalnym rejestrem artykułów ARC**. Zawiera: identyfikator MSC, tytuł, linię badawczą, `research_state`, `publication_stage`, `relation`, `owner`, `manuscript`, `study_plan`, zgodę na umieszczenie w katalogu, DOI, odnośniki i `stage_evidence`. Status naukowy i etap publikacji są oddzielne.
 
-- `owner.mode=local`: kanoniczne źródło LaTeX znajduje się w tym ARC, `owner.project_id=null`; nie rejestruj fikcyjnego `msc-*`.
+- `owner.mode=local`: kanoniczne źródło LaTeX znajduje się w tym ARC, `owner.project_id=null`; `owner.repository` musi dokładnie odpowiadać `program.json:repository_full_name`. Nie rejestruj fikcyjnego `msc-*`.
 - `owner.mode=external`: `project_id` wskazuje projekt z `portfolio/projects.json`, a `owner.repository` musi odpowiadać jego repozytorium. Lokalny plan nie jest kopią kanonicznego manuskryptu.
 - `relation=related`: niezależny program wskazuje pozycję innego właściciela. Globalną unikalność ID kontroluje Research Autopilot.
 - `portfolio/dependencies.json`: każda zależność w `tools`, `equipment` lub `datasets` wskazuje **dokładnie jedno** z `paper_id` albo `project_id`. Bez duplikowania kodu i kart aparatury.

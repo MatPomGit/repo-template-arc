@@ -18,7 +18,8 @@
     "public_catalog_policy",
     "scientific_state",
     "owner_of_raw_data",
-    "repository_visibility"
+    "repository_visibility",
+    "repository_full_name"
   ],
   "properties": {
     "schema_version": {
@@ -71,6 +72,12 @@
         "unconfigured",
         "public",
         "private"
+      ]
+    },
+    "repository_full_name": {
+      "type": [
+        "string",
+        "null"
       ]
     }
   }

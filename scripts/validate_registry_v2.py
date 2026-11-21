@@ -90,9 +90,11 @@ def validate_registry_v2(root,meta,papers,dependencies,project_repos,lines,safe_
                 if pid is not None or p.get("relation")!="primary":
                     issues.append(f"Invalid local ownership: {name}")
                 programme=meta.get("programme")
-                if not isinstance(programme,str) or programme=="arc-REPLACE" or (
-                    not isinstance(r,str) or not r.endswith("/"+programme)):
-                    issues.append(f"Local owner must match configured ARC programme: {name}")
+                canonical=meta.get("repository_full_name")
+                if (not isinstance(programme,str) or programme=="arc-REPLACE" or
+                        not isinstance(canonical,str) or not REPO.fullmatch(canonical) or
+                        not isinstance(r,str) or r!=canonical):
+                    issues.append(f"Local owner must match configured ARC repository: {name}")
                 if meta.get("repository_visibility")=="unconfigured":
                     issues.append(f"Configure ARC visibility before local manuscript: {name}")
             elif mode=="external":

@@ -30,7 +30,8 @@ class RegistryV2Tests(unittest.TestCase):
         root=Path(folder)/"arc"
         shutil.copytree(ROOT,root,ignore=shutil.ignore_patterns(".git","site","__pycache__"))
         meta=json.loads((root/"program.json").read_text())
-        meta.update(programme="arc-neuro",repository_visibility="public")
+        meta.update(programme="arc-neuro",repository_visibility="public",
+                    repository_full_name="MatPomGit/arc-neuro")
         self.write(root,"program.json",meta)
         self.write(root,"areas/index.json",{"schema_version":1,"lines":[{"id":"ndd","title":"NDD"}]})
         state=root/"PROJECT_STATE.yaml"
