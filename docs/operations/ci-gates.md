@@ -8,7 +8,7 @@ Wymagany wynik techniczny przed merge:
 - testy E2E generatorów, walidacja study.yaml i schematów, kontrola testów negatywnych;
 - MkDocs build --strict i audyt całego HTML.
 
-Przed merge sprawdź pozytywny wynik CI, diff i bezpieczeństwo finalnego exact SHA. Niezależne review jest opcjonalne, bez obowiązkowego `APPROVED`. Zalecane jest egzekwowanie checku `offline-arc-validation` w ruleset `main`, bez wymagania drugiego recenzenta. Gdy ruleset nie egzekwuje CI, raportuj `CI_NOT_ENFORCED` i sprawdź wynik przed merge; nie utożsamiaj braku formalnej ochrony z poprawnością testów.
+Przed merge sprawdź pozytywny wynik CI, diff i bezpieczeństwo finalnego exact SHA. Niezależne review jest opcjonalne, bez obowiązkowego `APPROVED`. W aktywnym ruleset `main` (ID `27653249`) istnieje wymóg PR z zerem zatwierdzeń, ale `required_status_checks=[]`, więc **nie wymusza on sukcesu żadnego testu**. W tym repozytorium właściwy check do wybrania z GitHub Actions to `offline-arc-validation` ([udany przebieg](https://github.com/MatPomGit/repo-template-arc/actions/runs/44894848491)). Reguła ma też `do_not_enforce_on_create=true`. Po dodaniu checku zweryfikuj ponownie konfigurację i wykonaj negatywny test blokady merge. Do tego czasu raportuj `CI_NOT_ENFORCED` i sprawdzaj CI przed merge; brak formalnej ochrony nie oznacza sukcesu testów.
 
 Samo scalenie PR nie upoważnia do publikacji GitHub Pages, artykułów, wyników eksperymentalnych, archiwum danych ani Release. Publikacja pozostaje osobnym zadaniem z kontrolą uprawnień i zakresu ujawnienia. Nie uruchamia się niezaufanego kodu na stałym runnerze HomeServer.
 
