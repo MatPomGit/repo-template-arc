@@ -17,7 +17,7 @@ ARC (strategia, rejestry, publiczny katalog)
 
 **Granice publikacji:** `docs/` przechowuje dokumentację techniczną, bezpieczeństwa i decyzji architektonicznych; nigdy nie jest źródłem Pages. `pages/` zawiera wyłącznie przeglądnięte materiały dla odbiorców, z jawną listą dopuszczenia. [Architektura szczegółowa](docs/architecture/README.md), [ADR](docs/adr/README.md) i [model zagrożeń](docs/security/threat-model.md) nie są automatycznie publiczne.
 
-**Niezmiennik:** jeden globalny identyfikator MSC -> jedno kanoniczne repozytorium (`local` ARC albo `external` MSC) -> dokładnie jeden właściciel. Dla lokalnego manuskryptu nie twórz fikcyjnego `owner_project_id`. Wieloprogramowe powiązania to tagi i `related`, nie duplikaty.
+**Niezmiennik:** jeden globalny identyfikator MSC -> jedno kanoniczne repozytorium (`local` ARC albo `external` MSC) -> dokładnie jeden właściciel. Obecny walidator v1 nie rejestruje jeszcze źródeł `local`; wymagane jest odrębne wdrożenie schematu v2. Dla lokalnego manuskryptu nie twórz fikcyjnego `owner_project_id`. Wieloprogramowe powiązania to tagi i `related`, nie duplikaty.
 
 **Główne programy:** `arc-neuro` (w tym `ndd/`), `arc-ai`, `arc-xr`, `arc-robo`. Nie tworzyć `arc-ndd` ani `arc-eye`. Eye tracking jest rodziną metod i narzędzi.
 

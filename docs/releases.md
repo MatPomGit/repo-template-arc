@@ -1,6 +1,6 @@
 # Wydania i wersjonowanie programu badawczego ARC
 
-**Przedmiot wydania:** zweryfikowana, odtwarzalna **migawka programu i jego publicznych metadanych**, a nie publikacja artykułu naukowego, danych uczestników, aplikacji ani bibliotek. Kanoniczne wyniki badań pozostają w `msc-*`, a oprogramowanie w `app-*` i `lib-*`. GitHub Release, publikacja Pages, DOI, prerejestracja i zgłoszenie do czasopisma są odrębnymi czynnościami, z odrębnymi zgodami i dowodami. Szablon ma status `scaffold`; aktualnie nie jest dopuszczony do wydania.
+**Przedmiot wydania:** zweryfikowana, odtwarzalna **migawka programu i jego publicznych metadanych**, a nie publikacja artykułu naukowego, danych uczestników, aplikacji ani bibliotek. Kanoniczne źródła badań pozostają u właściciela: w lokalnym ARC (`local`) albo zewnętrznym repozytorium MSC (`external`); oprogramowanie pozostaje w `app-*` i `lib-*`. GitHub Release, publikacja Pages, DOI, prerejestracja i zgłoszenie do czasopisma są odrębnymi czynnościami, z odrębnymi zgodami i dowodami. Szablon ma status `scaffold`; aktualnie nie jest dopuszczony do wydania.
 
 ## 1. Tożsamość, wersje i zakres
 
@@ -18,13 +18,13 @@ Dopuszczalne są wersje przedwydaniowe, np. `0.3.0-rc.1`; tag wydania `v0.3.0` m
 | `arc-catalogue` | Zatwierdzone publiczne metadane programu, objaśnienie zakresu, `CITATION.cff`, changelog, odnośniki do publicznych źródeł | Każdy wpis jawnie dopuszczony; brak ścieżek prywatnych projektów, ich nazw, danych, tokenów i wewnętrznych logów |
 | `arc-reproducibility` | Manifest zamrożonych wersji, SHA commitów i sum danych **tylko w uprawnionym zakresie**, konfiguracja oraz instrukcja odtworzenia | Spójne gitlinki, jawne kontrakty, wersje środowiska i skryptów, status dostępu do danych oraz odpowiednio ograniczony kanał dystrybucji |
 
-Paczki ARC nie powinny zawierać manuskryptów, surowych danych, kodu `app-*`/`lib-*`, firmware, pakietów urządzeń ani prywatnych raportów `audit-live`. Dostęp do artefaktu prywatnego nie może być zastępowany „publicznym zipem”; zakres danych zawsze wynika z zgód, etyki i praw. Dla repozytorium prywatnego przyjmij **private-only** jako domyślny kanał wydania. Widoczność poszczególnych elementów sprawdzaj niezależnie od widoczności repo.
+Pakiety `arc-catalogue` i `arc-reproducibility` nie powinny zawierać pełnych manuskryptów, nawet jeśli ARC jest ich kanonicznym właścicielem. Lokalny TeX może należeć do repozytorium ARC, ale jego publikacja i odrębne wydanie manuskryptu podlegają osobnej decyzji. Pakiety nie obejmują także surowych danych, kodu `app-*`/`lib-*`, firmware, pakietów urządzeń ani prywatnych raportów `audit-live`. Dostęp do artefaktu prywatnego nie może być zastępowany „publicznym zipem”; zakres danych zawsze wynika z zgód, etyki i praw. Dla repozytorium prywatnego przyjmij **private-only** jako domyślny kanał wydania. Widoczność poszczególnych elementów sprawdzaj niezależnie od widoczności repo.
 
 ## 3. Manifest dowodowy
 
 Dla planowanej wersji przygotuj **nieśledzony** manifest `outputs/arc-release-manifest.json` zawierający co najmniej: `schema_version`, `kind`, `version`, `programme`, `commit_sha`, `audience` (`public`/`restricted`), sumy SHA-256 kanonicznych rejestrów i co najmniej jednego konkretnego artefaktu oraz rzeczywiste wyniki kontroli. Manifest powinien wiązać:
  
-`ARC commit -> program.json -> areas/index.json -> portfolio/projects.json + papers.json + dependencies.json -> project snapshot SHA -> MSC manuscript / app-lib release -> dataset manifest / checksum -> scientific result / verified DOI`.
+`ARC commit -> program.json -> areas/index.json -> portfolio/projects.json + papers.json + dependencies.json -> canonical owner SHA (ARC/local albo project snapshot SHA/external) -> manuscript source / app-lib release -> dataset manifest / checksum -> scientific result / verified DOI`.
 
 Elementy niepubliczne opisuj wyłącznie w chronionym obiegu. Nie wystawiaj URL lub nawet nazwy prywatnego `msc-*` w publicznym manifeście. Stan `STALE` w audycie live oznacza pojawienie się nowego commita, a nie brak odtwarzalności historycznej migawki; `UNAVAILABLE` nie znaczy `PASS`.
 
@@ -33,7 +33,7 @@ Kontrola strukturalna manifestu może potwierdzić spójność SHA plików i sta
 ## 4. Bramka wydania R0–R3
 
 1. **R0 – zakres i tożsamość:** nazwa jednego z programów ARC, właściciel, rzeczywista widoczność, kompletne kanoniczne rejestry, brak placeholderów, wybrana licencja i potwierdzone prawa do treści.
-2. **R1 – zgodność rejestrów:** pozytywny wynik `python scripts/validate_repository.py --phase scaffold`, kontrola `PROJECT_STATE.yaml`, unikalnych `owner_project_id`, spójności SHA submodułów, identyfikatorów projektów i zależności, brak wpisów prywatnych w publicznym ARC.
+2. **R1 – zgodność rejestrów:** pozytywny wynik `python scripts/validate_repository.py --phase scaffold`, kontrola `PROJECT_STATE.yaml`, jednoznacznej własności `local`/`external` po migracji do v2 (w v1: `owner_project_id`), spójności SHA submodułów, identyfikatorów projektów i zależności, brak wpisów prywatnych w publicznym ARC.
 3. **R2 – odtwarzalność i dowody:** manifest na **exact SHA**, konkretne artefakty i sumy, wyniki testów w czystym środowisku, deterministyczny generator katalogu, weryfikacja publicznych źródeł i renderu. Dla reprodukcji korzystaj z trybu `reproduce`, a nie `audit-live`; brak dostępnej próbki lub sprzętu oznacz `UNAVAILABLE`/`NOT_RUN`.
 4. **R3 – decyzja i dystrybucja:** niezależny review, wymagane checki CI realnie egzekwowane przez ochronę `main`, zatwierdzenie właściciela osobno dla **wersji, artefaktu, kanału i publiczności**. Jeśli ruleset nie wymaga checków/review, status `GATE_UNENFORCED / HOLD`; samo zielone CI to za mało.
 
@@ -41,7 +41,7 @@ Procedura `python scripts/validate_repository.py --phase publish` dotyczy kontro
 
 ## 5. Publikacje naukowe i DOI
 
-Statusy artykułu `submitted`, `accepted` i `published` wolno deklarować wyłącznie z odpowiednim `stage_evidence` w kanonicznym projekcie `msc-*`. Wpis do katalogu ARC nie oznacza zgody czasopisma, recenzji naukowej ani możliwości upublicznienia tekstu. Prawdziwy DOI, data i URL wymagają niezależnej weryfikacji; nie przypisuj DOI repozytorium ani artefaktowi „na zapas”.
+Statusy artykułu `submitted`, `accepted` i `published` wolno deklarować wyłącznie z odpowiednim `stage_evidence` w kanonicznym repozytorium lokalnym ARC albo zewnętrznym MSC. Wpis do katalogu ARC nie oznacza zgody czasopisma, recenzji naukowej ani możliwości upublicznienia tekstu. Prawdziwy DOI, data i URL wymagają niezależnej weryfikacji; nie przypisuj DOI repozytorium ani artefaktowi „na zapas”.
 
 Rozróżniaj wersję programu, wersję datasetu, wersję kodu, wersję protokołu i etap publikacji. Wydania `arc-reproducibility` mogą zawierać metadane zbioru, ale udostępnienie samych danych odbywa się według odrębnej polityki danego zasobu. Zmiana wyników analizy po wydaniu wymaga nowej wersji artefaktu i odnotowania wpływu na powiązane manuskrypty, nie korekty wstecznej bez śladu.
 

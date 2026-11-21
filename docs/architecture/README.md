@@ -7,4 +7,4 @@
 - [Reprodukowanie](reproducibility.md): snapshot, remote HEAD, gitlink i pochodzenie wyników.
 - [ADR](../adr/README.md): uzasadnienia decyzji o architekturze i poufności.
 
-**Status szablonu:** brak skonfigurowanych badań i rzeczywistych projektów. Dla programu rozwijanego z tego szablonu każdą zmianę opisuj na podstawie aktualnych faktów, SHA i rzeczywistych dowodów. Dokument nie jest substytutem protokołu w `msc-*`.
+**Status szablonu:** brak skonfigurowanych badań i rzeczywistych projektów. Dla programu rozwijanego z tego szablonu każdą zmianę opisuj na podstawie aktualnych faktów, SHA i rzeczywistych dowodów. Dokument nie zastępuje protokołu należącego do kanonicznego właściciela: lokalnego ARC albo zewnętrznego `msc-*`.
