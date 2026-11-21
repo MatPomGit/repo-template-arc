@@ -6,7 +6,7 @@ Zmianę rejestru dopuszczaj tylko po potwierdzeniu kanonicznego właściciela, a
 
 ## Uprawnienia, recenzje i publikacja
 
-Research Autopilot, jeśli dostępny i uprawniony, zarządza kolejką, leasingiem i limitem WIP. Zmiany wymagają odpowiednich uprawnień, testów exact SHA i niezależnej recenzji adekwatnej do klasy R0–R3 z [AGENTS.md](AGENTS.md). Autor nie uznaje własnej oceny za niezależną; `COMMENTED/ACCEPT` nie zastępuje formalnego `APPROVED`.
+Research Autopilot, jeśli dostępny i uprawniony, zarządza kolejką, leasingiem i limitem WIP. Zmiany wymagają uprawnień, przeglądu technicznego i testów finalnego SHA adekwatnych do ryzyka R0–R3 z [AGENTS.md](AGENTS.md). Niezależne review może być wykonane, ale nie jest obowiązkową bramką merge. Własnej kontroli nie przedstawiaj jako niezależnej.
 
 Migracje historii, przenoszenie projektów, ujawnienie prywatnych metadanych, wydania i GitHub Pages wymagają oddzielnego zatwierdzenia i możliwości wycofania. Scalenie PR nie oznacza publikacji. Decyzje architektoniczne przechowuje [ADR](docs/adr/README.md), natomiast stan i źródła faktów pozostają w `portfolio/`, `program.json` i `RESEARCH.md`. Nie utrzymuj równoległych rejestrów.
 

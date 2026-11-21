@@ -35,7 +35,7 @@ Kontrola strukturalna manifestu może potwierdzić spójność SHA plików i sta
 1. **R0 – zakres i tożsamość:** nazwa jednego z programów ARC, właściciel, rzeczywista widoczność, kompletne kanoniczne rejestry, brak placeholderów, wybrana licencja i potwierdzone prawa do treści.
 2. **R1 – zgodność rejestrów:** pozytywny wynik `python scripts/validate_repository.py --phase scaffold`, kontrola `PROJECT_STATE.yaml`, jednoznacznej własności `local`/`external` dla każdego MSC, spójności SHA submodułów, identyfikatorów projektów i zależności, brak wpisów prywatnych w publicznym ARC.
 3. **R2 – odtwarzalność i dowody:** manifest na **exact SHA**, konkretne artefakty i sumy, wyniki testów w czystym środowisku, deterministyczny generator katalogu, weryfikacja publicznych źródeł i renderu. Dla reprodukcji korzystaj z trybu `reproduce`, a nie `audit-live`; brak dostępnej próbki lub sprzętu oznacz `UNAVAILABLE`/`NOT_RUN`.
-4. **R3 – decyzja i dystrybucja:** niezależny review, wymagane checki CI realnie egzekwowane przez ochronę `main`, zatwierdzenie właściciela osobno dla **wersji, artefaktu, kanału i publiczności**. Jeśli ruleset nie wymaga checków/review, status `GATE_UNENFORCED / HOLD`; samo zielone CI to za mało.
+4. **R3 – decyzja i dystrybucja:** kontrola finalnego SHA i wyniku CI oraz osobna zgoda właściciela na **wersję, artefakt, kanał i publiczność**. Niezależne review jest opcjonalne. Brak egzekwowania status checks w ruleset oznacz `CI_NOT_ENFORCED`; nie traktuj zielonego CI jako zgody na Release.
 
 Procedura `python scripts/validate_repository.py --phase publish` dotyczy kontroli metadanych i gotowości **katalogu publicznego**. Nie jest bramką GitHub Release, atestacją artykułu ani zgodą etyczną. Wydanie migawki programu nie wymaga automatycznej publikacji Pages; wdrożenie portalu pozostaje osobną decyzją według [polityki Pages](pages.md).
 
@@ -47,7 +47,7 @@ Rozróżniaj wersję programu, wersję datasetu, wersję kodu, wersję protokoł
 
 ## 6. Procedura operacyjna i wycofanie
 
-Przed tagowaniem wykonaj przegląd diff i historii, skontroluj listę plików w paczce, licencję, zależności, odnośniki, widoczność danych, status dowodów i sumy SHA. Odrębny recenzent potwierdza finalny commit. Dopiero po zatwierdzeniu zbuduj niezmienny artefakt, podpisz/zatestuj go zgodnie z możliwościami środowiska, opublikuj tag i Release oraz dołącz datę, changelog i instrukcję odtworzenia; sprawdź pobrane pliki. Nie uruchamiaj niezaufanych projektów na stałym runnerze ani nie wydawaj pieniędzy bez zgody.
+Przed tagowaniem wykonaj przegląd diff i historii, skontroluj listę plików w paczce, licencję, zależności, odnośniki, widoczność danych, status dowodów i sumy SHA. Właściciel lub uprawniony operator potwierdza finalny commit. Dopiero po zatwierdzeniu zbuduj niezmienny artefakt, podpisz/zatestuj go zgodnie z możliwościami środowiska, opublikuj tag i Release oraz dołącz datę, changelog i instrukcję odtworzenia; sprawdź pobrane pliki. Nie uruchamiaj niezaufanych projektów na stałym runnerze ani nie wydawaj pieniędzy bez zgody.
 
 Przy wykryciu błędu oznacz wydanie jako wycofane lub zastąpione, zablokuj dalszą dystrybucję poufnych plików, powiadom odbiorców i wydaj nową wersję z odniesieniem do poprzedniej. Nie przepinaj tagu. W razie ujawnienia prywatnych danych postępuj zgodnie z [procedurą incydentu](security/incident-response.md); usunięcie bieżącego Release nie wycofuje skopiowanych plików. Rejestr utrzymuje dokładne SHA i źródło decyzji.
 

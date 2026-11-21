@@ -23,7 +23,7 @@ Ten plik oraz [.github/AGENT_WORKFLOW.md](.github/AGENT_WORKFLOW.md) określają
 
 Przed zadaniem sprawdź default branch i exact SHA, otwarte PR (także draft), Issues, aktywne lease i istniejące dowody. Najpierw dokończ pracę rozpoczętą; nie dubluj PR ani rejestrów. Research Autopilot, jeżeli jest dostępny i uprawniony, pozostaje jedynym kontrolerem kolejki, schedulerów i leasingu. Zachowaj limit **4 PR / 4 gałęzie robocze na repo** oraz **5 PR w portfelu**, chyba że aktywna polityka jest ostrzejsza lub właściciel autoryzował konkretny wyjątek. Nie obchodź limitu bezpośrednim pushem do `main`.
 
-**Definition of Ready (DoR):** cel, mierzalny wynik, właściciel, zadanie/PR, baza SHA, zakres rejestrów, zależności, ryzyko, uprawnienia, plan testów, prywatność i kryteria akceptacji. **Definition of Done (DoD):** faktycznie potwierdzone kryteria, aktualne dowody na HEAD SHA, odpowiednia recenzja i zatwierdzony merge; publikacja, reprodukcja wyników i weryfikacja sprzętowa są odrębnymi krokami.
+**Definition of Ready (DoR):** cel, mierzalny wynik, właściciel, zadanie/PR, baza SHA, zakres rejestrów, zależności, ryzyko, uprawnienia, plan testów, prywatność i kryteria akceptacji. **Definition of Done (DoD):** faktycznie potwierdzone kryteria, aktualne dowody na HEAD SHA, przegląd techniczny i poprawnie wykonany merge; publikacja, reprodukcja wyników i weryfikacja sprzętowa są odrębnymi krokami.
 
 ## Ocena ryzyka R0–R3
 
@@ -34,7 +34,7 @@ Przed zadaniem sprawdź default branch i exact SHA, otwarte PR (także draft), I
 | **R2** | Polityki agentów, kod, kontrakt, rejestry, katalog, CI i zależności | Testy na exact HEAD SHA, przegląd techniczny i odpowiednia zgoda na integrację |
 | **R3** | Zmiana dostępu/ujawnienia danych, migracja historii, usunięcie źródeł, produkcja i publikacja | Jawna zgoda na konkretny skutek, dowody, kontrola uprawnień i plan wycofania |
 
-W przypadku niejednoznaczności wybierz wyższe ryzyko. **Wewnętrzna recenzja `COMMENTED/ACCEPT` nie stanowi formalnego `APPROVED`**. Autor nie może podpisywać własnego przeglądu jako niezależnego. Nie używaj administracyjnego bypassu do obchodzenia bramek. `PASS`, `FAIL`, `SKIPPED`, `NOT_RUN`, `UNAVAILABLE`, `NOT_APPLICABLE`, `CURRENT` i `STALE` oznaczają różne stany. Wynik CI nie poświadcza poprawności metodologicznej ani faktycznej publikacji.
+W przypadku niejednoznaczności wybierz wyższe ryzyko. Niezależne review i formalne `APPROVED` nie są obowiązkowe. Nie przedstawiaj własnego przeglądu jako niezależnego i nie obchodź aktywnych bramek administracyjnym bypassem. `PASS`, `FAIL`, `SKIPPED`, `NOT_RUN`, `UNAVAILABLE`, `NOT_APPLICABLE`, `CURRENT` i `STALE` oznaczają różne stany. Wynik CI nie poświadcza poprawności metodologicznej ani faktycznej publikacji.
 
 ## Publiczne strony i poufność portfolio
 

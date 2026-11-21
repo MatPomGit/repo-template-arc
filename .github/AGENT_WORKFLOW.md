@@ -16,10 +16,10 @@ Wykonaj offline `python scripts/validate_repository.py --phase scaffold`, `pytho
 
 ## C. Recenzja, merge i wydanie
 
-Recenzent bada diff, testy, granice prywatności i integralność metadanych na końcowym SHA, ze wskazaniem faktycznych ustaleń. Wymagane `APPROVED` musi wynikać z obowiązujących reguł GitHub; komentarz autora nie jest niezależnym review. Nie obchodź uprawnień. Po scaleniu potwierdź rzeczywisty commit `main` i wyniki kontroli.
+Przed merge sprawdź diff, CI, granice prywatności i integralność metadanych na finalnym SHA. Niezależne review jest opcjonalne, nie wymaga się `APPROVED` od drugiej osoby. Przestrzegaj pozostałych aktywnych reguł. Po scaleniu sprawdź `main` i wyniki testów.
 
 Wydanie publicznego katalogu to **osobna czynność**. W `pages/` mogą znaleźć się tylko zasoby z `config/pages-policy.json`, po sprawdzeniu tekstów, danych, obrazów, linków, renderowanego HTML, widoczności i praw do ujawnienia. Nigdy nie publikuj `docs/`, `.github/`, instrukcji agentowych ani informacji redakcyjnych. Prywatne repo nie zapewnia prywatnej strony. Nie twórz workflow automatycznie publikującego z merge.
 
 ## D. Odbiór, blokady i sprzątanie
 
-Definition of Done: kryteria zostały potwierdzone na aktualnym SHA, właściwe dokumenty i dowody są zgodne, recenzja ukończona, wymagane uprawnienia spełnione i właściwy etap integracji zweryfikowany. Merge, aktualny audit-live, reproducibility, publikacja witryny i publikacja manuskryptu mają **osobne** statusy. Zapisz blokady i punkt wznowienia w istniejącym Issue. Usuwaj wyłącznie własne, zweryfikowane jako zbędne zasoby; nie likwiduj nieznanych worktree, gałęzi ani projektów.
+Definition of Done: kryteria zostały potwierdzone na aktualnym SHA, właściwe dokumenty i dowody są zgodne, przegląd techniczny ukończony, wymagane uprawnienia spełnione i właściwy etap integracji zweryfikowany. Merge, aktualny audit-live, reproducibility, publikacja witryny i publikacja manuskryptu mają **osobne** statusy. Zapisz blokady i punkt wznowienia w istniejącym Issue. Usuwaj wyłącznie własne, zweryfikowane jako zbędne zasoby; nie likwiduj nieznanych worktree, gałęzi ani projektów.

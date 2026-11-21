@@ -45,7 +45,7 @@ Zobacz [niezależny audyt szablonu ARC z 2026-11-19](reviews/2026-11-19-template
 
 ## Kontrole wydania szablonu (faza E)
 
-Zintegrowany test `tests/test_lifecycle_cli.py` uruchamia prawdziwe komendy CLI w izolowanej kopii szablonu: inicjalizację ARC, stworzenie manuskryptu i `study.yaml`, walidację, generatory katalogu oraz próbę powtórzenia operacji. Sprawdza też, czy tryb `ALREADY_V2` nie maskuje nieprawidłowego rejestru. Wynik tego testu **nie** zastępuje niezależnego review, zasad ochrony `main` ani decyzji o wydaniu.
+Zintegrowany test `tests/test_lifecycle_cli.py` uruchamia prawdziwe komendy CLI w izolowanej kopii szablonu: inicjalizację ARC, stworzenie manuskryptu i `study.yaml`, walidację, generatory katalogu oraz próbę powtórzenia operacji. Sprawdza też, czy tryb `ALREADY_V2` nie maskuje nieprawidłowego rejestru. Wynik tego testu **nie** zastępuje kontroli finalnego SHA, zasad ochrony `main` ani decyzji o wydaniu. Niezależne review jest opcjonalne.
 
 [Lista kontrolna przed wydaniem szablonu](docs/operations/release-readiness.md) rozróżnia wersję szablonu od wersji wydania danego programu ARC i nie uruchamia GitHub Release.
 
@@ -57,7 +57,7 @@ Istniejące ARC aktualizuj ostrożnie: `python scripts/migrate_arc.py --mode inv
 
 ## Architektura i bezpieczeństwo
 
-[Kontrole CI i wymagane bramki PR](docs/operations/ci-gates.md) dokumentują różnicę między PASS testów, uprawnionym review i rzeczywistą ochroną gałęzi.
+[Kontrole CI i wymagane bramki PR](docs/operations/ci-gates.md) dokumentują różnicę między PASS testów, kontrolą finalnego SHA i rzeczywistą ochroną gałęzi.
 
 
 [Architektura](ARCHITECTURE.md), [zarządzanie](GOVERNANCE.md), [model zagrożeń](docs/security/threat-model.md), [decyzje ADR](docs/adr/README.md), [standard dokumentacji](docs/documentation.md), [polityka GitHub Pages](docs/pages.md), [wydania programu](docs/releases.md) i [wsparcie](SUPPORT.md). Nie twórz osobnego `CONTRIBUTING.md`.
