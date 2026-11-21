@@ -114,6 +114,21 @@ class GeneratorTests(unittest.TestCase):
         self.assertTrue((self.root/"papers/ndd/MSC-ADHD-P01/main.tex").is_file())
         self.assertEqual([],validate(self.root))
 
+    def test_authorship_is_not_inferred_from_programme_owner(self):
+        self.init()
+        self.new()
+        source=(self.root/"manuscripts/MSC-ADHD-P01/main.tex").read_text()
+        self.assertIn(r"\author{}",source)
+        self.assertNotIn(r"\author{Research Author}",source)
+
+    def test_invalid_paper_register_is_blocked_before_write(self):
+        self.init()
+        register=self.root/"portfolio/papers.json"
+        register.write_text(json.dumps({"schema_version":2,"papers":["invalid-record"]}))
+        with self.assertRaisesRegex(ValueError,"Invalid paper records"):
+            self.new()
+        self.assertFalse((self.root/"manuscripts").exists())
+
     def test_tex_special_characters_are_escaped(self):
         self.assertEqual(tex_escape("C#_% &"),r"C\#\_\% \&")
 

@@ -20,10 +20,13 @@ def tex_escape(value: str) -> str:
 
 
 def create(root: Path, *, ident: str, title: str, area: str,
-           study_type: str = "empirical", apply: bool = False) -> list[str]:
+           study_type: str = "empirical", authors: str | None = None,
+           apply: bool = False) -> list[str]:
     root = root.absolute()
     if not root.is_dir() or root.is_symlink() or not MSC.fullmatch(ident):
         raise ValueError("Invalid ARC directory or MSC identifier")
+    if authors is not None and (not isinstance(authors, str) or "\n" in authors or "\r" in authors):
+        raise ValueError("Author list must be supplied explicitly on one line")
     if study_type not in STUDY_TYPES:
         raise ValueError("Unsupported study type")
     if not isinstance(title, str) or not title.strip() or any(c in title for c in "\r\n"):
@@ -52,6 +55,8 @@ def create(root: Path, *, ident: str, title: str, area: str,
     register = json.loads(reg_path.read_text(encoding="utf-8"))
     if register.get("schema_version") != 2 or not isinstance(register.get("papers"), list):
         raise ValueError("Expected registry schema_version=2")
+    if any(not isinstance(p, dict) for p in register["papers"]):
+        raise ValueError("Invalid paper records")
     existing = [p for p in register["papers"] if p.get("id") == ident]
     if existing:
         if (len(existing) == 1 and existing[0].get("title") == title
@@ -68,7 +73,7 @@ def create(root: Path, *, ident: str, title: str, area: str,
         "\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n"
         "\\usepackage{lmodern}\n\\usepackage[hidelinks]{hyperref}\n"
         "\\title{" + tex_escape(title) + "}\n"
-        "\\author{" + tex_escape(str(meta.get("owner") or "")) + "}\n"
+        "\\author{" + tex_escape(authors or "") + "}\n"
         "\\date{}\n\\begin{document}\n\\maketitle\n"
         "\\begin{abstract}\n\\end{abstract}\n"
         "\\section{Wprowadzenie}\n"
@@ -132,12 +137,13 @@ def main() -> int:
     parser.add_argument("--id", required=True)
     parser.add_argument("--title", required=True)
     parser.add_argument("--area", required=True)
+    parser.add_argument("--authors", help="Explicit confirmed manuscript authors; never inferred from ARC owner")
     parser.add_argument("--study-type", choices=sorted(STUDY_TYPES), default="empirical")
     parser.add_argument("--apply", action="store_true")
     args = parser.parse_args()
     try:
         paths = create(args.root, ident=args.id, title=args.title, area=args.area,
-                       study_type=args.study_type, apply=args.apply)
+                       study_type=args.study_type, authors=args.authors, apply=args.apply)
     except (OSError, ValueError, KeyError) as exc:
         parser.exit(2, "BLOCKED: " + str(exc) + "\n")
     print(("ALREADY_EXISTS" if not paths else "APPLIED" if args.apply else "DRY_RUN") +

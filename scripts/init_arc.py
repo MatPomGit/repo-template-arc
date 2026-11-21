@@ -24,7 +24,7 @@ def initialize(root: Path, *, programme: str, repository: str,
     if visibility not in ("public", "private"):
         raise ValueError("Explicit public or private visibility required")
     if any(not isinstance(value, str) or not value.strip() or "\n" in value or "\r" in value
-           for value in (title, owner, scope)):
+           for value in (title, owner, scope)) or "#" in owner or ":" in owner:
         raise ValueError("Invalid title, owner or scope")
     if len(set(areas)) != len(areas) or any(not AREA.fullmatch(x) for x in areas):
         raise ValueError("Invalid or duplicate research area")
