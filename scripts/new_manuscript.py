@@ -120,7 +120,9 @@ def create(root: Path, *, ident: str, title: str, area: str,
         "\\section{Plan analizy}\n"
         "\\section{Wyniki}\n"
         "\\section{Dyskusja}\n"
-        "\\bibliographystyle{plain}\n\\bibliography{references}\n"
+        "\\bibliographystyle{plain}\n"
+        "% Enable bibliography after adding verified references:\n"
+        "% \\bibliography{references}\n"
         "\\end{document}\n"
     )
     study = (
