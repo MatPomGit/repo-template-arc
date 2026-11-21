@@ -1,6 +1,6 @@
 # Polityka publikacyjna programu ARC
 
-ARC utrzymuje mapę kierunków badawczych, projektów, manuskryptów i zależności, lecz **nie zastępuje** kanonicznych repozytoriów `msc-*`, `app-*`, `lib-*` ani magazynów danych. Rejestry `portfolio/*.json` są źródłem prawdy dla programu, natomiast uprawnienia do upublicznienia każdej pozycji i jej dowodów należy oceniać oddzielnie.
+ARC utrzymuje mapę kierunków badawczych, projektów, manuskryptów i zależności oraz może prowadzić **lokalne kanoniczne manuskrypty**. Nie zastępuje zewnętrznych `msc-*`, `app-*`, `lib-*` ani magazynów danych. Rejestry `portfolio/*.json` są źródłem prawdy dla programu, natomiast uprawnienia do upublicznienia każdej pozycji i jej dowodów należy oceniać oddzielnie.
 
 ## Cztery niezależne zdarzenia
 

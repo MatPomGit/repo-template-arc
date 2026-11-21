@@ -1,6 +1,6 @@
 # Zarządzanie programem badawczym ARC
 
-Program ARC zarządza **rejestrem referencji**, a nie treścią wszystkich projektów. Właściciel naukowy odpowiada za zakres programu, akceptację przypisania projektu i publikację publicznych metadanych. Właściciele `msc-*` pozostają odpowiedzialni za swoje hipotezy, protokoły, wyniki, prawa i manuskrypty.
+Program ARC zarządza **portfelem publikacji** i może prowadzić lokalne źródła naukowe, ale nie przejmuje treści cudzych projektów. Właściciel naukowy odpowiada za zakres programu, akceptację przypisania projektu i publikację publicznych metadanych. Zewnętrzne `msc-*` zachowują odpowiedzialność za swoje hipotezy, protokoły, wyniki, prawa i manuskrypty. W przypadku pracy lokalnej odpowiada za nie kanoniczny właściciel ARC.
 
 Zmianę rejestru dopuszczaj tylko po potwierdzeniu kanonicznego właściciela, aktualnej wersji, zakresu i stanu dowodu. Każda publikacja ma jednego właściciela; referencje innych ARC oznaczaj `related`. W publicznym repozytorium zabronione są wpisy wskazujące prywatne projekty, nawet gdy `public_listing` jest wyłączone.
 

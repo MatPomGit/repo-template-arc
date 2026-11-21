@@ -2,8 +2,8 @@
 
 Czytaj po kolei: `program.json`, `PROJECT_STATE.yaml`, `RESEARCH.md`, `ARCHITECTURE.md`, `portfolio/projects.json`, `portfolio/papers.json`, `portfolio/dependencies.json`, `GOVERNANCE.md`.
 
-1. To repozytorium **indeksuje** badania; nie kopiuj manuskryptów, wyników pomiarów, kodu `app-*` ani `lib-*`.
-2. Każdy manuskrypt ma jedno repozytorium kanoniczne i jedno `project_id`; odnośniki między programami są `related`, nie drugą kopią.
+1. Repozytorium ARC **indeksuje program i może prowadzić kanoniczne lokalne manuskrypty** `MSC-*`. Nie kopiuj *zewnętrznych* manuskryptów, wyników pomiarów ani kodu `app-*`/`lib-*`.
+2. Każdy manuskrypt ma jedno globalne ID MSC i jedno kanoniczne repozytorium: lokalne ARC lub zewnętrzne MSC. W trybie lokalnym nie wymagaj fikcyjnego `project_id`; relacja `related` nie tworzy kopii.
 3. Przed audytem aktualnego programu wykonaj `python scripts/bootstrap.py --mode audit-live` z uwierzytelnionym dostępem do repozytoriów. Raportuj `CURRENT`, `STALE` i `UNAVAILABLE` osobno. Nie opieraj aktualnej recenzji wyłącznie na starym gitlinku.
 4. Przed odtworzeniem wyników użyj przypiętego commitu i manifestu eksperymentu (`--mode reproduce`). Nigdy nie zastępuj zamrożonego SNAPSHOT aktualnym `main` podczas analizy historycznej.
 5. Nie czytaj ani nie publikuj danych osobowych, surowych EEG/wideo/eye tracking. Źródłem kontraktów sprzętu jest Research Autopilot `catalog/equipment/` i `docs/equipment/`, a sieci `homeserver-infra/docs/infrastructure/network/`.

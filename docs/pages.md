@@ -1,6 +1,6 @@
 # GitHub Pages programu badawczego ARC
 
-**Zakres:** publiczny portal *programu badawczego*, a nie strona pojedynczej aplikacji, manuskryptu ani wewnętrzny panel zarządzania. Szablon ma status `scaffold`; obecność `pages/` nie oznacza publikacji. Szczegółowe protokoły i wyniki należą do kanonicznych projektów `msc-*`, a kod aplikacji i bibliotek do `app-*` i `lib-*`.
+**Zakres:** publiczny portal *programu badawczego*, a nie strona pojedynczej aplikacji, manuskryptu ani wewnętrzny panel zarządzania. Szablon ma status `scaffold`; obecność `pages/` nie oznacza publikacji. Szczegółowe protokoły i wyniki należą do kanonicznych źródeł: lokalnych ARC albo zewnętrznych `msc-*`, a kod aplikacji i bibliotek do `app-*` i `lib-*`.
 
 ## 1. Architektura i granice publikacji
 
@@ -27,7 +27,7 @@ Nie twórz pustych zakładek ani dublowanych ręcznie list `portfolio/*.json`. J
 
 ## 3. Powiązanie ARC, MSC, APP, LIB i urządzeń
 
-ARC jest **indeksem programu i zależności**, a nie właścicielem wszystkich wyników: jedna pozycja `MSC-*` ma jedno kanoniczne `owner_project_id`. Pozostałe przypisania są wyłącznie `related`. Dla opublikowanej pozycji podawaj identyfikator, tytuł i link do źródłowego manuskryptu tylko wtedy, gdy jest publicznie dostępny i jego status `submitted` / `accepted` / `published` potwierdza odpowiedni dowód. Sama obecność DOI/URL w rejestrze nie uprawnia do ujawnienia treści.
+ARC jest **indeksem programu i zależności**, a nie właścicielem wszystkich wyników: jedna pozycja `MSC-*` ma jednego kanonicznego właściciela. Pozostałe przypisania są wyłącznie `related`. Dla opublikowanej pozycji podawaj identyfikator, tytuł i link do źródłowego manuskryptu tylko wtedy, gdy jest publicznie dostępny i jego status `submitted` / `accepted` / `published` potwierdza odpowiedni dowód. Sama obecność DOI/URL w rejestrze nie uprawnia do ujawnienia treści.
 
 Aplikacje `app-*` i biblioteki `lib-*` opisuj jedynie jako odrębne, wersjonowane narzędzia, z zatwierdzonym odnośnikiem. Nie kopiuj kodu, dokumentacji implementacyjnej, prywatnych kontraktów ani niezweryfikowanych deklaracji o działaniu aparatury. Publiczna karta sprzętu nie może zawierać prywatnych identyfikatorów, ścieżek, adresów sieciowych czy danych uczestników; wewnętrzne karty urządzeń należą do odrębnego prywatnego repozytorium `devices`.
 

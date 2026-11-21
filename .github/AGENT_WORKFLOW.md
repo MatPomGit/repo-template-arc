@@ -4,13 +4,13 @@
 
 ## A. Rozpoznanie i Definition of Ready
 
-Przed rozpoczęciem odczytaj rzeczywisty `main` i SHA, wszystkie PR (również drafty), Issues, lease, `program.json`, `PROJECT_STATE.yaml`, `portfolio/*.json`, [ARCHITECTURE](../ARCHITECTURE.md), zależności i istniejące testy. Zidentyfikuj właściciela pojedynczej publikacji oraz ewentualny pierwotny projekt. Nie twórz nowego PR, gdy istnieje zadanie o tym samym celu. Przy zmianach rejestru sprawdź, czy nie utrwala on informacji o prywatnych projektach w publicznym repozytorium.
+Przed rozpoczęciem odczytaj rzeczywisty `main` i SHA, wszystkie PR (również drafty), Issues, lease, `program.json`, `PROJECT_STATE.yaml`, `portfolio/*.json`, [ARCHITECTURE](../ARCHITECTURE.md), zależności i istniejące testy. Zidentyfikuj globalne ID MSC, kanoniczne repozytorium i tryb `local`/`external` oraz ewentualny pierwotny projekt. Nie twórz nowego PR, gdy istnieje zadanie o tym samym celu. Przy zmianach rejestru sprawdź, czy nie utrwala on informacji o prywatnych projektach w publicznym repozytorium.
 
 Zapisz w istniejącym Issue lub PR: cel, mierzalne kryteria akceptacji, base SHA, właściciela, zakres, ryzyko R0–R3, uprawnienia i plan walidacji. Brak zgody na ujawnienie informacji lub migrację jest blokadą, a nie brakującym szczegółem technicznym.
 
 ## B. Implementacja i testy
 
-Działaj możliwie małą, odwracalną zmianą. Nie duplikuj kodu `app-*`, `lib-*`, dokumentacji `msc-*`, dowodów i rejestrów. `snapshot_sha` oznacza historyczną migawkę; `audit-live` jest odczytem aktualnego zdalnego HEAD, a brak dostępu jest `UNAVAILABLE`. Nie przepinaj SNAPSHOT automatycznie, nawet gdy zdalna gałąź jest nowsza.
+Działaj możliwie małą, odwracalną zmianą. Nie duplikuj zewnętrznych manuskryptów, kodu `app-*`/`lib-*`, dowodów ani rejestrów; lokalny kanoniczny manuskrypt ARC jest dozwolony. `snapshot_sha` oznacza historyczną migawkę; `audit-live` jest odczytem aktualnego zdalnego HEAD, a brak dostępu jest `UNAVAILABLE`. Nie przepinaj SNAPSHOT automatycznie, nawet gdy zdalna gałąź jest nowsza.
 
 Wykonaj offline `python scripts/validate_repository.py --phase scaffold`, `python scripts/validate_documentation.py`, `python scripts/validate_pages.py`, `python -m unittest discover -s tests -v` i, jeśli dotyczy publicznego katalogu, `python scripts/build_public_catalog.py`. Dokumentuj dokładny SHA, polecenia, środowisko i wyniki. Nie deklaruj `PASS` dla `NOT_RUN` ani `UNAVAILABLE`. Nie uruchamiaj niezaufanego kodu na stałym runnerze; nie uruchamiaj prywatnego `audit-live` w publicznym CI.
 
