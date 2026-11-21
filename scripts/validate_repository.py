@@ -172,10 +172,11 @@ def validate(root: Path, phase: str = "scaffold", verified_repository: str | Non
     schema_version = meta.get("schema_version")
     if type(schema_version) is not int or schema_version not in (1, 2) or meta.get("type") != "arc-program":
         issues.append("Invalid program.json schema_version/type")
-    allowed_template_versions = {"0.1.0", "2.0.0"} if schema_version == 2 else {"1.0.0"}
+    # A template release and the on-disk data schema are separate version axes.
     template_version = meta.get("template_version")
-    if not isinstance(template_version, str) or template_version not in allowed_template_versions:
-        issues.append("Unexpected program template version for data schema")
+    if (not isinstance(template_version, str) or
+            not re.fullmatch(r"(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)", template_version)):
+        issues.append("Invalid template version (expected numeric SemVer core)")
     if schema_version == 2:
         for rel, obj in (("portfolio/projects.json", projects),
                          ("portfolio/papers.json", papers),
