@@ -46,6 +46,8 @@ jobs:
         run: python3 -B scripts/validate_documentation.py
       - name: Validate public Pages boundary
         run: python3 -B scripts/validate_pages.py
+      - name: E1 isolated CLI lifecycle and non-disclosure scenarios
+        run: python3 -B -m unittest discover -s tests -p 'test_lifecycle_cli.py' -v
       - name: Run offline unit tests with JSON Schema parity
         run: python3 -B -m unittest discover -s tests -v
       - name: Confirm public catalog is deterministic
