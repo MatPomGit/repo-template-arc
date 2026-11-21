@@ -65,6 +65,10 @@ def initialize(root: Path, *, programme: str, repository: str,
         "Zakres programu wynika z jego głównych pytań naukowych, a nie wyłącznie z zastosowanej aparatury czy oprogramowania. Programy ARC obejmują neuronaukę i psychoinformatykę, rzeczywistość rozszerzoną, robotykę oraz metody sztucznej inteligencji.",
         scope,
     )
+    readme = readme.replace(
+        "Repozytorium stanowi szablon struktury programów ARC. Szczegółowe informacje o konfiguracji znajdują się w [dokumentacji technicznej](TEMPLATE_SETUP.md), a warunki rozpowszechniania w [licencji](LICENSE).",
+        "Repozytorium przedstawia program " + title + ". Zasady wykorzystania materiałów określa [licencja](LICENSE), a opis techniczny znajduje się w [dokumentacji](TEMPLATE_SETUP.md).",
+    )
     research_path = root / "RESEARCH.md"
     research = research_path.read_text(encoding="utf-8")
     research = research.replace("REPLACE_PROGRAM_NAME", title).replace("REPLACE_SCIENTIFIC_SCOPE", scope)
