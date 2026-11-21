@@ -23,16 +23,14 @@
         ],
         "properties": {
           "paper_id": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\\\S"
           },
           "project_id": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\\\S"
           },
           "ref": {
             "type": "string"
@@ -108,16 +106,14 @@
         ],
         "properties": {
           "paper_id": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\\\S"
           },
           "project_id": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\\\S"
           },
           "ref": {
             "type": "string"
@@ -193,16 +189,14 @@
         ],
         "properties": {
           "paper_id": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\\\S"
           },
           "project_id": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\\\S"
           },
           "ref": {
             "type": "string"
