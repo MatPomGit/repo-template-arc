@@ -47,9 +47,7 @@ REQUIRED = (
     "scripts/validate_repository.py", "scripts/bootstrap.py",
     "scripts/build_public_catalog.py", "scripts/validate_pages.py",
     "scripts/validate_documentation.py", "scripts/validate_state.py",
-    "scripts/validate_registry_v2.py", "tests/test_registry_v2.py",
-    "schemas/program.v2.schema.json", "schemas/projects.v2.schema.json",
-    "schemas/papers.v2.schema.json", "schemas/dependencies.v2.schema.json",
+
     "scripts/validate_site.py", "tests/test_repository_contract.py",
     "tests/test_pages_policy.py", "tests/test_documentation_policy.py",
     "tests/test_agent_policy.py", "tests/test_state_policy.py",
@@ -152,6 +150,13 @@ def validate(root: Path, phase: str = "scaffold") -> list[str]:
     ):
         if set(obj) - fields or ("schema_version" in obj and type(obj["schema_version"]) is not int):
             issues.append("Unexpected registry fields or schema type: " + filename)
+    # v1 remains supported without v2-only schemas/tests, permitting audit before migration.
+    if meta.get("schema_version") == 2:
+        for rel in ("schemas/program.v2.schema.json", "schemas/projects.v2.schema.json",
+                    "schemas/papers.v2.schema.json", "schemas/dependencies.v2.schema.json"):
+            f = root / rel
+            if not f.is_file() or f.is_symlink() or not f.read_bytes().strip():
+                issues.append("Missing v2 schema: " + rel)
     schema_version = meta.get("schema_version")
     if type(schema_version) is not int or schema_version not in (1, 2) or meta.get("type") != "arc-program":
         issues.append("Invalid program.json schema_version/type")

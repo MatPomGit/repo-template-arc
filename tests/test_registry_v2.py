@@ -154,6 +154,31 @@ class RegistryV2Tests(unittest.TestCase):
             self.write(root,"portfolio/papers.json",{"schema_version":2,"papers":[p]})
             self.assertTrue(any("Invalid manuscript" in e for e in validate(root)))
 
+    def test_legacy_v1_scaffold_without_v2_schema_files(self):
+        """Legacy programme config and registries remain auditable pre-migration."""
+        with tempfile.TemporaryDirectory() as d:
+            root=self.fixture(d)
+            for schema in ("program", "projects", "papers", "dependencies"):
+                (root/"schemas"/(schema+".v2.schema.json")).unlink()
+            meta=json.loads((root/"program.json").read_text())
+            meta["schema_version"]=1
+            meta["template_version"]="1.0.0"
+            meta.pop("repository_full_name")
+            meta.pop("manuscript_root")
+            self.write(root,"program.json",meta)
+            for path in ("portfolio/projects.json","portfolio/papers.json","portfolio/dependencies.json"):
+                obj=json.loads((root/path).read_text())
+                obj["schema_version"]=1
+                if path.endswith("papers.json"):
+                    obj["papers"]=[]
+                self.write(root,path,obj)
+            state=root/"PROJECT_STATE.yaml"
+            state.write_text(state.read_text().replace("schema_version: 2","schema_version: 1")
+                             .replace("template_version: 2.0.0","template_version: 1.0.0")
+                             .replace("papers_registered: 1","papers_registered: 0")
+                             .replace("phase: active","phase: planned"))
+            self.assertEqual([],validate(root))
+
     def test_json_schemas_parse(self):
         for name in ("program","papers","projects","dependencies"):
             cfg=json.loads((ROOT/"schemas"/(name+".v2.schema.json")).read_text())
