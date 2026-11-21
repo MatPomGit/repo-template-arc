@@ -35,10 +35,58 @@ class VersionContractTests(unittest.TestCase):
             program_path.write_text(json.dumps(program, indent=2) + "\n", encoding="utf-8")
             state = state_path.read_text(encoding="utf-8")
             state_path.write_text(state.replace("template_version: 0.1.0", "template_version: 2.0.0"), encoding="utf-8")
-            before = program_path.read_bytes()
+            from scripts.migrate_arc import execute
+            tracked = [
+                "program.json", "PROJECT_STATE.yaml", "areas/index.json",
+                "portfolio/projects.json", "portfolio/papers.json",
+                "portfolio/dependencies.json",
+            ]
+            before = {name: (destination / name).read_bytes() for name in tracked}
             problems = validate(destination)
             self.assertEqual(problems, [], problems)
-            self.assertEqual(program_path.read_bytes(), before)
+            for mode in ("plan", "apply"):
+                with self.subTest(mode=mode):
+                    result = execute(destination, mode=mode)
+                    self.assertEqual(result["status"], "ALREADY_V2", result)
+            self.assertEqual(
+                {name: (destination / name).read_bytes() for name in tracked}, before
+            )
+
+    def test_invalid_template_version_type_yields_diagnostic(self):
+        from scripts.validate_repository import validate
+        with tempfile.TemporaryDirectory() as tmp:
+            destination = Path(tmp) / "arc"
+            shutil.copytree(ROOT, destination, ignore=shutil.ignore_patterns(".git", "__pycache__", ".venv"))
+            path = destination / "program.json"
+            original = json.loads(path.read_text(encoding="utf-8"))
+            for invalid in ([], {}, None, 42):
+                with self.subTest(value=invalid):
+                    path.write_text(json.dumps(dict(original, template_version=invalid)) + "\\n", encoding="utf-8")
+                    issues = validate(destination)
+                    self.assertTrue(any("Unexpected program template version" in x for x in issues), issues)
+
+    def test_version_mismatch_between_state_and_program_is_rejected(self):
+        from scripts.validate_repository import validate
+        from scripts.migrate_arc import execute
+        with tempfile.TemporaryDirectory() as tmp:
+            destination = Path(tmp) / "arc"
+            shutil.copytree(ROOT, destination, ignore=shutil.ignore_patterns(".git", "__pycache__", ".venv"))
+            state_path = destination / "PROJECT_STATE.yaml"
+            state_path.write_text(
+                state_path.read_text(encoding="utf-8").replace(
+                    "template_version: 0.1.0", "template_version: 2.0.0"
+                ), encoding="utf-8"
+            )
+            self.assertTrue(any("PROJECT_STATE mismatch: template_version" in x
+                                for x in validate(destination)))
+            before = {name: (destination / name).read_bytes()
+                      for name in ("program.json", "PROJECT_STATE.yaml", "portfolio/papers.json")}
+            for mode in ("plan", "apply"):
+                result = execute(destination, mode=mode)
+                self.assertEqual(result["status"], "BLOCKED", result)
+            self.assertEqual(
+                {name: (destination / name).read_bytes() for name in before}, before
+            )
 
 
 if __name__ == "__main__":
