@@ -175,7 +175,7 @@ def validate(root: Path, phase: str = "scaffold", verified_repository: str | Non
     # A template release and the on-disk data schema are separate version axes.
     template_version = meta.get("template_version")
     if (not isinstance(template_version, str) or
-            not re.fullmatch(r"(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)", template_version)):
+            not re.fullmatch(r"(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)", template_version)):
         issues.append("Invalid template version (expected numeric SemVer core)")
     if schema_version == 2:
         for rel, obj in (("portfolio/projects.json", projects),
