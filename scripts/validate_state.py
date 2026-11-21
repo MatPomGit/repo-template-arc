@@ -57,7 +57,7 @@ def check_state(root: Path, meta: dict, projects: list, papers: list) -> list[st
     state, issues = read_state(root / "PROJECT_STATE.yaml")
     if issues:
         return issues
-    expected = {"schema_version":"1","repository_type":"research_program",
+    expected = {"schema_version":str(meta.get("schema_version",1)),"repository_type":"research_program",
                 "template_version":meta.get("template_version"),
                 "programme":meta.get("programme"),"scientific_owner":meta.get("owner"),
                 "projects_registered":str(len(projects)),

@@ -15,6 +15,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from validate_documentation import check_documentation
 from validate_pages import check_pages
 from validate_state import check_state
+from validate_registry_v2 import validate_registry_v2
 
 ALLOWED_PROGRAMMES = frozenset(("arc-neuro", "arc-ai", "arc-xr", "arc-robo"))
 ALLOWED_ROLES = frozenset(("primary", "related"))
@@ -46,6 +47,9 @@ REQUIRED = (
     "scripts/validate_repository.py", "scripts/bootstrap.py",
     "scripts/build_public_catalog.py", "scripts/validate_pages.py",
     "scripts/validate_documentation.py", "scripts/validate_state.py",
+    "scripts/validate_registry_v2.py", "tests/test_registry_v2.py",
+    "schemas/program.v2.schema.json", "schemas/projects.v2.schema.json",
+    "schemas/papers.v2.schema.json", "schemas/dependencies.v2.schema.json",
     "scripts/validate_site.py", "tests/test_repository_contract.py",
     "tests/test_pages_policy.py", "tests/test_documentation_policy.py",
     "tests/test_agent_policy.py", "tests/test_state_policy.py",
@@ -146,10 +150,18 @@ def validate(root: Path, phase: str = "scaffold") -> list[str]:
     ):
         if set(obj) - fields or ("schema_version" in obj and type(obj["schema_version"]) is not int):
             issues.append("Unexpected registry fields or schema type: " + filename)
-    if meta.get("schema_version") != 1 or meta.get("type") != "arc-program":
+    schema_version = meta.get("schema_version")
+    if type(schema_version) is not int or schema_version not in (1, 2) or meta.get("type") != "arc-program":
         issues.append("Invalid program.json schema_version/type")
-    if meta.get("template_version") != "1.0.0":
+    expected_version = "2.0.0" if schema_version == 2 else "1.0.0"
+    if meta.get("template_version") != expected_version:
         issues.append("Unexpected program template version")
+    if schema_version == 2:
+        for rel, obj in (("portfolio/projects.json", projects),
+                         ("portfolio/papers.json", papers),
+                         ("portfolio/dependencies.json", dependencies)):
+            if obj.get("schema_version") != 2:
+                issues.append("Registry requires schema_version 2: " + rel)
     programme = meta.get("programme")
     declared_visibility = meta.get("repository_visibility", "unconfigured")
     if declared_visibility not in ("unconfigured", "public", "private"):
@@ -234,6 +246,8 @@ def validate(root: Path, phase: str = "scaffold") -> list[str]:
 
     paper_ids = set()
     for p in papers.get("papers", []) if isinstance(papers.get("papers"), list) else []:
+        if schema_version == 2:
+            continue
         if not isinstance(p, dict):
             issues.append("Invalid paper record type"); continue
         if set(p) - PAPER_FIELDS:
@@ -277,10 +291,16 @@ def validate(root: Path, phase: str = "scaffold") -> list[str]:
     for group in ("tools", "equipment", "datasets"):
         group_records = dependencies.get(group, []) if isinstance(dependencies.get(group), list) else []
         for p in group_records:
+            if schema_version == 2:
+                continue
             if (not isinstance(p, dict) or set(p) - DEPENDENCY_FIELDS
                     or p.get("project_id") not in project_ids
                     or not isinstance(p.get("ref"), str) or not p["ref"].strip()):
                 issues.append(f"Invalid {group} dependency reference")
+
+    if schema_version == 2:
+        issues.extend(validate_registry_v2(root, meta, paper_items, dependencies,
+                                           project_repos, lines, safe_public_page_url))
 
     submodule_records = {
         p["submodule_path"]: p for p in registered_projects
