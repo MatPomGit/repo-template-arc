@@ -26,7 +26,7 @@ class PagesPolicyTests(unittest.TestCase):
         self.assertEqual([], validator.check_pages(ROOT))
         self.assertFalse((ROOT / "CONTRIBUTING.md").exists())
         self.assertFalse((ROOT / "docs/projects.md").exists())
-        self.assertEqual(["index.md", "projects.md"], json.loads(
+        self.assertEqual(["index.md", "projects.md", "articles.md"], json.loads(
             (ROOT / "config/pages-policy.json").read_text(encoding="utf-8")
         )["public_files"])
 

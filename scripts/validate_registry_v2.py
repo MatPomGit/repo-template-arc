@@ -18,8 +18,10 @@ EVIDENCE={"submitted":"submission_receipt","accepted":"editorial_decision",
           "published":"publication_record"}
 PAPER_FIELDS={"id","title","area","research_state","publication_stage","relation","owner",
               "manuscript","study_plan","public_listing","doi","preprint_url",
-              "preregistration_url","publication_url","stage_evidence"}
+              "preregistration_url","publication_url","stage_evidence","public_summary"}
+REQUIRED_PAPER_FIELDS = PAPER_FIELDS - {"public_summary"}
 OWNER_FIELDS={"mode","repository","project_id"}
+REDACTED_OWNER_FIELDS=OWNER_FIELDS|{"redacted"}
 MANUSCRIPT_FIELDS={"path","format","commit_sha","blob_sha"}
 DEP_FIELDS={"paper_id","project_id","ref","version","sha","role","contract_path",
             "validation_status","notes"}
@@ -94,7 +96,7 @@ def validate_registry_v2(root,meta,papers,dependencies,project_repos,lines,safe_
             continue
         ident=p.get("id")
         name=ident if isinstance(ident,str) else "?"
-        if set(p)!=PAPER_FIELDS:
+        if set(p)-PAPER_FIELDS or REQUIRED_PAPER_FIELDS-set(p):
             issues.append(f"Undeclared paper metadata or missing v2 fields: {name}")
         if not isinstance(ident,str) or not MSC.fullmatch(ident) or ident in paper_ids:
             issues.append(f"Invalid or duplicate MSC paper id: {name}")
@@ -111,6 +113,12 @@ def validate_registry_v2(root,meta,papers,dependencies,project_repos,lines,safe_
             issues.append(f"Unknown paper publication stage: {name}")
         if p.get("relation") not in ("primary","related"):
             issues.append(f"Invalid paper relation: {name}")
+        summary=p.get("public_summary")
+        if summary is not None and (not isinstance(summary,str) or len(summary)>320
+                                    or not summary.strip()):
+            issues.append(f"Invalid public paper summary: {name}")
+        if p.get("public_listing") is True and (not isinstance(summary,str) or not summary.strip()):
+            issues.append(f"Missing public summary for listed paper: {name}")
         if not isinstance(p.get("public_listing"),bool):
             issues.append(f"Invalid paper public_listing: {name}")
         elif p["public_listing"] and meta.get("repository_visibility")!="public":
@@ -118,13 +126,23 @@ def validate_registry_v2(root,meta,papers,dependencies,project_repos,lines,safe_
 
         owner=p.get("owner")
         mode=None
-        if not isinstance(owner,dict) or set(owner)!=OWNER_FIELDS:
+        redacted=(isinstance(owner,dict)
+                  and set(owner)==REDACTED_OWNER_FIELDS
+                  and owner.get("redacted") is True)
+        if not isinstance(owner,dict) or (set(owner)!=OWNER_FIELDS and not redacted):
             issues.append(f"Invalid paper canonical owner: {name}")
         else:
             mode=owner.get("mode")
             r=owner.get("repository")
             pid=owner.get("project_id")
-            if not isinstance(r,str) or not REPO.fullmatch(r):
+            if redacted:
+                if (mode!="external" or r is not None or pid is not None
+                        or p.get("relation")!="related"
+                        or p.get("public_listing") is not False
+                        or p.get("manuscript") is not None
+                        or p.get("study_plan") is not None):
+                    issues.append(f"Invalid redacted external reference: {name}")
+            elif not isinstance(r,str) or not REPO.fullmatch(r):
                 issues.append(f"Invalid canonical repository: {name}")
             if mode=="local":
                 if pid is not None or p.get("relation")!="primary":
@@ -138,7 +156,7 @@ def validate_registry_v2(root,meta,papers,dependencies,project_repos,lines,safe_
                 if meta.get("repository_visibility")=="unconfigured":
                     issues.append(f"Configure ARC visibility before local manuscript: {name}")
             elif mode=="external":
-                if not isinstance(pid,str) or project_repos.get(pid)!=r:
+                if not redacted and (not isinstance(pid,str) or project_repos.get(pid)!=r):
                     issues.append(f"Unknown canonical project for paper: {name}")
             else:
                 issues.append(f"Unknown manuscript ownership mode: {name}")

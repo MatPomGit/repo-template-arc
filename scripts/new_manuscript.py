@@ -140,7 +140,7 @@ def create(root: Path, *, ident: str, title: str, area: str,
         "owner": {"mode": "local", "repository": repository, "project_id": None},
         "manuscript": {"path": str(files["main.tex"].relative_to(root)), "format": "latex"},
         "study_plan": str(files["study.yaml"].relative_to(root)),
-        "public_listing": False, "doi": None, "preprint_url": None,
+        "public_listing": False, "public_summary": None, "doi": None, "preprint_url": None,
         "preregistration_url": None, "publication_url": None,
         "stage_evidence": None,
     }

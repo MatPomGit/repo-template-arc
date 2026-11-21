@@ -43,6 +43,12 @@ Weryfikacja `audit-live` **nie zmienia** przypiętych commitów i nie uruchamia 
 
 Zobacz [niezależny audyt szablonu ARC z 2026-11-19](reviews/2026-11-19-template-audit.md), zawierający priorytety P0–P2 i test akceptacyjny. Publiczne repozytoria mogą korzystać z istniejących izolowanych kontroli CI, bez sekretów i bez dostępu do prywatnych projektów; wynik testu nie jest zgodą na publikację.
 
+## Katalog artykułów i migracja
+
+Publiczny katalog artykułów jest generowany wyłącznie z zatwierdzonych opisów w kanonicznym rejestrze, w oddzielnym katalogu `pages/`. Uruchom `python scripts/build_article_catalog.py`. Dla publikacji wymagane są `public_listing=true` i zatwierdzony `public_summary`; prywatne repozytoria i niepubliczne źródła są wykluczone.
+
+Istniejące ARC aktualizuj ostrożnie: `python scripts/migrate_arc.py --mode inventory`, następnie `--mode plan` i dopiero świadome `--mode apply` z exact SHA. [Instrukcja migracji v1 → v2](docs/migrations/schema-v2.md).
+
 ## Architektura i bezpieczeństwo
 
 [Kontrole CI i wymagane bramki PR](docs/operations/ci-gates.md) dokumentują różnicę między PASS testów, uprawnionym review i rzeczywistą ochroną gałęzi.

@@ -4,7 +4,7 @@
 
 - `owner.mode=local`: kanoniczne źródło LaTeX znajduje się w tym ARC, `owner.project_id=null`; `owner.repository` musi dokładnie odpowiadać `program.json:repository_full_name`. Katalog wskazany w `manuscript_root` to `manuscripts/` (nowe ARC) lub `papers/` (zgodność z ARC Neuro). Nie rejestruj fikcyjnego `msc-*`.
 - `owner.mode=external`: `project_id` wskazuje projekt z `portfolio/projects.json`, a `owner.repository` musi odpowiadać jego repozytorium. Lokalny plan nie jest kopią kanonicznego manuskryptu.
-- `relation=related`: niezależny program wskazuje pozycję innego właściciela. Globalną unikalność ID kontroluje Research Autopilot.
+- `relation=related`: niezależny program wskazuje pozycję innego właściciela. Jeżeli lokalizacja właściciela kanonicznego jest poufna, dopuszcza się wyłącznie rekord `owner: {mode: external, repository: null, project_id: null, redacted: true}` z `relation=related`, `public_listing=false` i bez wskazania kanonicznego TeX lub planu. Nie poświadcza to tożsamości właściciela; pełna weryfikacja pozostaje po stronie uprawnionego indeksu Research Autopilot. Globalną unikalność ID kontroluje Research Autopilot.
 - `portfolio/dependencies.json`: każda zależność w `tools`, `equipment` lub `datasets` wskazuje **dokładnie jedno** z `paper_id` albo `project_id`. Bez duplikowania kodu i kart aparatury.
 - `areas/index.json`: lista zdefiniowanych linii programu. Same metody (np. eye tracking) nie stanowią osobnych ARC.
 
