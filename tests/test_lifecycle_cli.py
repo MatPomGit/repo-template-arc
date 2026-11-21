@@ -26,7 +26,8 @@ class ArcCliLifecycleTests(unittest.TestCase):
     def cli(self, script: str, *args: str, code: int = 0):
         result = subprocess.run(
             [sys.executable, str(self.root / "scripts" / script),
-             "--root", str(self.root), *args],
+             *([] if script == "build_public_catalog.py"
+                else ["--root", str(self.root)]), *args],
             cwd=self.root, text=True, capture_output=True,
             timeout=25, check=False,
         )
@@ -54,6 +55,7 @@ class ArcCliLifecycleTests(unittest.TestCase):
 
     def test_complete_public_lifecycle_and_no_accidental_disclosure(self):
         before = (self.root / "program.json").read_bytes()
+        original_version = (self.root / "VERSION").read_bytes()
         preview = self.cli(
             "init_arc.py", "--programme", "arc-ai",
             "--repository", "MatPomGit/arc-ai",
@@ -96,7 +98,7 @@ class ArcCliLifecycleTests(unittest.TestCase):
         self.cli("build_article_catalog.py")
         self.assertEqual(before_registry, (self.root / "portfolio/papers.json").read_bytes())
         self.assertEqual(before_catalog, catalog.read_bytes())
-        self.assertEqual((self.root / "VERSION").read_text().strip(), "0.1.0")
+        self.assertEqual((self.root / "VERSION").read_bytes(), original_version)
         self.assertEqual(self.cli("migrate_arc.py", "--mode", "plan").count("ALREADY_V2"), 1)
 
     def test_private_arc_stays_out_of_public_article_catalog(self):

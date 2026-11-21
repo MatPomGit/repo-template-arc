@@ -43,6 +43,12 @@ Weryfikacja `audit-live` **nie zmienia** przypiętych commitów i nie uruchamia 
 
 Zobacz [niezależny audyt szablonu ARC z 2026-11-19](reviews/2026-11-19-template-audit.md), zawierający priorytety P0–P2 i test akceptacyjny. Publiczne repozytoria mogą korzystać z istniejących izolowanych kontroli CI, bez sekretów i bez dostępu do prywatnych projektów; wynik testu nie jest zgodą na publikację.
 
+## Kontrole wydania szablonu (faza E)
+
+Zintegrowany test `tests/test_lifecycle_cli.py` uruchamia prawdziwe komendy CLI w izolowanej kopii szablonu: inicjalizację ARC, stworzenie manuskryptu i `study.yaml`, walidację, generatory katalogu oraz próbę powtórzenia operacji. Sprawdza też, czy tryb `ALREADY_V2` nie maskuje nieprawidłowego rejestru. Wynik tego testu **nie** zastępuje niezależnego review, zasad ochrony `main` ani decyzji o wydaniu.
+
+[Lista kontrolna przygotowania wersji 2.0.0](docs/operations/release-readiness.md) rozróżnia wersję szablonu od wersji wydania danego programu ARC i nie uruchamia GitHub Release.
+
 ## Katalog artykułów i migracja
 
 Publiczny katalog artykułów jest generowany wyłącznie z zatwierdzonych opisów w kanonicznym rejestrze, w oddzielnym katalogu `pages/`. Uruchom `python scripts/build_article_catalog.py`. Dla publikacji wymagane są `public_listing=true` i zatwierdzony `public_summary`; prywatne repozytoria i niepubliczne źródła są wykluczone.
