@@ -85,7 +85,7 @@
       ]
     },
     "manuscript_root": {
-      "const": "papers"
+      "const": "manuscripts"
     },
     "site_root": {
       "const": "site"
