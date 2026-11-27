@@ -1,7 +1,6 @@
 """Compare registered programme snapshots with remote default branches, read-only."""
 from __future__ import annotations
 import argparse
-import json
 import os
 import re
 import subprocess
@@ -9,8 +8,10 @@ import sys
 from pathlib import Path
 
 try:
+    from _registry_layout import read_registry
     from validate_repository import github_repo_url
 except ImportError:
+    from scripts._registry_layout import read_registry
     from scripts.validate_repository import github_repo_url
 
 
@@ -52,7 +53,7 @@ def inspect_project(project: dict, timeout: int = 15) -> dict:
 
 
 def run(root:Path,require_current:bool=False,timeout:int=15) -> int:
-    manifest=json.loads((root/"portfolio/projects.json").read_text(encoding="utf-8"))
+    manifest=read_registry(root, "projects")
     items=manifest.get("projects",[])
     if not items:
         print("NO_PROJECTS: registry contains no projects; this is not a complete live audit")
