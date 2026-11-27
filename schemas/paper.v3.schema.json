@@ -1,0 +1,539 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "title",
+    "area",
+    "research_state",
+    "publication_stage",
+    "relation",
+    "owner",
+    "manuscript",
+    "study_plan",
+    "public_listing",
+    "doi",
+    "preprint_url",
+    "preregistration_url",
+    "publication_url",
+    "stage_evidence",
+    "schema_version",
+    "dependencies"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^MSC-[A-Z0-9]+(?:-[A-Z0-9]+)*$"
+    },
+    "title": {
+      "type": "string"
+    },
+    "area": {
+      "type": "string"
+    },
+    "research_state": {
+      "enum": [
+        "planned",
+        "active",
+        "paused",
+        "completed",
+        "deferred",
+        "archived"
+      ]
+    },
+    "publication_stage": {
+      "enum": [
+        "concept",
+        "protocol",
+        "preregistered",
+        "collection",
+        "analysis",
+        "draft",
+        "submitted",
+        "accepted",
+        "published",
+        "archived",
+        "withdrawn"
+      ]
+    },
+    "relation": {
+      "enum": [
+        "primary",
+        "related"
+      ]
+    },
+    "owner": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "repository",
+        "project_id"
+      ],
+      "properties": {
+        "mode": {
+          "enum": [
+            "local",
+            "external"
+          ]
+        },
+        "repository": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"
+        },
+        "project_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "redacted": {
+          "const": true
+        }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "mode": {
+              "const": "local"
+            },
+            "repository": {
+              "type": "string"
+            },
+            "project_id": {
+              "type": "null"
+            }
+          },
+          "not": {
+            "required": [
+              "redacted"
+            ]
+          }
+        },
+        {
+          "properties": {
+            "mode": {
+              "const": "external"
+            },
+            "repository": {
+              "type": "string"
+            },
+            "project_id": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "not": {
+            "required": [
+              "redacted"
+            ]
+          }
+        },
+        {
+          "properties": {
+            "mode": {
+              "const": "external"
+            },
+            "repository": {
+              "type": "null"
+            },
+            "project_id": {
+              "type": "null"
+            },
+            "redacted": {
+              "const": true
+            }
+          },
+          "required": [
+            "redacted"
+          ]
+        }
+      ]
+    },
+    "manuscript": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "format"
+          ],
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "format": {
+              "enum": [
+                "latex",
+                "markdown"
+              ]
+            },
+            "commit_sha": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "blob_sha": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "study_plan": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "public_listing": {
+      "type": "boolean"
+    },
+    "doi": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "preprint_url": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "preregistration_url": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "publication_url": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "stage_evidence": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "sha256",
+            "checked_on"
+          ],
+          "properties": {
+            "kind": {
+              "enum": [
+                "submission_receipt",
+                "editorial_decision",
+                "publication_record"
+              ]
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "checked_on": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        }
+      ]
+    },
+    "public_summary": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1,
+      "maxLength": 320
+    },
+    "schema_version": {
+      "const": 3
+    },
+    "dependencies": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tools",
+        "equipment",
+        "datasets"
+      ],
+      "properties": {
+        "tools": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "ref"
+            ],
+            "properties": {
+              "ref": {
+                "type": "string"
+              },
+              "version": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "sha": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "role": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "contract_path": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "validation_status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "notes": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        "equipment": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "ref"
+            ],
+            "properties": {
+              "ref": {
+                "type": "string"
+              },
+              "version": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "sha": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "role": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "contract_path": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "validation_status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "notes": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        "datasets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "ref"
+            ],
+            "properties": {
+              "ref": {
+                "type": "string"
+              },
+              "version": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "sha": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "role": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "contract_path": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "validation_status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "notes": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "owner": {
+            "required": [
+              "redacted"
+            ]
+          }
+        },
+        "required": [
+          "owner"
+        ]
+      },
+      "then": {
+        "properties": {
+          "relation": {
+            "const": "related"
+          },
+          "public_listing": {
+            "const": false
+          },
+          "manuscript": {
+            "type": "null"
+          },
+          "study_plan": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "owner": {
+            "properties": {
+              "mode": {
+                "const": "local"
+              }
+            },
+            "required": [
+              "mode"
+            ]
+          }
+        },
+        "required": [
+          "owner"
+        ]
+      },
+      "then": {
+        "properties": {
+          "manuscript": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "path",
+                  "format"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "pattern": "^papers/MSC-[A-Z0-9]+(?:-[A-Z0-9]+)*/[^/]+$"
+                  },
+                  "format": {
+                    "enum": [
+                      "latex",
+                      "markdown"
+                    ]
+                  },
+                  "commit_sha": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "blob_sha": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          "study_plan": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^papers/MSC-[A-Z0-9]+(?:-[A-Z0-9]+)*/[^/]+$"
+          }
+        }
+      }
+    }
+  ],
+  "title": "ARC paper metadata v3",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}
