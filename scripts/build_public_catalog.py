@@ -5,6 +5,7 @@ import json
 import re
 import sys
 from pathlib import Path
+from _registry_layout import read_registry
 from validate_repository import safe_public_page_url
 from site_branding import approved_logo
 
@@ -14,7 +15,7 @@ def safe_text(text:str)->str:
 
 
 def render(root:Path)->str:
-    projects=json.loads((root/"portfolio/projects.json").read_text(encoding="utf-8")).get("projects",[])
+    projects=read_registry(root, "projects").get("projects",[])
     policy_file=root/"config/pages-policy.json"
     policy=(json.loads(policy_file.read_text(encoding="utf-8")) if policy_file.is_file()
             else {"public_files": [], "approved_image_sha256": {}})
