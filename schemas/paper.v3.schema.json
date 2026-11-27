@@ -463,6 +463,75 @@
           }
         }
       }
+    },
+    {
+      "if": {
+        "properties": {
+          "owner": {
+            "properties": {
+              "mode": {
+                "const": "local"
+              }
+            },
+            "required": [
+              "mode"
+            ]
+          }
+        },
+        "required": [
+          "owner"
+        ]
+      },
+      "then": {
+        "properties": {
+          "manuscript": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "path",
+                  "format"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "pattern": "^papers/MSC-[A-Z0-9]+(?:-[A-Z0-9]+)*/[^/]+$"
+                  },
+                  "format": {
+                    "enum": [
+                      "latex",
+                      "markdown"
+                    ]
+                  },
+                  "commit_sha": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "blob_sha": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          "study_plan": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^papers/MSC-[A-Z0-9]+(?:-[A-Z0-9]+)*/[^/]+$"
+          }
+        }
+      }
     }
   ],
   "title": "ARC paper metadata v3",
