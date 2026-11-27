@@ -499,7 +499,7 @@
                 "properties": {
                   "path": {
                     "type": "string",
-                    "pattern": "^papers/MSC-[A-Z0-9]+(?:-[A-Z0-9]+)*/[^/]+$"
+                    "pattern": "^manuscripts/MSC-[A-Z0-9]+(?:-[A-Z0-9]+)*/[^/]+$"
                   },
                   "format": {
                     "enum": [
@@ -528,7 +528,7 @@
               "string",
               "null"
             ],
-            "pattern": "^papers/MSC-[A-Z0-9]+(?:-[A-Z0-9]+)*/[^/]+$"
+            "pattern": "^manuscripts/MSC-[A-Z0-9]+(?:-[A-Z0-9]+)*/[^/]+$"
           }
         }
       }
