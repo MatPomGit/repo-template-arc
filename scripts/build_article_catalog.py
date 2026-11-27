@@ -4,6 +4,7 @@ import argparse
 import json
 import re
 from pathlib import Path
+from _registry_layout import read_registry
 
 from validate_repository import github_repo_url, safe_public_page_url
 from validate_pages import BANNED
@@ -25,8 +26,8 @@ def clean(value: object, ident: str) -> str:
 
 def render(root: Path) -> str:
     program=json.loads((root/"program.json").read_text(encoding="utf-8"))
-    papers=json.loads((root/"portfolio/papers.json").read_text(encoding="utf-8"))
-    projects=json.loads((root/"portfolio/projects.json").read_text(encoding="utf-8"))
+    papers=read_registry(root, "papers")
+    projects=read_registry(root, "projects")
     lines=["# Artykuły naukowe","",
            "Publikacje i planowane badania prowadzone w programie.",""]
     if papers.get("schema_version")!=2 or program.get("repository_visibility")!="public":
