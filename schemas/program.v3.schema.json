@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ARC programme v3",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "template_version",
+    "type",
+    "programme",
+    "title",
+    "owner",
+    "scope",
+    "default_branch",
+    "license_spdx",
+    "pages_status",
+    "pages_url",
+    "public_catalog_policy",
+    "scientific_state",
+    "owner_of_raw_data",
+    "repository_visibility",
+    "repository_full_name",
+    "manuscript_root"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 3
+    },
+    "template_version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+    },
+    "type": {
+      "const": "arc-program"
+    },
+    "programme": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "owner": {
+      "type": "string"
+    },
+    "scope": {
+      "type": "string"
+    },
+    "default_branch": {
+      "type": "string"
+    },
+    "license_spdx": {
+      "type": "string"
+    },
+    "pages_status": {
+      "type": "string"
+    },
+    "pages_url": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "public_catalog_policy": {
+      "type": "string"
+    },
+    "scientific_state": {
+      "type": "string"
+    },
+    "owner_of_raw_data": {
+      "const": false
+    },
+    "repository_visibility": {
+      "enum": [
+        "unconfigured",
+        "public",
+        "private"
+      ]
+    },
+    "repository_full_name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "manuscript_root": {
+      "const": "papers"
+    }
+  }
+}
